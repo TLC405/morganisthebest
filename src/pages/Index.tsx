@@ -1,39 +1,40 @@
 import { Link } from 'react-router-dom';
-import { Heart, Calendar, Users, Shield, Sparkles, ArrowRight } from 'lucide-react';
+import { Heart, Calendar, Users, Shield, Sparkles, ArrowRight, MessageCircle, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Layout } from '@/components/layout/Layout';
 import { mockEvents } from '@/data/mockData';
 import { EventCard } from '@/components/events/EventCard';
 
 const features = [
   {
-    icon: Calendar,
-    title: 'Real Events, Real People',
-    description: 'Attend curated singles events in OKC. No endless swiping—just show up and connect.',
+    icon: ShieldCheck,
+    title: 'Zero Catfishing',
+    description: 'Every profile is verified. Live selfie check + event attendance proof. No fakes allowed.',
   },
   {
-    icon: Shield,
-    title: 'Privacy First',
-    description: 'No geo-tracking. Check in with your door code when you arrive. Your location stays private.',
+    icon: MessageCircle,
+    title: 'Zero Ghosting',
+    description: 'Response rates are tracked and visible. Accountability breeds respect.',
   },
   {
     icon: Users,
-    title: 'Profile Reveal System',
-    description: 'Profiles stay blurred until you both attend the same event. Meet in person first!',
+    title: 'Meet First, Reveal Later',
+    description: 'Profiles stay mysterious until you attend the same event. Real chemistry, not filtered photos.',
   },
   {
-    icon: Sparkles,
-    title: 'Spark Connections',
-    description: 'After meeting at an event, send a "Spark" to let them know you\'re interested.',
+    icon: Shield,
+    title: '100% Privacy',
+    description: 'No geo-tracking. No data selling. Check in with door codes. Your safety matters.',
   },
 ];
 
 const howItWorks = [
   { step: 1, title: 'Browse Events', description: 'Find singles events that match your interests' },
   { step: 2, title: 'RSVP & Get Code', description: 'Reserve your spot and receive your private door code' },
-  { step: 3, title: 'Show Up & Check In', description: 'Enter your code or scan QR at the event entrance' },
-  { step: 4, title: 'Reveal & Connect', description: 'See unblurred profiles of people you met!' },
+  { step: 3, title: 'Show Up & Check In', description: 'Enter your code at the event entrance' },
+  { step: 4, title: 'Reveal & Wave', description: 'See real profiles of people you met and send a wave!' },
 ];
 
 const Index = () => {
@@ -46,10 +47,22 @@ const Index = () => {
         <div className="absolute inset-0 gradient-warm opacity-50" />
         <div className="relative mx-auto max-w-7xl px-4 py-20 md:py-32">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
-              <Heart className="h-4 w-4" fill="currentColor" />
-              Oklahoma City's Privacy-First Dating Platform
+            {/* Trust Badges */}
+            <div className="mb-6 flex flex-wrap justify-center gap-2">
+              <Badge variant="outline" className="gap-1 py-1.5 px-3">
+                <ShieldCheck className="h-3 w-3 text-green-500" />
+                Zero Catfishing
+              </Badge>
+              <Badge variant="outline" className="gap-1 py-1.5 px-3">
+                <MessageCircle className="h-3 w-3 text-blue-500" />
+                Zero Ghosting
+              </Badge>
+              <Badge variant="outline" className="gap-1 py-1.5 px-3">
+                <Heart className="h-3 w-3 text-primary" />
+                100% Real
+              </Badge>
             </div>
+            
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl">
               Meet Singles{' '}
               <span className="text-primary">In Person</span>
@@ -57,20 +70,20 @@ const Index = () => {
               Not Just Online
             </h1>
             <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-              No swiping. No geo-tracking. Just real connections at real events. 
-              Profiles stay blurred until you meet face-to-face.
+              Every face is verified. Every connection is earned.
+              Real people, real events, real chemistry.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" className="gap-2" asChild>
                 <Link to="/events">
                   <Calendar className="h-5 w-5" />
-                  Browse Events
+                  Find an Event
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="gap-2" asChild>
                 <Link to="/community">
                   <Users className="h-5 w-5" />
-                  View Singles
+                  Browse Singles
                 </Link>
               </Button>
             </div>
@@ -81,9 +94,12 @@ const Index = () => {
       {/* Features Section */}
       <section className="border-t border-border bg-card py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4">
-          <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
-            Why Social Singles OKC?
+          <h2 className="mb-4 text-center text-3xl font-bold text-foreground">
+            Why We're Different
           </h2>
+          <p className="mb-12 text-center text-muted-foreground max-w-2xl mx-auto">
+            We solve the real problems with dating apps: fake profiles, ghosting, and endless swiping.
+          </p>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
               <Card key={feature.title} className="border-border bg-background">
@@ -147,11 +163,11 @@ const Index = () => {
         <div className="mx-auto max-w-3xl px-4 text-center">
           <Heart className="mx-auto mb-6 h-16 w-16 text-primary" fill="currentColor" />
           <h2 className="mb-4 text-3xl font-bold text-foreground">
-            Ready to Meet Someone Special?
+            Ready to Meet Someone Real?
           </h2>
           <p className="mb-8 text-lg text-muted-foreground">
-            Join hundreds of OKC singles who are tired of endless swiping 
-            and ready for real connections.
+            Join hundreds of OKC singles who are tired of catfishing and ghosting.
+            Real connections start with real meetings.
           </p>
           <Button size="lg" className="gap-2" asChild>
             <Link to="/events">
