@@ -11,6 +11,7 @@ import Connections from "./pages/Connections";
 import CheckIn from "./pages/CheckIn";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import Quiz from "./pages/Quiz";
 import Chats from "./pages/Chats";
 import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/check-in" element={<CheckIn />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/quiz" element={<Quiz />} />
             <Route path="/chats" element={<Chats />} />
             <Route path="/chat/:conversationId" element={<Chat />} />
             
