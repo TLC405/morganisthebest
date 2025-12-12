@@ -11,6 +11,8 @@ import Connections from "./pages/Connections";
 import CheckIn from "./pages/CheckIn";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import Chats from "./pages/Chats";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -45,6 +47,8 @@ const App = () => (
             <Route path="/check-in" element={<CheckIn />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/chats" element={<Chats />} />
+            <Route path="/chat/:conversationId" element={<Chat />} />
             
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />

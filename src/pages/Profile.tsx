@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { User, Camera, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, Camera, Save, Sparkles } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { currentUser } from '@/data/mockData';
+import { PersonalityQuoteSelector } from '@/components/profile/PersonalityQuoteSelector';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 const allInterests = [
   'hiking', 'coffee', 'live music', 'travel', 'food', 'photography',
@@ -17,11 +19,44 @@ const allInterests = [
 ];
 
 const Profile = () => {
-  const [name, setName] = useState(currentUser.name);
-  const [age, setAge] = useState(currentUser.age.toString());
-  const [bio, setBio] = useState(currentUser.bio);
-  const [interests, setInterests] = useState<string[]>(currentUser.interests);
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [bio, setBio] = useState('');
+  const [interests, setInterests] = useState<string[]>([]);
+  const [personalityQuote, setPersonalityQuote] = useState<string | null>(null);
+  const [area, setArea] = useState('');
+  const [lookingFor, setLookingFor] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchProfile = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (data) {
+        setName(data.name || '');
+        setAge(data.age?.toString() || '');
+        setBio(data.bio || '');
+        setInterests(data.interests || []);
+        setPersonalityQuote(data.personality_quote);
+        setArea(data.area || '');
+        setLookingFor(data.looking_for || '');
+        setPhotoUrl(data.photo_url || '');
+      }
+      setLoading(false);
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const toggleInterest = (interest: string) => {
     if (interests.includes(interest)) {
@@ -37,12 +72,52 @@ const Profile = () => {
     }
   };
 
-  const handleSave = () => {
-    toast({
-      title: "Profile Updated! ✨",
-      description: "Your changes have been saved.",
-    });
+  const handleSave = async () => {
+    if (!user) return;
+
+    setSaving(true);
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        name,
+        age: age ? parseInt(age) : null,
+        bio,
+        interests,
+        personality_quote: personalityQuote,
+        area,
+        looking_for: lookingFor,
+      })
+      .eq('id', user.id);
+
+    setSaving(false);
+
+    if (error) {
+      toast({
+        title: "Error saving profile",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Profile Updated! ✨",
+        description: "Your changes have been saved.",
+      });
+    }
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="mx-auto max-w-2xl px-4 py-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-muted rounded w-1/3" />
+            <div className="h-40 bg-muted rounded" />
+            <div className="h-40 bg-muted rounded" />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -68,7 +143,7 @@ const Profile = () => {
             <div className="flex items-center gap-6">
               <div className="relative">
                 <img
-                  src={currentUser.photoUrl}
+                  src={photoUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop'}
                   alt="Your profile"
                   className="h-24 w-24 rounded-full object-cover"
                 />
@@ -116,6 +191,26 @@ const Profile = () => {
                 />
               </div>
             </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="area">Area/Neighborhood</Label>
+                <Input
+                  id="area"
+                  value={area}
+                  onChange={(e) => setArea(e.target.value)}
+                  placeholder="e.g., Midtown OKC"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lookingFor">Looking For</Label>
+                <Input
+                  id="lookingFor"
+                  value={lookingFor}
+                  onChange={(e) => setLookingFor(e.target.value)}
+                  placeholder="e.g., Long-term relationship"
+                />
+              </div>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="bio">About Me</Label>
               <Textarea
@@ -132,6 +227,14 @@ const Profile = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Personality Quote */}
+        <div className="mb-6">
+          <PersonalityQuoteSelector 
+            selectedQuote={personalityQuote}
+            onSelect={setPersonalityQuote}
+          />
+        </div>
 
         {/* Interests */}
         <Card className="mb-6">
@@ -159,9 +262,14 @@ const Profile = () => {
         </Card>
 
         {/* Save Button */}
-        <Button onClick={handleSave} className="w-full gap-2" size="lg">
+        <Button 
+          onClick={handleSave} 
+          className="w-full gap-2" 
+          size="lg"
+          disabled={saving}
+        >
           <Save className="h-5 w-5" />
-          Save Profile
+          {saving ? 'Saving...' : 'Save Profile'}
         </Button>
       </div>
     </Layout>

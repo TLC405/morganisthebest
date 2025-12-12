@@ -23,7 +23,8 @@ import {
 const singlesLinks = [
   { to: '/', label: 'Home', icon: Heart },
   { to: '/events', label: 'Events', icon: Calendar },
-  { to: '/connections', label: 'My Connections', icon: MessageCircle },
+  { to: '/connections', label: 'Connections', icon: Users },
+  { to: '/chats', label: 'Chats', icon: MessageCircle },
   { to: '/check-in', label: 'Check In', icon: MapPin },
   { to: '/profile', label: 'Profile', icon: User },
 ];
