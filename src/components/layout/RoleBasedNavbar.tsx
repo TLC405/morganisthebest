@@ -85,12 +85,9 @@ export const RoleBasedNavbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <Heart className="h-6 w-6 text-primary fill-primary" />
-            <div className="flex flex-col">
-              <span className="font-bold text-lg text-foreground leading-tight">
-                Social Singles OKC
-              </span>
-              <span className="text-[10px] text-muted-foreground leading-tight">by TLC</span>
-            </div>
+            <span className="font-bold text-lg text-foreground">
+              Social Singles OKC
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

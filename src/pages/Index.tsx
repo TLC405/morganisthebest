@@ -26,15 +26,15 @@ const features = [
   {
     icon: Shield,
     title: '100% Privacy',
-    description: 'No geo-tracking. No data selling. Check in with door codes. Your safety matters.',
+    description: 'No geo-tracking. No data selling. Check in with your nametag PIN. Your safety matters.',
   },
 ];
 
 const howItWorks = [
   { step: 1, title: 'Browse Events', description: 'Find singles events that match your interests' },
-  { step: 2, title: 'RSVP & Get Code', description: 'Reserve your spot and receive your private door code' },
-  { step: 3, title: 'Show Up & Check In', description: 'Enter your code at the event entrance' },
-  { step: 4, title: 'Reveal & Wave', description: 'See real profiles of people you met and send a wave!' },
+  { step: 2, title: 'RSVP & Show Up', description: 'Reserve your spot and arrive ready to mingle' },
+  { step: 3, title: 'Check In & Get PIN', description: 'Check in at the door and get your nametag PIN' },
+  { step: 4, title: 'Match & Connect', description: 'Exchange PINs with people you like - mutual matches unlock chat!' },
 ];
 
 const Index = () => {
@@ -42,28 +42,26 @@ const Index = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 gradient-warm opacity-50" />
+      {/* Hero Section - Warm gradient */}
+      <section className="relative overflow-hidden gradient-hero">
         <div className="relative mx-auto max-w-7xl px-4 py-20 md:py-32">
           <div className="mx-auto max-w-3xl text-center">
             {/* Trust Badges */}
             <div className="mb-6 flex flex-wrap justify-center gap-2">
-              <Badge variant="outline" className="gap-1 py-1.5 px-3">
+              <Badge variant="outline" className="gap-1 py-1.5 px-3 bg-card/50 backdrop-blur-sm">
                 <ShieldCheck className="h-3 w-3 text-green-500" />
                 Zero Catfishing
               </Badge>
-              <Badge variant="outline" className="gap-1 py-1.5 px-3">
-                <MessageCircle className="h-3 w-3 text-blue-500" />
+              <Badge variant="outline" className="gap-1 py-1.5 px-3 bg-card/50 backdrop-blur-sm">
+                <MessageCircle className="h-3 w-3 text-secondary" />
                 Zero Ghosting
               </Badge>
-              <Badge variant="outline" className="gap-1 py-1.5 px-3">
+              <Badge variant="outline" className="gap-1 py-1.5 px-3 bg-card/50 backdrop-blur-sm">
                 <Heart className="h-3 w-3 text-primary" />
                 100% Real
               </Badge>
             </div>
             
-            <p className="text-sm text-muted-foreground mb-4">An app by TLC</p>
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl">
               Meet Singles{' '}
               <span className="text-primary">In Person</span>
@@ -74,18 +72,26 @@ const Index = () => {
               Every face is verified. Every connection is earned.
               Real people, real events, real chemistry.
             </p>
-            <Button size="lg" className="gap-2" asChild>
-              <Link to="/events">
-                <Calendar className="h-5 w-5" />
-                Find an Event
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="gap-2" asChild>
+                <Link to="/events">
+                  <Calendar className="h-5 w-5" />
+                  Find an Event
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="gap-2" asChild>
+                <Link to="/auth">
+                  <Sparkles className="h-5 w-5" />
+                  Get Started
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="border-t border-border bg-card py-16 md:py-24">
+      {/* Features Section - Warm section bg */}
+      <section className="border-t border-border gradient-section py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4">
           <h2 className="mb-4 text-center text-3xl font-bold text-foreground">
             Why We're Different
@@ -95,9 +101,9 @@ const Index = () => {
           </p>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
-              <Card key={feature.title} className="border-border bg-background">
+              <Card key={feature.title} className="border-border bg-card/80 backdrop-blur-sm hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/30">
                     <feature.icon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="mb-2 text-lg font-semibold text-foreground">{feature.title}</h3>
@@ -110,7 +116,7 @@ const Index = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-card">
         <div className="mx-auto max-w-7xl px-4">
           <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
             How It Works
@@ -118,7 +124,7 @@ const Index = () => {
           <div className="grid gap-8 md:grid-cols-4">
             {howItWorks.map((item, index) => (
               <div key={item.step} className="relative text-center">
-                <div className="mb-4 mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl font-bold text-primary-foreground">
+                <div className="mb-4 mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-2xl font-bold text-primary-foreground shadow-lg">
                   {item.step}
                 </div>
                 <h3 className="mb-2 text-lg font-semibold text-foreground">{item.title}</h3>
@@ -133,7 +139,7 @@ const Index = () => {
       </section>
 
       {/* Upcoming Events Preview */}
-      <section className="border-t border-border bg-card py-16 md:py-24">
+      <section className="border-t border-border gradient-warm py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mb-12 flex items-center justify-between">
             <h2 className="text-3xl font-bold text-foreground">Upcoming Events</h2>
@@ -152,9 +158,11 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-card">
         <div className="mx-auto max-w-3xl px-4 text-center">
-          <Heart className="mx-auto mb-6 h-16 w-16 text-primary" fill="currentColor" />
+          <div className="mb-6 mx-auto h-20 w-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/30 flex items-center justify-center">
+            <Heart className="h-10 w-10 text-primary" fill="currentColor" />
+          </div>
           <h2 className="mb-4 text-3xl font-bold text-foreground">
             Ready to Meet Someone Real?
           </h2>
@@ -163,8 +171,8 @@ const Index = () => {
             Real connections start with real meetings.
           </p>
           <Button size="lg" className="gap-2" asChild>
-            <Link to="/events">
-              Find Your First Event
+            <Link to="/auth">
+              Get Started Now
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>
