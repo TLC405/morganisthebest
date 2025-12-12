@@ -8,7 +8,7 @@ import { quizQuestions } from '@/data/quizQuestions';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Sparkles, Heart } from 'lucide-react';
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -95,17 +95,26 @@ const Quiz = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex flex-col">
+    <div className="min-h-screen gradient-premium flex flex-col relative overflow-hidden">
+      {/* Floating decorative elements */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl float" />
+      <div className="absolute bottom-20 right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl float" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-secondary/10 rounded-full blur-2xl float" style={{ animationDelay: '4s' }} />
+      
       {/* Header */}
-      <div className="p-4 md:p-6">
+      <div className="p-4 md:p-6 relative z-10">
         <div className="max-w-lg mx-auto">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Heart className="h-6 w-6 text-primary fill-primary" />
+            <span className="text-lg font-bold text-gradient">Compatibility Quiz</span>
+          </div>
           <QuizProgress currentStep={currentStep} totalSteps={quizQuestions.length} />
         </div>
       </div>
       
       {/* Question */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        <Card className="w-full max-w-lg p-6 md:p-8 shadow-lg">
+      <div className="flex-1 flex items-center justify-center p-4 relative z-10">
+        <Card className="w-full max-w-lg p-6 md:p-8 glass-strong border-0 shadow-glow-lg rounded-3xl">
           <QuizQuestion
             question={currentQuestion}
             value={answers[currentQuestion.key]}
@@ -115,13 +124,13 @@ const Quiz = () => {
       </div>
       
       {/* Navigation */}
-      <div className="p-4 md:p-6">
+      <div className="p-4 md:p-6 relative z-10">
         <div className="max-w-lg mx-auto flex gap-3">
           <Button
             variant="outline"
             onClick={handleBack}
             disabled={isFirstStep}
-            className="flex-1"
+            className="flex-1 h-12 rounded-xl border-border/50 bg-card/50 hover:bg-card transition-colors"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
@@ -130,7 +139,7 @@ const Quiz = () => {
           <Button
             onClick={handleNext}
             disabled={!answers[currentQuestion.key] || isSubmitting}
-            className="flex-1"
+            className="flex-1 h-12 rounded-xl gradient-primary shadow-glow hover:shadow-glow-lg transition-all"
           >
             {isSubmitting ? (
               <>Saving...</>

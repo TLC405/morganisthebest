@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Heart, 
   Calendar, 
@@ -16,7 +18,9 @@ import {
   Star,
   ClipboardList,
   LogOut,
-  LogIn
+  LogIn,
+  Crown,
+  Shield
 } from 'lucide-react';
 
 // Navigation links by role
@@ -47,11 +51,33 @@ const adminLinks = [
 
 export const RoleBasedNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const location = useLocation();
   const { user, role, signOut, isLoading } = useAuth();
 
+  // Fetch user profile for personalized greeting
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      
+      const { data } = await supabase
+        .from('profiles')
+        .select('name, photo_url')
+        .eq('id', user.id)
+        .single();
+      
+      if (data) {
+        setUserName(data.name);
+        setUserPhoto(data.photo_url);
+      }
+    };
+    
+    fetchProfile();
+  }, [user]);
+
   const getNavLinks = () => {
-    if (!user) return singlesLinks.slice(0, 2); // Only Home and Events for guests
+    if (!user) return singlesLinks.slice(0, 2);
     
     switch (role) {
       case 'admin':
@@ -65,28 +91,47 @@ export const RoleBasedNavbar = () => {
 
   const navLinks = getNavLinks();
 
+  const getFirstName = () => {
+    if (!userName) return null;
+    return userName.split(' ')[0];
+  };
+
+  const getInitials = () => {
+    if (!userName) return 'U';
+    const names = userName.split(' ');
+    return names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
   const getRoleBadge = () => {
     if (!role || role === 'single') return null;
+    
+    const isAdmin = role === 'admin';
+    const Icon = isAdmin ? Crown : Shield;
+    
     return (
-      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-        role === 'admin' 
-          ? 'bg-destructive/10 text-destructive' 
+      <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+        isAdmin 
+          ? 'bg-gradient-primary text-primary-foreground shadow-glow' 
           : 'bg-secondary/20 text-secondary-foreground'
       }`}>
+        <Icon className="h-3 w-3" />
         {role.charAt(0).toUpperCase() + role.slice(1)}
       </span>
     );
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
+    <header className="sticky top-0 z-50 glass-strong border-b border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <Heart className="h-6 w-6 text-primary fill-primary" />
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="relative">
+              <Heart className="h-7 w-7 text-primary fill-primary transition-transform group-hover:scale-110" />
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
             <span className="font-bold text-lg text-foreground">
-              Social Singles OKC
+              Social Singles <span className="text-gradient">OKC</span>
             </span>
           </Link>
 
@@ -99,35 +144,51 @@ export const RoleBasedNavbar = () => {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      ? 'bg-primary/10 text-primary shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className={`h-4 w-4 ${isActive ? 'text-primary' : ''}`} />
                   {link.label}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Auth & Role Badge */}
-          <div className="hidden md:flex items-center gap-3">
-            {getRoleBadge()}
+          {/* User Section with Personalized Greeting */}
+          <div className="hidden md:flex items-center gap-4">
+            {user && getFirstName() && (
+              <div className="flex items-center gap-3">
+                <Avatar className="h-9 w-9 border-2 border-primary/20 shadow-glow">
+                  <AvatarImage src={userPhoto || undefined} />
+                  <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm font-semibold">
+                    {getInitials()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold text-foreground">
+                    Hey, {getFirstName()}! ✨
+                  </span>
+                  {getRoleBadge()}
+                </div>
+              </div>
+            )}
+            
             {user ? (
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={signOut}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
               </Button>
             ) : (
               <Link to="/auth">
-                <Button variant="default" size="sm">
+                <Button size="sm" className="rounded-xl gradient-primary shadow-glow hover:shadow-glow-lg transition-all">
                   <LogIn className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>
@@ -138,7 +199,7 @@ export const RoleBasedNavbar = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-foreground"
+            className="md:hidden p-2 text-foreground rounded-xl hover:bg-muted/50 transition-colors"
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -146,7 +207,25 @@ export const RoleBasedNavbar = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-border">
+          <nav className="md:hidden py-4 border-t border-border/50 animate-fade-in">
+            {/* Mobile User Greeting */}
+            {user && getFirstName() && (
+              <div className="flex items-center gap-3 px-4 py-3 mb-2">
+                <Avatar className="h-10 w-10 border-2 border-primary/20">
+                  <AvatarImage src={userPhoto || undefined} />
+                  <AvatarFallback className="bg-gradient-primary text-primary-foreground">
+                    {getInitials()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="text-base font-semibold text-foreground">
+                    Hey, {getFirstName()}! ✨
+                  </span>
+                  {getRoleBadge()}
+                </div>
+              </div>
+            )}
+            
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => {
                 const Icon = link.icon;
@@ -156,10 +235,10 @@ export const RoleBasedNavbar = () => {
                     key={link.to}
                     to={link.to}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                       isActive
                         ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                     }`}
                   >
                     <Icon className="h-5 w-5" />
@@ -168,17 +247,14 @@ export const RoleBasedNavbar = () => {
                 );
               })}
               
-              <div className="border-t border-border mt-2 pt-2">
-                {getRoleBadge() && (
-                  <div className="px-4 py-2">{getRoleBadge()}</div>
-                )}
+              <div className="border-t border-border/50 mt-2 pt-2">
                 {user ? (
                   <button
                     onClick={() => {
                       signOut();
                       setMobileMenuOpen(false);
                     }}
-                    className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg"
+                    className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl"
                   >
                     <LogOut className="h-5 w-5" />
                     Sign Out
@@ -187,7 +263,7 @@ export const RoleBasedNavbar = () => {
                   <Link
                     to="/auth"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-primary hover:bg-primary/10 rounded-lg"
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-primary hover:bg-primary/10 rounded-xl"
                   >
                     <LogIn className="h-5 w-5" />
                     Sign In

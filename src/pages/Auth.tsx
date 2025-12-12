@@ -98,40 +98,53 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-accent/20 via-background to-primary/10 p-4">
-      <Card className="w-full max-w-md shadow-xl border-0">
-        <CardHeader className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-2">
-            <Heart className="h-8 w-8 text-primary fill-primary" />
+    <div className="min-h-screen flex items-center justify-center gradient-premium p-4 relative overflow-hidden">
+      {/* Floating decorative elements */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl float" />
+      <div className="absolute bottom-20 right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl float" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-secondary/10 rounded-full blur-2xl float" style={{ animationDelay: '4s' }} />
+      
+      <Card className="w-full max-w-md glass-strong border-0 shadow-glow-lg rounded-3xl relative z-10">
+        <CardHeader className="text-center space-y-4 pb-2">
+          {/* Animated Logo */}
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl pulse-glow" />
+              <div className="relative h-16 w-16 rounded-full gradient-primary flex items-center justify-center shadow-glow">
+                <Heart className="h-8 w-8 text-primary-foreground fill-primary-foreground" />
+              </div>
+            </div>
             <span className="text-2xl font-bold text-foreground">
-              Social Singles OKC
+              Social Singles <span className="text-gradient">OKC</span>
             </span>
           </div>
-          <span className="text-sm text-muted-foreground">by TLC</span>
-          <CardTitle className="text-xl">
+          
+          <CardTitle className="text-xl font-semibold">
             {isLogin ? 'Welcome Back' : 'Join the Community'}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-base">
             {isLogin 
-              ? 'Sign in to connect with genuine singles in OKC' 
+              ? 'Sign in to connect with genuine singles' 
               : 'Create an account to start meeting real people'
             }
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="pt-2">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <User className="h-4 w-4 text-primary" />
+                  </div>
                   <Input
                     id="name"
                     type="text"
                     placeholder="Your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="pl-10"
+                    className="pl-14 h-12 rounded-xl border-border/50 bg-card/50 focus:bg-card transition-colors"
                     required={!isLogin}
                   />
                 </div>
@@ -139,32 +152,36 @@ const Auth = () => {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Mail className="h-4 w-4 text-primary" />
+                </div>
                 <Input
                   id="email"
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
+                  className="pl-14 h-12 rounded-xl border-border/50 bg-card/50 focus:bg-card transition-colors"
                   required
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Lock className="h-4 w-4 text-primary" />
+                </div>
                 <Input
                   id="password"
                   type="password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10"
+                  className="pl-14 h-12 rounded-xl border-border/50 bg-card/50 focus:bg-card transition-colors"
                   required
                   minLength={6}
                 />
@@ -173,7 +190,7 @@ const Auth = () => {
 
             <Button 
               type="submit" 
-              className="w-full bg-primary hover:bg-primary/90"
+              className="w-full h-12 rounded-xl gradient-primary shadow-glow hover:shadow-glow-lg transition-all text-base font-semibold"
               disabled={isSubmitting}
             >
               {isSubmitting 
@@ -187,7 +204,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary hover:underline"
+              className="text-sm text-primary hover:underline font-medium"
             >
               {isLogin 
                 ? "Don't have an account? Sign up" 
@@ -196,15 +213,12 @@ const Auth = () => {
             </button>
           </div>
 
-          <div className="mt-6 flex justify-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
+          <div className="mt-6 flex justify-center gap-4">
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
               ✓ Zero Catfishing
             </span>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full">
               ✓ Zero Ghosting
-            </span>
-            <span className="flex items-center gap-1">
-              ✓ 100% Real
             </span>
           </div>
         </CardContent>
