@@ -264,6 +264,7 @@ export type Database = {
           personality_vector: Json | null
           photo_url: string | null
           positive_feedback_count: number | null
+          quiz_completed: boolean | null
           religion: string | null
           response_rate: number | null
           show_up_rate: number | null
@@ -286,6 +287,7 @@ export type Database = {
           personality_vector?: Json | null
           photo_url?: string | null
           positive_feedback_count?: number | null
+          quiz_completed?: boolean | null
           religion?: string | null
           response_rate?: number | null
           show_up_rate?: number | null
@@ -308,6 +310,7 @@ export type Database = {
           personality_vector?: Json | null
           photo_url?: string | null
           positive_feedback_count?: number | null
+          quiz_completed?: boolean | null
           religion?: string | null
           response_rate?: number | null
           show_up_rate?: number | null
@@ -316,6 +319,38 @@ export type Database = {
           verification_level?: string | null
         }
         Relationships: []
+      }
+      quiz_responses: {
+        Row: {
+          answer_value: Json
+          created_at: string | null
+          id: string
+          question_key: string
+          user_id: string
+        }
+        Insert: {
+          answer_value: Json
+          created_at?: string | null
+          id?: string
+          question_key: string
+          user_id: string
+        }
+        Update: {
+          answer_value?: Json
+          created_at?: string | null
+          id?: string
+          question_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_responses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       team_performance: {
         Row: {

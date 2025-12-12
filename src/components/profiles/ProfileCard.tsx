@@ -1,4 +1,4 @@
-import { Heart, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -6,15 +6,17 @@ import { User, canRevealProfile } from '@/data/mockData';
 import { VerificationBadge } from './VerificationBadge';
 import { ResponseStats } from './ResponseStats';
 import { MysteryCard } from './MysteryCard';
-import { cn } from '@/lib/utils';
+import { CompatibilityBadge } from '@/components/quiz/CompatibilityBadge';
 
 interface ProfileCardProps {
   profile: User;
   onWave?: (profileId: string) => void;
-  forceReveal?: boolean; // For admin view
+  forceReveal?: boolean;
+  compatibilityPercentage?: number;
+  compatibilityReasons?: string[];
 }
 
-export const ProfileCard = ({ profile, onWave, forceReveal = false }: ProfileCardProps) => {
+export const ProfileCard = ({ profile, onWave, forceReveal = false, compatibilityPercentage, compatibilityReasons }: ProfileCardProps) => {
   const isRevealed = forceReveal || canRevealProfile(profile.id);
 
   // Show mystery card for unrevealed profiles
@@ -32,6 +34,16 @@ export const ProfileCard = ({ profile, onWave, forceReveal = false }: ProfileCar
           className="h-full w-full object-cover transition-all duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        
+        {/* Compatibility Badge */}
+        {compatibilityPercentage !== undefined && (
+          <div className="absolute left-3 top-3">
+            <CompatibilityBadge 
+              percentage={compatibilityPercentage} 
+              size="md"
+            />
+          </div>
+        )}
         
         {/* Verification Badge */}
         <div className="absolute right-3 top-3">
@@ -60,6 +72,17 @@ export const ProfileCard = ({ profile, onWave, forceReveal = false }: ProfileCar
           showUpRate={profile.showUpRate}
           className="justify-center"
         />
+
+        {/* Compatibility Reasons */}
+        {compatibilityReasons && compatibilityReasons.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {compatibilityReasons.map((reason, i) => (
+              <Badge key={i} variant="secondary" className="text-xs">
+                {reason}
+              </Badge>
+            ))}
+          </div>
+        )}
 
         {/* Bio */}
         <p className="text-sm text-muted-foreground line-clamp-2">{profile.bio}</p>

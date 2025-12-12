@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Camera, Save, Sparkles } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { PersonalityQuoteSelector } from '@/components/profile/PersonalityQuoteSelector';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -19,14 +19,15 @@ const allInterests = [
 ];
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [bio, setBio] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
-  const [personalityQuote, setPersonalityQuote] = useState<string | null>(null);
   const [area, setArea] = useState('');
   const [lookingFor, setLookingFor] = useState('');
   const [photoUrl, setPhotoUrl] = useState('');
+  const [quizCompleted, setQuizCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -47,10 +48,10 @@ const Profile = () => {
         setAge(data.age?.toString() || '');
         setBio(data.bio || '');
         setInterests(data.interests || []);
-        setPersonalityQuote(data.personality_quote);
         setArea(data.area || '');
         setLookingFor(data.looking_for || '');
         setPhotoUrl(data.photo_url || '');
+        setQuizCompleted(data.quiz_completed || false);
       }
       setLoading(false);
     };
@@ -83,7 +84,6 @@ const Profile = () => {
         age: age ? parseInt(age) : null,
         bio,
         interests,
-        personality_quote: personalityQuote,
         area,
         looking_for: lookingFor,
       })
@@ -225,16 +225,33 @@ const Profile = () => {
                 {bio.length}/200 characters
               </p>
             </div>
-          </CardContent>
+        </CardContent>
         </Card>
 
-        {/* Personality Quote */}
-        <div className="mb-6">
-          <PersonalityQuoteSelector 
-            selectedQuote={personalityQuote}
-            onSelect={setPersonalityQuote}
-          />
-        </div>
+        {/* Compatibility Quiz CTA */}
+        <Card className="mb-6 border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              {quizCompleted ? 'Compatibility Quiz Complete!' : 'Take the Compatibility Quiz'}
+            </CardTitle>
+            <CardDescription>
+              {quizCompleted 
+                ? 'Your matches are being calculated based on your answers.'
+                : 'Answer 8 quick questions to find your best matches!'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={() => navigate('/quiz')}
+              variant={quizCompleted ? 'outline' : 'default'}
+              className="gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              {quizCompleted ? 'Retake Quiz' : 'Start Quiz'}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Interests */}
         <Card className="mb-6">
