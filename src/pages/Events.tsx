@@ -1,12 +1,15 @@
-import { useState } from 'react';
-import { Calendar, Filter } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Calendar, Filter, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { EventCard } from '@/components/events/EventCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { mockEvents, generateDoorCode, Event } from '@/data/mockData';
+import { mockEvents, Event } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 type Category = 'all' | 'mixer' | 'speed-dating' | 'activity' | 'social';
 
@@ -20,46 +23,136 @@ const categories: { value: Category; label: string }[] = [
 
 const Events = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category>('all');
-  const [rsvpDialog, setRsvpDialog] = useState<{ open: boolean; event: Event | null; code: string }>({
+  const [rsvpDialog, setRsvpDialog] = useState<{ open: boolean; event: Event | null }>({
     open: false,
     event: null,
-    code: '',
   });
+  const [profileComplete, setProfileComplete] = useState<boolean | null>(null);
   const { toast } = useToast();
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  // Check if profile is complete
+  useEffect(() => {
+    const checkProfile = async () => {
+      if (!user) {
+        setProfileComplete(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('name, age, area')
+        .eq('id', user.id)
+        .single();
+
+      if (data && data.name && data.age && data.area) {
+        setProfileComplete(true);
+      } else {
+        setProfileComplete(false);
+      }
+    };
+
+    if (!isLoading) {
+      checkProfile();
+    }
+  }, [user, isLoading]);
 
   const filteredEvents = selectedCategory === 'all' 
     ? mockEvents 
     : mockEvents.filter(e => e.category === selectedCategory);
 
   const handleRSVP = (eventId: string) => {
+    // Check auth first
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to RSVP for events.",
+      });
+      navigate('/auth');
+      return;
+    }
+
+    // Check profile completion
+    if (!profileComplete) {
+      toast({
+        title: "Complete your profile",
+        description: "Please complete your profile before RSVPing.",
+      });
+      navigate('/profile');
+      return;
+    }
+
     const event = mockEvents.find(e => e.id === eventId);
     if (event) {
-      const code = generateDoorCode();
-      setRsvpDialog({ open: true, event, code });
+      setRsvpDialog({ open: true, event });
     }
   };
 
-  const confirmRSVP = () => {
-    toast({
-      title: "RSVP Confirmed! 🎉",
-      description: `Your door code is ${rsvpDialog.code}. Save it for check-in!`,
+  const confirmRSVP = async () => {
+    if (!user || !rsvpDialog.event) return;
+
+    // Generate a nametag PIN for the user
+    const pin = Math.floor(1000 + Math.random() * 9000).toString();
+
+    // Create attendance record (door code handled by admin/team)
+    const { error } = await supabase.from('event_attendance').insert({
+      user_id: user.id,
+      event_id: rsvpDialog.event.id,
+      rsvp_status: 'going',
+      nametag_pin: pin,
     });
-    setRsvpDialog({ open: false, event: null, code: '' });
+
+    if (error) {
+      toast({
+        title: "RSVP Failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "You're all set! 🎉",
+      description: "We'll see you at the event!",
+    });
+    setRsvpDialog({ open: false, event: null });
   };
 
   return (
     <Layout>
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
+      {/* Warm gradient header */}
+      <div className="gradient-hero border-b border-border">
+        <div className="mx-auto max-w-7xl px-4 py-12">
           <div className="flex items-center gap-3 mb-2">
-            <Calendar className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">Upcoming Events</h1>
+            <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+              <Calendar className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Upcoming Events</h1>
+              <p className="text-muted-foreground">
+                Find your next opportunity to meet amazing singles in OKC
+              </p>
+            </div>
           </div>
-          <p className="text-muted-foreground">
-            Find your next opportunity to meet amazing singles in OKC
-          </p>
         </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        {/* Profile completion prompt */}
+        {user && profileComplete === false && (
+          <div className="mb-6 rounded-xl bg-accent/30 border border-accent p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <p className="text-sm text-foreground">
+                Complete your profile to RSVP for events!
+              </p>
+            </div>
+            <Button size="sm" onClick={() => navigate('/profile')}>
+              Complete Profile
+            </Button>
+          </div>
+        )}
 
         {/* Category Filter */}
         <div className="mb-8 flex flex-wrap items-center gap-2">
@@ -90,26 +183,42 @@ const Events = () => {
         )}
       </div>
 
-      {/* RSVP Confirmation Dialog */}
+      {/* Simple RSVP Confirmation Dialog - NO door code shown */}
       <Dialog open={rsvpDialog.open} onOpenChange={(open) => setRsvpDialog({ ...rsvpDialog, open })}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>RSVP Confirmed! 🎉</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              Confirm Your RSVP
+            </DialogTitle>
             <DialogDescription>
-              You're all set for {rsvpDialog.event?.title}
+              Ready to join {rsvpDialog.event?.title}?
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="rounded-lg bg-muted p-4 text-center">
-              <p className="text-sm text-muted-foreground mb-2">Your Door Code</p>
-              <p className="text-3xl font-bold text-primary tracking-wider">{rsvpDialog.code}</p>
+            <div className="rounded-xl bg-gradient-to-r from-primary/10 to-accent/20 p-6 text-center">
+              <p className="text-lg font-medium text-foreground mb-2">
+                {rsvpDialog.event?.title}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {rsvpDialog.event?.date} at {rsvpDialog.event?.time}
+              </p>
             </div>
             <p className="text-sm text-muted-foreground text-center">
-              Save this code! You'll need it to check in at the event entrance.
+              Show up, check in at the door, and meet amazing people!
             </p>
-            <Button className="w-full" onClick={confirmRSVP}>
-              Got It!
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                className="flex-1" 
+                onClick={() => setRsvpDialog({ open: false, event: null })}
+              >
+                Cancel
+              </Button>
+              <Button className="flex-1" onClick={confirmRSVP}>
+                I'm In! 🎉
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
