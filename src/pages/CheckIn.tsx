@@ -1,33 +1,101 @@
-import { useState } from 'react';
-import { QrCode, Keyboard, CheckCircle, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { QrCode, Keyboard, CheckCircle, Sparkles, Hash, MapPin } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { mockEvents, userRSVPs } from '@/data/mockData';
+import { WelcomeAnimation } from '@/components/events/WelcomeAnimation';
+import { PinEntryModal } from '@/components/matching/PinEntryModal';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 const CheckIn = () => {
   const [doorCode, setDoorCode] = useState('');
   const [isCheckedIn, setIsCheckedIn] = useState(false);
-  const [checkedEvent, setCheckedEvent] = useState<string | null>(null);
+  const [checkedEvent, setCheckedEvent] = useState<{ title: string; id: string } | null>(null);
+  const [nametagPin, setNametagPin] = useState<string | null>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showPinEntry, setShowPinEntry] = useState(false);
+  const [userRsvps, setUserRsvps] = useState<any[]>([]);
+  const [geoVerified, setGeoVerified] = useState<boolean | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const handleCodeSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!user) return;
+    
+    // Fetch user's RSVPs
+    const fetchRsvps = async () => {
+      const { data } = await supabase
+        .from('event_attendance')
+        .select(`
+          *,
+          events (id, title, date, start_time)
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      setUserRsvps(data || []);
+    };
+    
+    fetchRsvps();
+  }, [user]);
+
+  const verifyGeoLocation = async (eventId: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve(false);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          // In production, compare with venue coordinates
+          // For now, just mark as verified
+          setGeoVerified(true);
+          resolve(true);
+        },
+        () => {
+          setGeoVerified(false);
+          resolve(false);
+        }
+      );
+    });
+  };
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Find RSVP with matching code
-    const rsvp = userRSVPs.find(r => r.doorCode.toLowerCase() === doorCode.toLowerCase());
-    
-    if (rsvp) {
-      const event = mockEvents.find(e => e.id === rsvp.eventId);
-      setIsCheckedIn(true);
-      setCheckedEvent(event?.title || 'the event');
+    if (!user) {
       toast({
-        title: "Check-in Successful! 🎉",
-        description: "Profiles of attendees will now be revealed to you!",
+        title: "Please sign in",
+        description: "You need to be signed in to check in.",
+        variant: "destructive",
       });
+      return;
+    }
+
+    // Find RSVP with matching door code
+    const rsvp = userRsvps.find(r => r.door_code?.toLowerCase() === doorCode.toLowerCase());
+    
+    if (rsvp && rsvp.events) {
+      // Verify GPS location
+      await verifyGeoLocation(rsvp.events.id);
+
+      // Update attendance record
+      await supabase
+        .from('event_attendance')
+        .update({
+          check_in_status: 'on_time' as const,
+          checked_in_at: new Date().toISOString(),
+          geo_verified: geoVerified,
+        })
+        .eq('id', rsvp.id);
+
+      setCheckedEvent({ title: rsvp.events.title, id: rsvp.events.id });
+      setNametagPin(rsvp.nametag_pin);
+      setShowWelcome(true);
     } else {
       toast({
         title: "Invalid Code",
@@ -37,19 +105,119 @@ const CheckIn = () => {
     }
   };
 
-  const handleQRScan = () => {
-    // Simulate QR scan success
-    setTimeout(() => {
-      setIsCheckedIn(true);
-      setCheckedEvent("Friday Night Mixer");
+  const handleQRScan = async () => {
+    // Simulate QR scan - in production this would use the camera
+    if (userRsvps.length > 0 && userRsvps[0].events) {
+      const rsvp = userRsvps[0];
+      
+      await verifyGeoLocation(rsvp.events.id);
+
+      await supabase
+        .from('event_attendance')
+        .update({
+          check_in_status: 'on_time' as const,
+          checked_in_at: new Date().toISOString(),
+          geo_verified: geoVerified,
+        })
+        .eq('id', rsvp.id);
+
+      setCheckedEvent({ title: rsvp.events.title, id: rsvp.events.id });
+      setNametagPin(rsvp.nametag_pin);
+      setShowWelcome(true);
+    } else {
       toast({
-        title: "QR Check-in Successful! 🎉",
-        description: "Welcome to the event! Profiles are now being revealed.",
+        title: "No RSVP Found",
+        description: "You don't have any active RSVPs.",
+        variant: "destructive",
       });
-    }, 1500);
+    }
   };
 
-  if (isCheckedIn) {
+  const handleWelcomeComplete = () => {
+    setShowWelcome(false);
+    setIsCheckedIn(true);
+  };
+
+  const handlePinSubmit = async (enteredPin: string) => {
+    if (!user || !checkedEvent) return;
+
+    // Find who has this PIN at this event
+    const { data: targetAttendance } = await supabase
+      .from('event_attendance')
+      .select('user_id')
+      .eq('event_id', checkedEvent.id)
+      .eq('nametag_pin', enteredPin)
+      .neq('user_id', user.id)
+      .single();
+
+    if (!targetAttendance) {
+      toast({
+        title: "PIN Not Found",
+        description: "No one at this event has that PIN.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create a wave (interest) to this person
+    const { error } = await supabase.from('waves').insert({
+      from_user_id: user.id,
+      to_user_id: targetAttendance.user_id,
+      event_id: checkedEvent.id,
+    });
+
+    if (error) {
+      if (error.code === '23505') { // Unique violation - already sent wave
+        toast({
+          title: "Already Sent",
+          description: "You've already entered this person's PIN!",
+        });
+      }
+      return;
+    }
+
+    // Check if they also entered our PIN (mutual match!)
+    const { data: mutualWave } = await supabase
+      .from('waves')
+      .select('id')
+      .eq('from_user_id', targetAttendance.user_id)
+      .eq('to_user_id', user.id)
+      .eq('event_id', checkedEvent.id)
+      .single();
+
+    if (mutualWave) {
+      // Create conversation for mutual match
+      await supabase.from('conversations').insert({
+        user_1_id: user.id,
+        user_2_id: targetAttendance.user_id,
+      });
+
+      toast({
+        title: "It's a Match! 💕",
+        description: "You both entered each other's PIN! Check your Chats.",
+      });
+    } else {
+      toast({
+        title: "PIN Recorded! 💫",
+        description: "If they enter your PIN too, you'll match!",
+      });
+    }
+
+    setShowPinEntry(false);
+  };
+
+  // Show welcome animation
+  if (showWelcome && checkedEvent && nametagPin) {
+    return (
+      <WelcomeAnimation
+        eventName={checkedEvent.title}
+        nametagPin={nametagPin}
+        onComplete={handleWelcomeComplete}
+      />
+    );
+  }
+
+  if (isCheckedIn && checkedEvent) {
     return (
       <Layout>
         <div className="mx-auto max-w-lg px-4 py-16">
@@ -61,23 +229,51 @@ const CheckIn = () => {
               <h2 className="text-2xl font-bold text-foreground mb-2">
                 You're Checked In!
               </h2>
-              <p className="text-muted-foreground mb-6">
-                Welcome to {checkedEvent}! Have an amazing time meeting new people.
+              <p className="text-muted-foreground mb-4">
+                Welcome to {checkedEvent.title}!
               </p>
-              <div className="rounded-lg bg-muted p-4 mb-6">
-                <div className="flex items-center justify-center gap-2 text-primary">
-                  <Sparkles className="h-5 w-5" />
-                  <span className="font-medium">Profiles Unlocked!</span>
+
+              {/* Your PIN */}
+              {nametagPin && (
+                <div className="rounded-xl bg-gradient-to-r from-primary/20 to-secondary/20 p-6 mb-6">
+                  <p className="text-sm text-muted-foreground mb-2">Your Nametag PIN</p>
+                  <div className="text-5xl font-bold text-primary tracking-widest">
+                    #{nametagPin}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Share with someone you'd like to match with!
+                  </p>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  You can now see unblurred photos of everyone at this event.
-                </p>
+              )}
+
+              {/* GPS Verification Status */}
+              <div className={`rounded-lg p-3 mb-6 flex items-center justify-center gap-2 ${
+                geoVerified ? 'bg-green-500/10 text-green-600' : 'bg-muted text-muted-foreground'
+              }`}>
+                <MapPin className="h-4 w-4" />
+                <span className="text-sm">
+                  {geoVerified ? 'Location Verified ✓' : 'Location not verified'}
+                </span>
               </div>
-              <Button asChild className="w-full">
-                <a href="/community">View Revealed Profiles</a>
-              </Button>
+
+              <div className="space-y-3">
+                <Button onClick={() => setShowPinEntry(true)} className="w-full gap-2">
+                  <Hash className="h-5 w-5" />
+                  Enter Someone's PIN
+                </Button>
+                <Button asChild variant="outline" className="w-full">
+                  <a href="/connections">View Revealed Profiles</a>
+                </Button>
+              </div>
             </CardContent>
           </Card>
+
+          <PinEntryModal
+            open={showPinEntry}
+            onClose={() => setShowPinEntry(false)}
+            onSubmit={handlePinSubmit}
+            eventName={checkedEvent.title}
+          />
         </div>
       </Layout>
     );
@@ -93,7 +289,7 @@ const CheckIn = () => {
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Event Check-In</h1>
           <p className="text-muted-foreground">
-            Check in when you arrive to unlock profile reveals!
+            Check in to get your nametag PIN for anonymous matching!
           </p>
         </div>
 
@@ -132,9 +328,6 @@ const CheckIn = () => {
                     Check In
                   </Button>
                 </form>
-                <p className="mt-4 text-xs text-center text-muted-foreground">
-                  Demo codes: LOVE2024, SPARK789, NYE2025
-                </p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -170,19 +363,31 @@ const CheckIn = () => {
             <CardTitle className="text-lg">Your RSVPs</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {userRSVPs.map((rsvp) => {
-                const event = mockEvents.find(e => e.id === rsvp.eventId);
-                return (
+            {userRsvps.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4">
+                No RSVPs yet. Browse events to get started!
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {userRsvps.map((rsvp) => (
                   <div 
-                    key={rsvp.eventId} 
+                    key={rsvp.id} 
                     className="flex items-center justify-between rounded-lg bg-muted p-3"
                   >
                     <div>
-                      <p className="font-medium text-foreground text-sm">{event?.title}</p>
-                      <p className="text-xs text-muted-foreground">Code: {rsvp.doorCode}</p>
+                      <p className="font-medium text-foreground text-sm">
+                        {rsvp.events?.title || 'Event'}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Code: {rsvp.door_code || 'Pending'}
+                      </p>
+                      {rsvp.nametag_pin && (
+                        <p className="text-xs text-primary font-medium">
+                          PIN: #{rsvp.nametag_pin}
+                        </p>
+                      )}
                     </div>
-                    {rsvp.checkedIn ? (
+                    {rsvp.check_in_status === 'checked_in' ? (
                       <span className="text-xs text-primary flex items-center gap-1">
                         <CheckCircle className="h-3 w-3" />
                         Checked In
@@ -191,9 +396,9 @@ const CheckIn = () => {
                       <span className="text-xs text-muted-foreground">Pending</span>
                     )}
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
