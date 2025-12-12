@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { Heart, Calendar, Users, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
+import { Heart, Calendar, Users, Sparkles, ArrowRight, CheckCircle, Send } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { currentUser, mockProfiles, mockEvents, userRSVPs, canRevealProfile } from '@/data/mockData';
+import { VerificationBadge } from '@/components/profiles/VerificationBadge';
 
 const Dashboard = () => {
   const revealedProfiles = mockProfiles.filter(p => canRevealProfile(p.id));
@@ -16,11 +17,14 @@ const Dashboard = () => {
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Welcome Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome back! 💕
-          </h1>
+          <div className="flex items-center gap-2 mb-2">
+            <h1 className="text-3xl font-bold text-foreground">
+              Welcome back!
+            </h1>
+            <VerificationBadge level={currentUser.verificationLevel} showLabel size="lg" />
+          </div>
           <p className="text-muted-foreground">
-            Here's your singles journey at a glance
+            Zero Catfishing • Zero Ghosting • 100% Real
           </p>
         </div>
 
@@ -48,7 +52,7 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-foreground">{revealedProfiles.length}</p>
-                  <p className="text-sm text-muted-foreground">Profiles Revealed</p>
+                  <p className="text-sm text-muted-foreground">People Met</p>
                 </div>
               </div>
             </CardContent>
@@ -57,26 +61,26 @@ const Dashboard = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/10">
-                  <Heart className="h-6 w-6 text-secondary" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <Send className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-foreground">{currentUser.totalConnections}</p>
+                  <p className="text-sm text-muted-foreground">Waves Sent</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <Heart className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-foreground">3</p>
-                  <p className="text-sm text-muted-foreground">Sparks Sent</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
-                  <Users className="h-6 w-6 text-accent" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">1</p>
-                  <p className="text-sm text-muted-foreground">Mutual Sparks</p>
+                  <p className="text-sm text-muted-foreground">Mutual Waves</p>
                 </div>
               </div>
             </CardContent>
@@ -137,8 +141,8 @@ const Dashboard = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Recently Revealed</CardTitle>
-                <CardDescription>Singles you can now connect with</CardDescription>
+                <CardTitle>People You've Met</CardTitle>
+                <CardDescription>Send a wave to connect</CardDescription>
               </div>
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/community">View All</Link>
@@ -155,19 +159,22 @@ const Dashboard = () => {
                         className="h-12 w-12 rounded-full object-cover"
                       />
                       <div className="flex-1">
-                        <h4 className="font-medium text-foreground">{profile.name}, {profile.age}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium text-foreground">{profile.name}, {profile.age}</h4>
+                          <VerificationBadge level={profile.verificationLevel} />
+                        </div>
                         <p className="text-sm text-muted-foreground line-clamp-1">{profile.bio}</p>
                       </div>
                       <Button size="sm" variant="outline" className="gap-1">
-                        <Heart className="h-3 w-3" />
-                        Spark
+                        <Send className="h-3 w-3" />
+                        Wave
                       </Button>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-muted-foreground mb-4">Attend events to reveal profiles!</p>
+                  <p className="text-muted-foreground mb-4">Attend events to meet people!</p>
                   <Button asChild>
                     <Link to="/events">Find Events</Link>
                   </Button>
