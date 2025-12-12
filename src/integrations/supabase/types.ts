@@ -53,6 +53,7 @@ export type Database = {
           geo_verified: boolean | null
           id: string
           left_at: string | null
+          nametag_pin: string | null
           rsvp_status: Database["public"]["Enums"]["rsvp_status"] | null
           time_spent_minutes: number | null
           user_id: string
@@ -70,6 +71,7 @@ export type Database = {
           geo_verified?: boolean | null
           id?: string
           left_at?: string | null
+          nametag_pin?: string | null
           rsvp_status?: Database["public"]["Enums"]["rsvp_status"] | null
           time_spent_minutes?: number | null
           user_id: string
@@ -87,6 +89,7 @@ export type Database = {
           geo_verified?: boolean | null
           id?: string
           left_at?: string | null
+          nametag_pin?: string | null
           rsvp_status?: Database["public"]["Enums"]["rsvp_status"] | null
           time_spent_minutes?: number | null
           user_id?: string
@@ -257,6 +260,7 @@ export type Database = {
           interests: string[] | null
           looking_for: string | null
           name: string
+          personality_quote: string | null
           personality_vector: Json | null
           photo_url: string | null
           positive_feedback_count: number | null
@@ -278,6 +282,7 @@ export type Database = {
           interests?: string[] | null
           looking_for?: string | null
           name: string
+          personality_quote?: string | null
           personality_vector?: Json | null
           photo_url?: string | null
           positive_feedback_count?: number | null
@@ -299,6 +304,7 @@ export type Database = {
           interests?: string[] | null
           looking_for?: string | null
           name?: string
+          personality_quote?: string | null
           personality_vector?: Json | null
           photo_url?: string | null
           positive_feedback_count?: number | null
@@ -461,6 +467,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_event_pin: { Args: { p_event_id: string }; Returns: string }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
