@@ -63,6 +63,7 @@ const Index = () => {
               </Badge>
             </div>
             
+            <p className="text-sm text-muted-foreground mb-4">An app by TLC</p>
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl">
               Meet Singles{' '}
               <span className="text-primary">In Person</span>
@@ -73,20 +74,12 @@ const Index = () => {
               Every face is verified. Every connection is earned.
               Real people, real events, real chemistry.
             </p>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button size="lg" className="gap-2" asChild>
-                <Link to="/events">
-                  <Calendar className="h-5 w-5" />
-                  Find an Event
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="gap-2" asChild>
-                <Link to="/community">
-                  <Users className="h-5 w-5" />
-                  Browse Singles
-                </Link>
-              </Button>
-            </div>
+            <Button size="lg" className="gap-2" asChild>
+              <Link to="/events">
+                <Calendar className="h-5 w-5" />
+                Find an Event
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 const navLinks = [
   { to: '/', label: 'Home', icon: Heart },
   { to: '/events', label: 'Events', icon: Calendar },
-  { to: '/community', label: 'Singles', icon: Users },
+  { to: '/connections', label: 'My Connections', icon: Users },
   { to: '/check-in', label: 'Check In', icon: QrCode },
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
 ];
@@ -26,8 +26,11 @@ export const Navbar = () => {
               <Heart className="h-5 w-5 text-primary-foreground" fill="currentColor" />
             </div>
             <div className="hidden sm:block">
-              <span className="text-lg font-bold text-foreground">Social Singles</span>
-              <span className="ml-1 text-sm text-muted-foreground">OKC</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-lg font-bold text-foreground">Social Singles</span>
+                <span className="text-sm text-muted-foreground">OKC</span>
+              </div>
+              <span className="text-xs text-muted-foreground">by TLC</span>
             </div>
           </Link>
 
