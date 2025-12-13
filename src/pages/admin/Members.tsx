@@ -1,30 +1,35 @@
 import { useState, useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MemberCard, MemberData, EventRole } from '@/components/members/MemberCard';
+import { MemberCard, MemberData, BehaviorMetrics } from '@/components/members/MemberCard';
 import { MemberDetail } from '@/components/members/MemberDetail';
 import { RoleType } from '@/components/events/EventRoleSelector';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
-  Search, Filter, Grid, List, Users, Star, CheckCircle, 
-  TrendingUp, Calendar, Heart, RefreshCw
+  Search, Grid, List, Users, Star, CheckCircle, 
+  TrendingUp, RefreshCw, Activity
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+interface MemberWithMetrics extends MemberData {
+  behaviorMetrics?: BehaviorMetrics;
+}
+
 const AdminMembers = () => {
-  const [members, setMembers] = useState<MemberData[]>([]);
+  const [members, setMembers] = useState<MemberWithMetrics[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTrust, setFilterTrust] = useState<string>('all');
   const [filterEvents, setFilterEvents] = useState<string>('all');
-  const [selectedMember, setSelectedMember] = useState<MemberData | null>(null);
+  const [filterTrustLevel, setFilterTrustLevel] = useState<string>('all');
+  const [selectedMember, setSelectedMember] = useState<MemberWithMetrics | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const { toast } = useToast();
 
@@ -35,13 +40,44 @@ const AdminMembers = () => {
   const fetchMembers = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      // Fetch profiles
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setMembers(data || []);
+      if (profilesError) throw profilesError;
+
+      // Fetch behavior metrics
+      const userIds = profilesData?.map(p => p.id) || [];
+      const { data: metricsData, error: metricsError } = await supabase
+        .from('user_behavior_metrics')
+        .select('*')
+        .in('user_id', userIds);
+
+      if (metricsError) {
+        console.error('Error fetching metrics:', metricsError);
+      }
+
+      // Combine profiles with metrics
+      const metricsMap = new Map(metricsData?.map(m => [m.user_id, m]) || []);
+      
+      const membersWithMetrics: MemberWithMetrics[] = (profilesData || []).map(profile => ({
+        ...profile,
+        behaviorMetrics: metricsMap.get(profile.id) ? {
+          trust_index: metricsMap.get(profile.id)?.trust_index,
+          trust_level: metricsMap.get(profile.id)?.trust_level,
+          waves_sent: metricsMap.get(profile.id)?.waves_sent,
+          waves_received: metricsMap.get(profile.id)?.waves_received,
+          messages_sent: metricsMap.get(profile.id)?.messages_sent,
+          messages_received: metricsMap.get(profile.id)?.messages_received,
+          avg_response_time_mins: metricsMap.get(profile.id)?.avg_response_time_mins,
+          positive_feedback_received: metricsMap.get(profile.id)?.positive_feedback_received,
+          reports_received: metricsMap.get(profile.id)?.reports_received,
+        } : undefined,
+      }));
+
+      setMembers(membersWithMetrics);
     } catch (error) {
       console.error('Error fetching members:', error);
       toast({
@@ -72,7 +108,11 @@ const AdminMembers = () => {
       (filterEvents === '10+' && (member.events_attended || 0) >= 10) ||
       (filterEvents === '0' && (member.events_attended || 0) === 0);
 
-    return matchesSearch && matchesTrust && matchesEvents;
+    const matchesTrustLevel =
+      filterTrustLevel === 'all' ||
+      (member.behaviorMetrics?.trust_level === filterTrustLevel);
+
+    return matchesSearch && matchesTrust && matchesEvents && matchesTrustLevel;
   });
 
   const stats = {
@@ -82,13 +122,12 @@ const AdminMembers = () => {
     active: members.filter((m) => (m.events_attended || 0) >= 3).length,
   };
 
-  const handleMemberClick = (member: MemberData) => {
+  const handleMemberClick = (member: MemberWithMetrics) => {
     setSelectedMember(member);
     setDetailOpen(true);
   };
 
   const handleRolesChange = async (roles: RoleType[], description?: string) => {
-    // In a full implementation, this would save to the database
     toast({
       title: 'Roles Updated',
       description: `Updated roles for ${selectedMember?.name}`,
@@ -100,18 +139,20 @@ const AdminMembers = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-                <Users className="h-8 w-8 text-primary" />
-                Member Database
-              </h1>
-              <p className="text-muted-foreground">
-                Manage members, assign event roles, and track engagement
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+                <Users className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Member Database</h1>
+                <p className="text-muted-foreground">
+                  Manage members, track behavior, and assign roles
+                </p>
+              </div>
             </div>
-            <Button onClick={fetchMembers} variant="outline">
+            <Button onClick={fetchMembers} variant="premium">
               <RefreshCw className={cn('h-4 w-4 mr-2', loading && 'animate-spin')} />
               Refresh
             </Button>
@@ -120,54 +161,33 @@ const AdminMembers = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="border-0 shadow-md bg-gradient-to-br from-card to-muted/30">
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                <Users className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{stats.total}</div>
-                <div className="text-sm text-muted-foreground">Total Members</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-md bg-gradient-to-br from-card to-muted/30">
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-amber-500/20 flex items-center justify-center">
-                <Star className="h-6 w-6 text-amber-400" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{stats.trusted}</div>
-                <div className="text-sm text-muted-foreground">Community Trusted</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-md bg-gradient-to-br from-card to-muted/30">
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-emerald-400" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{stats.verified}</div>
-                <div className="text-sm text-muted-foreground">Verified</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border-0 shadow-md bg-gradient-to-br from-card to-muted/30">
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-secondary/20 flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-secondary" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold">{stats.active}</div>
-                <div className="text-sm text-muted-foreground">Active (3+ events)</div>
-              </div>
-            </CardContent>
-          </Card>
+          {[
+            { icon: Users, label: 'Total Members', value: stats.total, color: 'primary' },
+            { icon: Star, label: 'Community Trusted', value: stats.trusted, color: 'amber-400' },
+            { icon: CheckCircle, label: 'Verified', value: stats.verified, color: 'emerald-400' },
+            { icon: TrendingUp, label: 'Active (3+ events)', value: stats.active, color: 'secondary' },
+          ].map((stat, index) => (
+            <Card 
+              key={stat.label} 
+              variant="glass"
+              className="opacity-0 animate-fade-in-up"
+              style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+            >
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className={`h-12 w-12 rounded-xl bg-${stat.color}/20 flex items-center justify-center`}>
+                  <stat.icon className={`h-6 w-6 text-${stat.color}`} />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold animate-count-up">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Filters and Search */}
-        <Card className="border-0 shadow-md mb-6">
+        <Card variant="glass" className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4 items-center">
               <div className="relative flex-1 w-full">
@@ -180,21 +200,34 @@ const AdminMembers = () => {
                 />
               </div>
               
-              <div className="flex gap-2 w-full md:w-auto">
+              <div className="flex flex-wrap gap-2 w-full md:w-auto">
                 <Select value={filterTrust} onValueChange={setFilterTrust}>
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-[130px]">
                     <SelectValue placeholder="Trust Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Members</SelectItem>
-                    <SelectItem value="trusted">Community Trusted</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="trusted">Trusted</SelectItem>
                     <SelectItem value="verified">Verified</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                   </SelectContent>
                 </Select>
 
-                <Select value={filterEvents} onValueChange={setFilterEvents}>
+                <Select value={filterTrustLevel} onValueChange={setFilterTrustLevel}>
                   <SelectTrigger className="w-[140px]">
+                    <Activity className="h-4 w-4 mr-1" />
+                    <SelectValue placeholder="Trust Level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Levels</SelectItem>
+                    <SelectItem value="rising_star">Rising Star</SelectItem>
+                    <SelectItem value="community_trusted">Community Trusted</SelectItem>
+                    <SelectItem value="veteran">Veteran</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={filterEvents} onValueChange={setFilterEvents}>
+                  <SelectTrigger className="w-[130px]">
                     <SelectValue placeholder="Events" />
                   </SelectTrigger>
                   <SelectContent>
@@ -206,7 +239,7 @@ const AdminMembers = () => {
                 </Select>
 
                 <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'grid' | 'list')}>
-                  <TabsList className="h-10">
+                  <TabsList className="h-10 glass border-0">
                     <TabsTrigger value="grid" className="px-3">
                       <Grid className="h-4 w-4" />
                     </TabsTrigger>
@@ -224,13 +257,15 @@ const AdminMembers = () => {
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {[...Array(10)].map((_, i) => (
-              <Card key={i} className="h-48 animate-pulse bg-muted/50" />
+              <Card key={i} variant="glass" className="h-48 skeleton-shimmer" />
             ))}
           </div>
         ) : filteredMembers.length === 0 ? (
-          <Card className="border-0 shadow-md">
+          <Card variant="glass" className="animate-fade-in-up">
             <CardContent className="p-12 text-center">
-              <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                <Users className="h-8 w-8 text-muted-foreground" />
+              </div>
               <h3 className="text-lg font-semibold mb-2">No Members Found</h3>
               <p className="text-muted-foreground">
                 {searchQuery
@@ -241,16 +276,18 @@ const AdminMembers = () => {
           </Card>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {filteredMembers.map((member) => (
-              <MemberCard
-                key={member.id}
-                member={member}
-                onClick={() => handleMemberClick(member)}
-              />
+            {filteredMembers.map((member, index) => (
+              <div key={member.id} style={{ animationDelay: `${index * 50}ms` }}>
+                <MemberCard
+                  member={member}
+                  behaviorMetrics={member.behaviorMetrics}
+                  onClick={() => handleMemberClick(member)}
+                />
+              </div>
             ))}
           </div>
         ) : (
-          <Card className="border-0 shadow-md">
+          <Card variant="glass">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -258,9 +295,9 @@ const AdminMembers = () => {
                     <tr className="border-b border-border">
                       <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Member</th>
                       <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Location</th>
+                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Trust</th>
                       <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Events</th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Show-up</th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Response</th>
+                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Waves</th>
                       <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
                       <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
                     </tr>
@@ -269,7 +306,7 @@ const AdminMembers = () => {
                     {filteredMembers.map((member) => (
                       <tr 
                         key={member.id} 
-                        className="border-b border-border hover:bg-muted/50 cursor-pointer"
+                        className="border-b border-border hover:bg-muted/50 cursor-pointer transition-colors"
                         onClick={() => handleMemberClick(member)}
                       >
                         <td className="py-3 px-4">
@@ -290,25 +327,29 @@ const AdminMembers = () => {
                           </div>
                         </td>
                         <td className="py-3 px-4 text-muted-foreground">{member.area || '-'}</td>
-                        <td className="py-3 px-4 text-center">{member.events_attended || 0}</td>
                         <td className="py-3 px-4 text-center">
-                          <span className={(member.show_up_rate || 0) >= 90 ? 'text-emerald-400' : 'text-muted-foreground'}>
-                            {member.show_up_rate || 0}%
+                          <span className={cn(
+                            'font-semibold',
+                            (member.behaviorMetrics?.trust_index || 50) >= 70 ? 'text-emerald-400' : 
+                            (member.behaviorMetrics?.trust_index || 50) >= 50 ? 'text-amber-400' : 'text-muted-foreground'
+                          )}>
+                            {Math.round(member.behaviorMetrics?.trust_index || member.trust_index || 50)}%
                           </span>
                         </td>
+                        <td className="py-3 px-4 text-center">{member.events_attended || 0}</td>
                         <td className="py-3 px-4 text-center">
-                          <span className={(member.response_rate || 0) >= 80 ? 'text-emerald-400' : 'text-muted-foreground'}>
-                            {member.response_rate || 0}%
-                          </span>
+                          <span className="text-primary">{member.behaviorMetrics?.waves_sent || 0}</span>
+                          <span className="text-muted-foreground">/</span>
+                          <span className="text-secondary">{member.behaviorMetrics?.waves_received || 0}</span>
                         </td>
                         <td className="py-3 px-4 text-center">
                           {member.community_trusted ? (
-                            <Badge className="bg-primary/20 text-primary border-primary/30">
+                            <Badge variant="glow" className="text-xs">
                               <Star className="h-3 w-3 mr-1 fill-current" />
                               Trusted
                             </Badge>
                           ) : (
-                            <Badge variant="outline">Member</Badge>
+                            <Badge variant="outline" className="text-xs">Member</Badge>
                           )}
                         </td>
                         <td className="py-3 px-4 text-right">
@@ -333,6 +374,7 @@ const AdminMembers = () => {
           member={selectedMember}
           open={detailOpen}
           onClose={() => setDetailOpen(false)}
+          behaviorMetrics={selectedMember?.behaviorMetrics}
           onRolesChange={handleRolesChange}
           mode="admin"
         />

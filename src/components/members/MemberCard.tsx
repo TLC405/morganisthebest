@@ -1,7 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Crown, Star, Sparkles, Target, Heart, Users, CheckCircle, Clock, MapPin } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Crown, Star, Sparkles, Target, Heart, Users, CheckCircle, Clock, MapPin, Send, MessageCircle, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface MemberData {
@@ -19,6 +20,20 @@ export interface MemberData {
   occupation?: string | null;
   bio?: string | null;
   verification_level?: string | null;
+  trust_index?: number | null;
+  trust_level?: string | null;
+}
+
+export interface BehaviorMetrics {
+  trust_index?: number | null;
+  trust_level?: string | null;
+  waves_sent?: number | null;
+  waves_received?: number | null;
+  messages_sent?: number | null;
+  messages_received?: number | null;
+  avg_response_time_mins?: number | null;
+  positive_feedback_received?: number | null;
+  reports_received?: number | null;
 }
 
 export interface EventRole {
@@ -28,6 +43,7 @@ export interface EventRole {
 
 interface MemberCardProps {
   member: MemberData;
+  behaviorMetrics?: BehaviorMetrics;
   eventRoles?: EventRole[];
   compatibilityScore?: number;
   checkInStatus?: 'checked_in' | 'pending' | 'late';
@@ -64,8 +80,15 @@ const roleLabels: Record<string, string> = {
   success_story: 'Success Story',
 };
 
+const trustLevelColors: Record<string, string> = {
+  rising_star: 'text-emerald-400',
+  community_trusted: 'text-amber-400',
+  veteran: 'text-purple-400',
+};
+
 export const MemberCard = ({
   member,
+  behaviorMetrics,
   eventRoles = [],
   compatibilityScore,
   checkInStatus,
@@ -80,13 +103,18 @@ export const MemberCard = ({
     .join('')
     .toUpperCase() || '?';
 
+  const trustIndex = behaviorMetrics?.trust_index ?? member.trust_index ?? 50;
+  const trustLevel = behaviorMetrics?.trust_level ?? member.trust_level ?? 'rising_star';
+
   return (
     <Card
+      variant="glass"
       className={cn(
-        'cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border-border/50',
+        'cursor-pointer hover-lift border-border/50 opacity-0 animate-fade-in-up',
         selected && 'ring-2 ring-primary border-primary',
         compact ? 'p-2' : ''
       )}
+      style={{ animationFillMode: 'forwards' }}
       onClick={onClick}
     >
       <CardContent className={compact ? 'p-2' : 'p-4'}>
@@ -120,7 +148,7 @@ export const MemberCard = ({
 
             {/* Community trusted badge */}
             {member.community_trusted && (
-              <div className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-primary flex items-center justify-center border-2 border-background">
+              <div className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-primary flex items-center justify-center border-2 border-background shadow-glow">
                 <Star className="h-3.5 w-3.5 text-primary-foreground fill-primary-foreground" />
               </div>
             )}
@@ -137,6 +165,43 @@ export const MemberCard = ({
               <MapPin className="h-3 w-3" />
               {member.area}
             </p>
+          )}
+
+          {/* Trust Index Bar */}
+          {!compact && (
+            <div className="w-full mt-3 space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1 text-muted-foreground">
+                  <TrendingUp className="h-3 w-3" />
+                  Trust
+                </span>
+                <span className={cn('font-semibold', trustLevelColors[trustLevel] || 'text-foreground')}>
+                  {Math.round(trustIndex)}%
+                </span>
+              </div>
+              <Progress 
+                value={trustIndex} 
+                className="h-1.5"
+              />
+            </div>
+          )}
+
+          {/* Behavior metrics summary */}
+          {!compact && behaviorMetrics && (
+            <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
+              {behaviorMetrics.waves_sent !== undefined && (
+                <span className="flex items-center gap-1" title="Waves sent/received">
+                  <Send className="h-3 w-3 text-primary" />
+                  {behaviorMetrics.waves_sent}/{behaviorMetrics.waves_received || 0}
+                </span>
+              )}
+              {behaviorMetrics.messages_sent !== undefined && (
+                <span className="flex items-center gap-1" title="Messages">
+                  <MessageCircle className="h-3 w-3 text-secondary" />
+                  {behaviorMetrics.messages_sent}
+                </span>
+              )}
+            </div>
           )}
 
           {/* Compatibility score */}
@@ -182,8 +247,8 @@ export const MemberCard = ({
             </div>
           )}
 
-          {/* Stats row */}
-          {!compact && (
+          {/* Stats row - fallback if no behavior metrics */}
+          {!compact && !behaviorMetrics && (
             <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
               {member.events_attended !== undefined && member.events_attended !== null && (
                 <span>{member.events_attended} events</span>

@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { CheckCircle, Clock, XCircle, Search, MapPin, UserCheck, Hash } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, Search, MapPin, UserCheck, Hash, Users, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface Attendee {
   id: string;
@@ -32,7 +33,6 @@ interface Event {
 
 const TeamCheckIns = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const eventId = searchParams.get('event');
   
@@ -82,7 +82,6 @@ const TeamCheckIns = () => {
     const fetchAttendees = async () => {
       setLoading(true);
       
-      // Get attendance records with profile names
       const { data: attendanceData, error } = await supabase
         .from('event_attendance')
         .select(`
@@ -102,7 +101,6 @@ const TeamCheckIns = () => {
         return;
       }
 
-      // Get profile names and roles for each attendee
       const userIds = attendanceData?.map(a => a.user_id) || [];
       
       const { data: profiles } = await supabase
@@ -132,7 +130,6 @@ const TeamCheckIns = () => {
 
       setAttendees(formattedAttendees);
       
-      // Check if current team member is checked in
       if (user) {
         const myAttendance = formattedAttendees.find(a => a.user_id === user.id);
         setTeamCheckedIn(!!myAttendance?.check_in_status);
@@ -144,7 +141,6 @@ const TeamCheckIns = () => {
     fetchAttendees();
   }, [selectedEvent, user]);
 
-  // Filter attendees by door code search
   const filteredAttendees = attendees.filter(attendee => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
@@ -154,8 +150,7 @@ const TeamCheckIns = () => {
     );
   });
 
-  // Check in attendee by door code
-  const handleCheckIn = async (attendeeId: string, doorCode: string | null) => {
+  const handleCheckIn = async (attendeeId: string) => {
     const { error } = await supabase
       .from('event_attendance')
       .update({
@@ -170,7 +165,6 @@ const TeamCheckIns = () => {
       return;
     }
 
-    // Update local state
     setAttendees(prev => prev.map(a => 
       a.id === attendeeId 
         ? { ...a, check_in_status: 'on_time', checked_in_at: new Date().toISOString(), geo_verified: true }
@@ -180,15 +174,12 @@ const TeamCheckIns = () => {
     toast.success('Attendee checked in successfully!');
   };
 
-  // Team member self check-in
   const handleTeamCheckIn = async () => {
     if (!user || !selectedEvent) return;
 
-    // Check if already has attendance record
     const existing = attendees.find(a => a.user_id === user.id);
     
     if (existing) {
-      // Update existing record
       const { error } = await supabase
         .from('event_attendance')
         .update({
@@ -203,7 +194,6 @@ const TeamCheckIns = () => {
         return;
       }
     } else {
-      // Create new attendance record for team member
       const { error } = await supabase
         .from('event_attendance')
         .insert({
@@ -223,38 +213,35 @@ const TeamCheckIns = () => {
 
     setTeamCheckedIn(true);
     toast.success("You're checked in for this event!");
-    
-    // Refresh attendees
-    setSelectedEvent(prev => prev);
   };
 
   const getStatusBadge = (status: string | null) => {
     switch (status) {
       case 'on_time':
         return (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-            <CheckCircle className="h-3 w-3 mr-1" />
+          <Badge variant="success" className="gap-1">
+            <CheckCircle className="h-3 w-3" />
             Checked In
           </Badge>
         );
       case 'late':
         return (
-          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-            <Clock className="h-3 w-3 mr-1" />
+          <Badge variant="warning" className="gap-1">
+            <Clock className="h-3 w-3" />
             Late
           </Badge>
         );
       case 'no_show':
         return (
-          <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
-            <XCircle className="h-3 w-3 mr-1" />
+          <Badge variant="destructive" className="gap-1">
+            <XCircle className="h-3 w-3" />
             No Show
           </Badge>
         );
       default:
         return (
-          <Badge variant="outline">
-            <Clock className="h-3 w-3 mr-1" />
+          <Badge variant="outline" className="gap-1">
+            <Clock className="h-3 w-3" />
             Pending
           </Badge>
         );
@@ -267,47 +254,96 @@ const TeamCheckIns = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Check-In Management</h1>
-          {currentEvent && (
-            <p className="text-muted-foreground">{currentEvent.title} - {currentEvent.venue_name}</p>
-          )}
+        {/* Header */}
+        <div className="mb-8 animate-fade-in-up">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-10 w-10 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+              <UserCheck className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Check-In Management</h1>
+              {currentEvent && (
+                <p className="text-muted-foreground">{currentEvent.title} — {currentEvent.venue_name}</p>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Event Selector */}
         {events.length > 1 && (
-          <div className="mb-6 flex flex-wrap gap-2">
+          <div className="mb-6 flex flex-wrap gap-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
             {events.map(event => (
               <Button
                 key={event.id}
-                variant={selectedEvent === event.id ? 'default' : 'outline'}
+                variant={selectedEvent === event.id ? 'glow' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedEvent(event.id)}
+                className="gap-2"
               >
+                <Calendar className="h-4 w-4" />
                 {event.title}
               </Button>
             ))}
           </div>
         )}
 
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <Card variant="glass" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '150ms', animationFillMode: 'forwards' }}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">{attendees.length}</div>
+                <div className="text-xs text-muted-foreground">RSVPs</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card variant="glass" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">{checkedInCount}</div>
+                <div className="text-xs text-muted-foreground">Checked In</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card variant="glass" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-amber-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold">{attendees.length - checkedInCount}</div>
+                <div className="text-xs text-muted-foreground">Pending</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Team Self Check-In */}
-        <Card className="mb-6 border-0 shadow-md bg-gradient-to-r from-primary/10 to-secondary/10">
+        <Card variant="neon" className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <UserCheck className="h-5 w-5 text-primary" />
+                <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+                  <UserCheck className="h-5 w-5 text-primary-foreground" />
+                </div>
                 <div>
-                  <p className="font-medium text-foreground">Team Check-In</p>
+                  <p className="font-semibold text-foreground">Team Check-In</p>
                   <p className="text-sm text-muted-foreground">Mark yourself as attending this event</p>
                 </div>
               </div>
               {teamCheckedIn ? (
-                <Badge className="bg-green-100 text-green-800">
-                  <CheckCircle className="h-3 w-3 mr-1" />
+                <Badge variant="success" className="gap-1 shadow-glow">
+                  <CheckCircle className="h-3 w-3" />
                   You're Checked In
                 </Badge>
               ) : (
-                <Button onClick={handleTeamCheckIn} size="sm">
+                <Button onClick={handleTeamCheckIn} variant="glow" size="sm">
                   Check In Now
                 </Button>
               )}
@@ -315,9 +351,9 @@ const TeamCheckIns = () => {
           </CardContent>
         </Card>
 
-        {/* Search by Door Code */}
-        <div className="mb-6 flex gap-4">
-          <div className="relative flex-1 max-w-md">
+        {/* Search */}
+        <div className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}>
+          <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
               placeholder="Search by name or door code..." 
@@ -328,47 +364,72 @@ const TeamCheckIns = () => {
           </div>
         </div>
 
-        <Card className="border-0 shadow-md">
+        {/* Attendees List */}
+        <Card variant="glass" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
           <CardHeader>
-            <CardTitle>Attendees ({checkedInCount}/{attendees.length} checked in)</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-primary" />
+              Attendees ({checkedInCount}/{attendees.length} checked in)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-muted-foreground text-center py-8">Loading attendees...</p>
+              <div className="space-y-3">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="h-16 skeleton-shimmer rounded-xl" />
+                ))}
+              </div>
             ) : filteredAttendees.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">
-                {searchQuery ? 'No attendees match your search' : 'No attendees yet'}
-              </p>
+              <div className="text-center py-12">
+                <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                  <Users className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <p className="text-muted-foreground">
+                  {searchQuery ? 'No attendees match your search' : 'No attendees yet'}
+                </p>
+              </div>
             ) : (
               <div className="space-y-3">
-                {filteredAttendees.map((attendee) => (
+                {filteredAttendees.map((attendee, index) => (
                   <div 
                     key={attendee.id}
-                    className="flex items-center justify-between p-4 rounded-lg bg-muted/50"
+                    className={cn(
+                      "flex items-center justify-between p-4 rounded-xl transition-all opacity-0 animate-fade-in-up",
+                      attendee.check_in_status ? "bg-emerald-500/5 border border-emerald-500/20" : "bg-muted/50 hover:bg-muted/70"
+                    )}
+                    style={{ animationDelay: `${index * 50 + 450}ms`, animationFillMode: 'forwards' }}
                   >
                     <div className="flex items-center gap-4">
+                      <div className={cn(
+                        "h-10 w-10 rounded-full flex items-center justify-center font-semibold text-sm",
+                        attendee.check_in_status 
+                          ? "bg-emerald-500/20 text-emerald-400" 
+                          : "bg-primary/20 text-primary"
+                      )}>
+                        {attendee.name?.split(' ').map(n => n[0]).join('').toUpperCase()}
+                      </div>
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-foreground">{attendee.name}</p>
                           {attendee.is_team && (
-                            <Badge variant="secondary" className="text-xs">Team</Badge>
+                            <Badge variant="premium-secondary" className="text-xs">Team</Badge>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          Door Code: <span className="font-mono font-semibold">{attendee.door_code || 'N/A'}</span>
+                          Door Code: <span className="font-mono font-semibold text-foreground">{attendee.door_code || 'N/A'}</span>
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       {attendee.check_in_status && attendee.nametag_pin && (
-                        <Badge variant="outline" className="text-primary border-primary">
-                          <Hash className="h-3 w-3 mr-1" />
+                        <Badge variant="premium" className="gap-1">
+                          <Hash className="h-3 w-3" />
                           PIN: {attendee.nametag_pin}
                         </Badge>
                       )}
                       {attendee.geo_verified && (
-                        <Badge variant="outline" className="text-secondary">
-                          <MapPin className="h-3 w-3 mr-1" />
+                        <Badge variant="premium-secondary" className="gap-1">
+                          <MapPin className="h-3 w-3" />
                           GPS
                         </Badge>
                       )}
@@ -376,7 +437,8 @@ const TeamCheckIns = () => {
                       {!attendee.check_in_status && (
                         <Button 
                           size="sm"
-                          onClick={() => handleCheckIn(attendee.id, attendee.door_code)}
+                          variant="glow"
+                          onClick={() => handleCheckIn(attendee.id)}
                         >
                           Check In
                         </Button>
