@@ -29,7 +29,7 @@ import { HelpCircle } from 'lucide-react';
 const singlesLinks = [
   { to: '/', label: 'Home', icon: Heart },
   { to: '/events', label: 'Events', icon: Calendar },
-  { to: '/connections', label: 'Connections', icon: Users },
+  { to: '/matches', label: 'Matches', icon: Heart },
   { to: '/chats', label: 'Chats', icon: MessageCircle },
   { to: '/check-in', label: 'Check In', icon: MapPin },
   { to: '/guide', label: 'Guide', icon: HelpCircle },
@@ -47,7 +47,7 @@ import { Brain } from 'lucide-react';
 
 const adminLinks = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/admin/users', label: 'Users', icon: Users },
+  { to: '/admin/members', label: 'Members', icon: Users },
   { to: '/admin/events', label: 'Events', icon: Calendar },
   { to: '/admin/venues', label: 'Venues', icon: Building2 },
   { to: '/admin/feedback', label: 'Feedback', icon: MessageCircle },
