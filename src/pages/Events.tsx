@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Filter, Sparkles } from 'lucide-react';
+import { Calendar, Filter, Sparkles, ChevronRight, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { EventCard } from '@/components/events/EventCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { mockEvents, Event } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
@@ -13,12 +14,12 @@ import { supabase } from '@/integrations/supabase/client';
 
 type Category = 'all' | 'mixer' | 'speed-dating' | 'activity' | 'social';
 
-const categories: { value: Category; label: string }[] = [
-  { value: 'all', label: 'All Events' },
-  { value: 'mixer', label: 'Mixers' },
-  { value: 'speed-dating', label: 'Speed Dating' },
-  { value: 'activity', label: 'Activities' },
-  { value: 'social', label: 'Social' },
+const categories: { value: Category; label: string; emoji: string }[] = [
+  { value: 'all', label: 'All', emoji: '✨' },
+  { value: 'mixer', label: 'Mixers', emoji: '🎉' },
+  { value: 'speed-dating', label: 'Speed Dating', emoji: '⚡' },
+  { value: 'activity', label: 'Activities', emoji: '🎳' },
+  { value: 'social', label: 'Social', emoji: '💫' },
 ];
 
 const Events = () => {
@@ -32,7 +33,6 @@ const Events = () => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  // Check if profile is complete
   useEffect(() => {
     const checkProfile = async () => {
       if (!user) {
@@ -62,8 +62,10 @@ const Events = () => {
     ? mockEvents 
     : mockEvents.filter(e => e.category === selectedCategory);
 
+  // Featured events (first 3)
+  const featuredEvents = mockEvents.slice(0, 3);
+
   const handleRSVP = (eventId: string) => {
-    // Check auth first
     if (!user) {
       toast({
         title: "Sign in required",
@@ -73,7 +75,6 @@ const Events = () => {
       return;
     }
 
-    // Check profile completion
     if (!profileComplete) {
       toast({
         title: "Complete your profile",
@@ -92,10 +93,8 @@ const Events = () => {
   const confirmRSVP = async () => {
     if (!user || !rsvpDialog.event) return;
 
-    // Generate a nametag PIN for the user
     const pin = Math.floor(1000 + Math.random() * 9000).toString();
 
-    // Create attendance record (door code handled by admin/team)
     const { error } = await supabase.from('event_attendance').insert({
       user_id: user.id,
       event_id: rsvpDialog.event.id,
@@ -121,64 +120,90 @@ const Events = () => {
 
   return (
     <Layout>
-      {/* Warm gradient header with animation */}
+      {/* Hero Section - Instagram Story Feel */}
       <div className="gradient-hero border-b border-border/50 relative overflow-hidden">
         <div className="absolute inset-0 gradient-spotlight pointer-events-none" />
-        <div className="mx-auto max-w-7xl px-4 py-12 relative">
-          <div className="flex items-center gap-3 mb-2 animate-fade-in-up">
-            <div className="h-12 w-12 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-primary-foreground" />
+        <div className="mx-auto max-w-7xl px-4 py-10 relative">
+          <div className="flex items-center gap-4 mb-6 animate-fade-in-up">
+            <div className="h-14 w-14 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+              <Calendar className="h-7 w-7 text-primary-foreground" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-foreground">Upcoming Events</h1>
-              <p className="text-muted-foreground">
-                Find your next opportunity to meet amazing singles in OKC
-              </p>
+              <p className="text-muted-foreground">Find your next opportunity to meet amazing singles</p>
             </div>
+          </div>
+
+          {/* Story-style horizontal carousel for featured events */}
+          <div className="story-carousel -mx-4 px-4 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+            {featuredEvents.map((event, i) => (
+              <div 
+                key={event.id} 
+                className="story-item flex-shrink-0 w-32 cursor-pointer group"
+                onClick={() => handleRSVP(event.id)}
+              >
+                <div className="story-ring p-0.5 mb-2">
+                  <div className="rounded-full overflow-hidden">
+                    <img 
+                      src={event.imageUrl} 
+                      alt={event.title}
+                      className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-center font-medium text-foreground line-clamp-2">{event.title}</p>
+                <p className="text-[10px] text-center text-muted-foreground">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 pb-24 md:pb-8">
         {/* Profile completion prompt */}
         {user && profileComplete === false && (
-          <div className="mb-6 rounded-2xl bg-gradient-to-r from-accent/20 to-primary/20 border border-accent/30 p-4 flex items-center justify-between animate-fade-in-up shadow-inner-glow">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-primary" />
+          <Card variant="neon" className="mb-6 animate-fade-in-up">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">Complete your profile</p>
+                  <p className="text-sm text-muted-foreground">Required to RSVP for events</p>
+                </div>
               </div>
-              <p className="text-sm text-foreground font-medium">
-                Complete your profile to RSVP for events!
-              </p>
-            </div>
-            <Button size="sm" variant="glow" onClick={() => navigate('/profile')}>
-              Complete Profile
-            </Button>
-          </div>
+              <Button variant="glow" onClick={() => navigate('/profile')}>
+                Complete
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
-        {/* Category Filter with premium badges */}
-        <div className="mb-8 flex flex-wrap items-center gap-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          {categories.map((cat) => (
-            <Badge
-              key={cat.value}
-              variant={selectedCategory === cat.value ? 'glow' : 'outline'}
-              className="cursor-pointer transition-all hover:scale-105"
-              onClick={() => setSelectedCategory(cat.value)}
-            >
-              {cat.label}
-            </Badge>
-          ))}
+        {/* Category Filter - Tinder-style pills */}
+        <div className="mb-8 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+          <div className="flex flex-wrap items-center gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat.value}
+                onClick={() => setSelectedCategory(cat.value)}
+                className={`interest-pill ${selectedCategory === cat.value ? 'selected' : ''}`}
+              >
+                <span>{cat.emoji}</span>
+                {cat.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Events Grid with stagger animation */}
+        {/* Events Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredEvents.map((event, index) => (
             <div
               key={event.id}
-              className="opacity-0 animate-fade-in-up"
-              style={{ animationDelay: `${index * 80 + 150}ms`, animationFillMode: 'forwards' }}
+              className="opacity-0 animate-slide-up-spring"
+              style={{ animationDelay: `${index * 80 + 200}ms`, animationFillMode: 'forwards' }}
             >
               <EventCard event={event} onRSVP={handleRSVP} />
             </div>
@@ -187,21 +212,22 @@ const Events = () => {
 
         {filteredEvents.length === 0 && (
           <div className="py-16 text-center animate-fade-in-up">
-            <div className="mx-auto w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center mb-4">
-              <Calendar className="h-10 w-10 text-muted-foreground" />
+            <div className="mx-auto w-24 h-24 rounded-full bg-muted/50 flex items-center justify-center mb-6">
+              <Calendar className="h-12 w-12 text-muted-foreground" />
             </div>
-            <p className="text-muted-foreground">No events in this category yet. Check back soon!</p>
+            <h3 className="text-xl font-semibold mb-2">No events in this category</h3>
+            <p className="text-muted-foreground">Check back soon for new events!</p>
           </div>
         )}
       </div>
 
-      {/* RSVP Confirmation Dialog with premium styling */}
+      {/* RSVP Dialog - Premium styling */}
       <Dialog open={rsvpDialog.open} onOpenChange={(open) => setRsvpDialog({ ...rsvpDialog, open })}>
-        <DialogContent className="sm:max-w-md glass border-primary/20">
+        <DialogContent className="sm:max-w-md glass-strong border-primary/20">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-primary-foreground" />
+            <DialogTitle className="flex items-center gap-3 text-xl">
+              <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+                <Sparkles className="h-5 w-5 text-primary-foreground" />
               </div>
               Confirm Your RSVP
             </DialogTitle>
@@ -209,18 +235,30 @@ const Events = () => {
               Ready to join {rsvpDialog.event?.title}?
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="rounded-2xl gradient-premium p-6 text-center shadow-inner-glow">
-              <p className="text-lg font-semibold text-foreground mb-2">
-                {rsvpDialog.event?.title}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {rsvpDialog.event?.date} at {rsvpDialog.event?.time}
-              </p>
+          <div className="space-y-5">
+            {/* Event preview card */}
+            <div className="rounded-2xl overflow-hidden">
+              {rsvpDialog.event?.imageUrl && (
+                <div className="relative h-32">
+                  <img 
+                    src={rsvpDialog.event.imageUrl} 
+                    alt={rsvpDialog.event.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 photo-card-gradient" />
+                  <div className="absolute bottom-3 left-3">
+                    <p className="text-lg font-bold text-white">{rsvpDialog.event?.title}</p>
+                    <p className="text-sm text-white/80">{rsvpDialog.event?.date} at {rsvpDialog.event?.time}</p>
+                  </div>
+                </div>
+              )}
             </div>
-            <p className="text-sm text-muted-foreground text-center">
-              Show up, check in at the door, and meet amazing people!
-            </p>
+            
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30">
+              <Users className="h-5 w-5 text-primary" />
+              <span className="text-sm text-foreground">Show up, check in, and meet amazing people!</span>
+            </div>
+            
             <div className="flex gap-3">
               <Button 
                 variant="outline" 
@@ -229,7 +267,11 @@ const Events = () => {
               >
                 Cancel
               </Button>
-              <Button variant="glow" className="flex-1 rounded-xl" onClick={confirmRSVP}>
+              <Button 
+                variant="glow" 
+                className="flex-1 rounded-xl animate-spring-bounce" 
+                onClick={confirmRSVP}
+              >
                 I'm In! 🎉
               </Button>
             </div>

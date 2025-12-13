@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { 
   Calendar, Users, CheckCircle, Clock, MapPin, 
   TrendingUp, Star, AlertCircle, ChevronRight, 
-  UserCheck, Timer, Activity
+  UserCheck, Timer, Activity, LayoutDashboard
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -102,66 +102,54 @@ const TeamDashboard = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <Badge className="bg-secondary/20 text-secondary">Volunteer</Badge>
-            <Badge variant="outline" className="text-xs">
-              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse mr-1.5" />
-              On Duty
-            </Badge>
+      <div className="container mx-auto px-4 py-8 pb-24 md:pb-8">
+        {/* Header with premium styling */}
+        <div className="mb-8 animate-fade-in-up">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="h-14 w-14 rounded-2xl gradient-thunder shadow-glow-thunder flex items-center justify-center">
+              <LayoutDashboard className="h-7 w-7 text-secondary-foreground" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Badge className="bg-secondary/20 text-secondary">Volunteer</Badge>
+                <Badge variant="outline" className="text-xs gap-1">
+                  <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                  On Duty
+                </Badge>
+              </div>
+              <h1 className="text-3xl font-bold text-foreground">Volunteer Dashboard</h1>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Volunteer Dashboard</h1>
           <p className="text-muted-foreground">
             {format(new Date(), 'EEEE, MMMM d, yyyy')} • Managing events & check-ins
           </p>
         </div>
 
-        {/* Quick Stats */}
+        {/* Quick Stats - Animated cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <Card variant="glass">
-            <CardContent className="pt-6 text-center">
-              <Calendar className="h-6 w-6 mx-auto text-primary mb-2" />
-              <p className="text-2xl font-bold">{stats.eventsToday}</p>
-              <p className="text-xs text-muted-foreground">Events Today</p>
-            </CardContent>
-          </Card>
-          <Card variant="glass">
-            <CardContent className="pt-6 text-center">
-              <CheckCircle className="h-6 w-6 mx-auto text-secondary mb-2" />
-              <p className="text-2xl font-bold text-secondary">{stats.checkInsManaged}</p>
-              <p className="text-xs text-muted-foreground">Check-ins Done</p>
-            </CardContent>
-          </Card>
-          <Card variant="glass">
-            <CardContent className="pt-6 text-center">
-              <Clock className="h-6 w-6 mx-auto text-yellow-500 mb-2" />
-              <p className="text-2xl font-bold text-yellow-500">{stats.pendingCheckIns}</p>
-              <p className="text-xs text-muted-foreground">Pending</p>
-            </CardContent>
-          </Card>
-          <Card variant="glass">
-            <CardContent className="pt-6 text-center">
-              <Users className="h-6 w-6 mx-auto text-accent mb-2" />
-              <p className="text-2xl font-bold">{stats.upcomingEvents}</p>
-              <p className="text-xs text-muted-foreground">This Week</p>
-            </CardContent>
-          </Card>
-          <Card variant="glass">
-            <CardContent className="pt-6 text-center">
-              <Star className="h-6 w-6 mx-auto text-primary mb-2" />
-              <p className="text-2xl font-bold">{stats.avgRating}</p>
-              <p className="text-xs text-muted-foreground">Avg Rating</p>
-            </CardContent>
-          </Card>
-          <Card variant="glass">
-            <CardContent className="pt-6 text-center">
-              <Timer className="h-6 w-6 mx-auto text-chart-4 mb-2" />
-              <p className="text-2xl font-bold">{stats.onTimeRate}%</p>
-              <p className="text-xs text-muted-foreground">On-Time Rate</p>
-            </CardContent>
-          </Card>
+          {[
+            { icon: Calendar, value: stats.eventsToday, label: 'Events Today', color: 'text-primary', delay: 0 },
+            { icon: CheckCircle, value: stats.checkInsManaged, label: 'Check-ins Done', color: 'text-secondary', delay: 50 },
+            { icon: Clock, value: stats.pendingCheckIns, label: 'Pending', color: 'text-yellow-500', delay: 100 },
+            { icon: Users, value: stats.upcomingEvents, label: 'This Week', color: 'text-accent', delay: 150 },
+            { icon: Star, value: stats.avgRating, label: 'Avg Rating', color: 'text-primary', delay: 200 },
+            { icon: Timer, value: `${stats.onTimeRate}%`, label: 'On-Time Rate', color: 'text-chart-4', delay: 250 },
+          ].map((stat, i) => (
+            <Card 
+              key={stat.label} 
+              variant="glass"
+              className="opacity-0 animate-slide-up-spring hover-lift"
+              style={{ animationDelay: `${stat.delay}ms`, animationFillMode: 'forwards' }}
+            >
+              <CardContent className="pt-6 text-center">
+                <div className={`h-12 w-12 mx-auto rounded-xl bg-muted/30 flex items-center justify-center mb-3`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                </div>
+                <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
