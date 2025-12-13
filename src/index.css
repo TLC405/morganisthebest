@@ -4,100 +4,100 @@
 
 @layer base {
   :root {
-    /* Ultra-Premium Dark Palette - Obsidian Aurora */
-    /* Deep cosmic foundation with precise luminosity */
-    --background: 228 24.7% 6.47%;
-    --foreground: 216 12.8% 93.53%;
+    /* Ultra-Premium Vibrant Dark Palette - Luminous Obsidian */
+    /* Warmer, brighter foundation with energy */
+    --background: 225 22% 11%;
+    --foreground: 210 40% 96%;
     
-    /* Cards with subtle warm undertone */
-    --card: 226 21.3% 9.22%;
-    --card-foreground: 218 14.1% 94.71%;
+    /* Cards with better separation - noticeably lighter */
+    --card: 222 20% 15%;
+    --card-foreground: 218 35% 96%;
     
-    /* Popovers slightly elevated */
-    --popover: 224 22.6% 10.78%;
-    --popover-foreground: 218 14.1% 94.71%;
+    /* Popovers elevated with warmth */
+    --popover: 220 22% 17%;
+    --popover-foreground: 218 35% 96%;
     
-    /* Rose Primary - Precisely calibrated pink */
-    --primary: 341.8 76.4% 58.43%;
+    /* Rose Primary - Vivid & Energetic */
+    --primary: 340 82% 62%;
     --primary-foreground: 0 0% 100%;
     
-    /* Thunder Blue - OKC Signature */
-    --secondary: 198.7 94.2% 47.65%;
+    /* Thunder Blue - Vibrant OKC Signature */
+    --secondary: 199 100% 52%;
     --secondary-foreground: 0 0% 100%;
-    --thunder-blue: 198.7 94.2% 47.65%;
-    --thunder-dark: 199.3 89.8% 33.14%;
-    --thunder-light: 197.4 82.6% 62.35%;
+    --thunder-blue: 199 100% 52%;
+    --thunder-dark: 199 90% 38%;
+    --thunder-light: 197 85% 68%;
     
-    /* Muted with depth - not flat gray */
-    --muted: 225 18.4% 13.92%;
-    --muted-foreground: 217 11.2% 61.57%;
+    /* Muted with high readability */
+    --muted: 225 18% 18%;
+    --muted-foreground: 217 25% 72%;
     
     /* Coral accent - warm energy pulse */
-    --accent: 16.8 78.6% 57.25%;
+    --accent: 18 88% 60%;
     --accent-foreground: 0 0% 100%;
     
     /* Destructive - calibrated warning */
-    --destructive: 0 72.4% 50.98%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    /* Borders with precision */
-    --border: 224 16.7% 16.47%;
-    --input: 224 16.7% 16.47%;
-    --ring: 341.8 76.4% 58.43%;
+    /* Borders with better definition */
+    --border: 224 18% 22%;
+    --input: 224 18% 22%;
+    --ring: 340 82% 62%;
     --radius: 0.875rem;
     
-    /* Sidebar - slightly warmer undertone */
-    --sidebar-background: 227 23.1% 7.45%;
-    --sidebar-foreground: 216 12.8% 93.53%;
-    --sidebar-primary: 341.8 76.4% 58.43%;
+    /* Sidebar - cohesive with main */
+    --sidebar-background: 225 22% 9%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 340 82% 62%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 225 18.4% 13.92%;
-    --sidebar-accent-foreground: 216 12.8% 93.53%;
-    --sidebar-border: 224 16.7% 16.47%;
-    --sidebar-ring: 341.8 76.4% 58.43%;
+    --sidebar-accent: 225 18% 18%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 224 18% 22%;
+    --sidebar-ring: 340 82% 62%;
   }
 
   .dark {
-    /* Even deeper dark mode with refined contrast */
-    --background: 229 26.3% 4.71%;
-    --foreground: 214 11.4% 94.51%;
+    /* Enhanced dark mode with vibrant contrast */
+    --background: 225 24% 8%;
+    --foreground: 214 35% 95%;
     
-    --card: 227 23.8% 7.06%;
-    --card-foreground: 214 11.4% 94.51%;
+    --card: 222 22% 12%;
+    --card-foreground: 214 35% 95%;
     
-    --popover: 226 22.1% 8.63%;
-    --popover-foreground: 214 11.4% 94.51%;
+    --popover: 220 22% 14%;
+    --popover-foreground: 214 35% 95%;
     
-    --primary: 341.4 78.9% 56.27%;
+    --primary: 340 85% 60%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 198.3 96.1% 49.41%;
+    --secondary: 199 100% 54%;
     --secondary-foreground: 0 0% 100%;
-    --thunder-blue: 198.3 96.1% 49.41%;
-    --thunder-dark: 199.7 91.2% 31.37%;
-    --thunder-light: 196.9 84.3% 64.12%;
+    --thunder-blue: 199 100% 54%;
+    --thunder-dark: 199 92% 36%;
+    --thunder-light: 197 88% 70%;
     
-    --muted: 226 19.6% 11.18%;
-    --muted-foreground: 218 10.8% 58.43%;
+    --muted: 225 20% 16%;
+    --muted-foreground: 218 22% 70%;
     
-    --accent: 17.2 80.4% 55.49%;
+    --accent: 18 90% 58%;
     --accent-foreground: 0 0% 100%;
     
-    --destructive: 0 74.6% 48.82%;
+    --destructive: 0 78% 52%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 225 17.3% 13.73%;
-    --input: 225 17.3% 13.73%;
-    --ring: 341.4 78.9% 56.27%;
+    --border: 225 18% 20%;
+    --input: 225 18% 20%;
+    --ring: 340 85% 60%;
     
-    --sidebar-background: 228 25.1% 5.49%;
-    --sidebar-foreground: 214 11.4% 94.51%;
-    --sidebar-primary: 341.4 78.9% 56.27%;
+    --sidebar-background: 225 24% 6%;
+    --sidebar-foreground: 214 35% 95%;
+    --sidebar-primary: 340 85% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 226 19.6% 11.18%;
-    --sidebar-accent-foreground: 214 11.4% 94.51%;
-    --sidebar-border: 225 17.3% 13.73%;
-    --sidebar-ring: 341.4 78.9% 56.27%;
+    --sidebar-accent: 225 20% 16%;
+    --sidebar-accent-foreground: 214 35% 95%;
+    --sidebar-border: 225 18% 20%;
+    --sidebar-ring: 340 85% 60%;
   }
 }
 
