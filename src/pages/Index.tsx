@@ -44,47 +44,48 @@ const Index = () => {
     <Layout>
       {/* Hero Section - Premium gradient with floating elements */}
       <section className="relative overflow-hidden gradient-hero min-h-[80vh] flex items-center">
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl float" />
+        {/* Animated floating decorative elements */}
+        <div className="absolute top-20 left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl float animate-morph" />
         <div className="absolute bottom-20 right-10 w-52 h-52 bg-accent/10 rounded-full blur-3xl float" style={{ animationDelay: '2s' }} />
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-secondary/10 rounded-full blur-2xl float" style={{ animationDelay: '4s' }} />
+        <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-primary/15 rounded-full blur-2xl float-rotate" style={{ animationDelay: '1s' }} />
         
         <div className="relative mx-auto max-w-7xl px-4 py-20 md:py-32">
           <div className="mx-auto max-w-3xl text-center">
-            {/* Trust Badges - Glass style */}
+            {/* Trust Badges - Glass style with stagger animation */}
             <div className="mb-8 flex flex-wrap justify-center gap-3">
-              <Badge className="gap-1.5 py-2 px-4 glass border-0 text-foreground shadow-sm">
+              <Badge variant="glass" className="gap-1.5 py-2 px-4 animate-fade-in-up opacity-0 stagger-1">
                 <ShieldCheck className="h-3.5 w-3.5 text-green-500" />
                 Zero Catfishing
               </Badge>
-              <Badge className="gap-1.5 py-2 px-4 glass border-0 text-foreground shadow-sm">
+              <Badge variant="glass" className="gap-1.5 py-2 px-4 animate-fade-in-up opacity-0 stagger-2">
                 <MessageCircle className="h-3.5 w-3.5 text-secondary" />
                 Zero Ghosting
               </Badge>
-              <Badge className="gap-1.5 py-2 px-4 glass border-0 text-foreground shadow-sm">
+              <Badge variant="glass" className="gap-1.5 py-2 px-4 animate-fade-in-up opacity-0 stagger-3">
                 <Heart className="h-3.5 w-3.5 text-primary" />
                 100% Real
               </Badge>
             </div>
             
-            <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground md:text-7xl">
+            <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground md:text-7xl animate-fade-in-up opacity-0 stagger-2">
               Meet Singles{' '}
               <span className="text-gradient-warm">In Person</span>
               <br />
               <span className="text-4xl md:text-5xl text-muted-foreground font-medium">Not Just Online</span>
             </h1>
-            <p className="mb-10 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto">
+            <p className="mb-10 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto animate-fade-in-up opacity-0 stagger-3">
               Every face is verified. Every connection is earned.
               Real people, real events, real chemistry.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="gap-2 h-14 px-8 rounded-2xl gradient-primary shadow-glow hover:shadow-glow-lg transition-all text-base" asChild>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up opacity-0 stagger-4">
+              <Button variant="glow" size="xl" className="gap-2 rounded-2xl" asChild>
                 <Link to="/events">
                   <Calendar className="h-5 w-5" />
                   Find an Event
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="gap-2 h-14 px-8 rounded-2xl glass border-0 hover:bg-card/80 transition-all text-base" asChild>
+              <Button variant="glass" size="xl" className="gap-2 rounded-2xl" asChild>
                 <Link to="/auth">
                   <Sparkles className="h-5 w-5" />
                   Get Started
@@ -95,9 +96,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section - Glass cards */}
-      <section className="gradient-section py-20 md:py-28">
-        <div className="mx-auto max-w-7xl px-4">
+      {/* Features Section - Glass cards with stagger */}
+      <section className="gradient-section py-20 md:py-28 relative">
+        <div className="absolute inset-0 gradient-spotlight pointer-events-none" />
+        <div className="mx-auto max-w-7xl px-4 relative">
           <div className="text-center mb-16">
             <h2 className="mb-4 text-3xl md:text-4xl font-bold text-foreground">
               Why We're <span className="text-gradient">Different</span>
@@ -110,8 +112,9 @@ const Index = () => {
             {features.map((feature, index) => (
               <Card 
                 key={feature.title} 
-                className="glass border-0 hover-lift rounded-2xl"
-                style={{ animationDelay: `${index * 100}ms` }}
+                variant="glass"
+                className="hover-lift opacity-0 animate-fade-in-up"
+                style={{ animationDelay: `${index * 100 + 200}ms`, animationFillMode: 'forwards' }}
               >
                 <CardContent className="pt-8 pb-6 text-center">
                   <div className="mb-5 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary shadow-glow">
@@ -126,23 +129,28 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How It Works - Premium timeline */}
+      {/* How It Works - Premium timeline with animated steps */}
       <section className="py-20 md:py-28 bg-card relative overflow-hidden">
         <div className="absolute inset-0 gradient-premium opacity-50" />
+        <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
         <div className="relative mx-auto max-w-7xl px-4">
           <h2 className="mb-16 text-center text-3xl md:text-4xl font-bold text-foreground">
             How It <span className="text-gradient">Works</span>
           </h2>
           <div className="grid gap-8 md:grid-cols-4">
             {howItWorks.map((item, index) => (
-              <div key={item.step} className="relative text-center group">
-                <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center rounded-2xl gradient-primary shadow-glow-lg group-hover:scale-110 transition-transform duration-300">
+              <div 
+                key={item.step} 
+                className="relative text-center group opacity-0 animate-fade-in-up"
+                style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
+              >
+                <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center rounded-2xl gradient-primary shadow-glow-lg group-hover:scale-110 group-hover:shadow-glow transition-all duration-300">
                   <span className="text-3xl font-bold text-primary-foreground">{item.step}</span>
                 </div>
                 <h3 className="mb-3 text-xl font-bold text-foreground">{item.title}</h3>
                 <p className="text-sm text-muted-foreground">{item.description}</p>
                 {index < howItWorks.length - 1 && (
-                  <ArrowRight className="absolute right-0 top-10 hidden h-6 w-6 -translate-x-4 text-primary/50 md:block" />
+                  <ArrowRight className="absolute right-0 top-10 hidden h-6 w-6 -translate-x-4 text-primary/50 md:block group-hover:translate-x-0 group-hover:text-primary transition-all" />
                 )}
               </div>
             ))}
@@ -151,8 +159,9 @@ const Index = () => {
       </section>
 
       {/* Upcoming Events Preview - Glass design */}
-      <section className="gradient-warm py-20 md:py-28">
-        <div className="mx-auto max-w-7xl px-4">
+      <section className="gradient-warm py-20 md:py-28 relative">
+        <div className="absolute inset-0 particles opacity-30" />
+        <div className="mx-auto max-w-7xl px-4 relative">
           <div className="mb-12 flex items-center justify-between">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
@@ -160,21 +169,27 @@ const Index = () => {
               </h2>
               <p className="text-muted-foreground mt-2">Find your next opportunity to connect</p>
             </div>
-            <Button variant="ghost" className="gap-2 text-primary hover:bg-primary/10 rounded-xl" asChild>
+            <Button variant="ghost" className="gap-2 text-primary hover:bg-primary/10 rounded-xl group" asChild>
               <Link to="/events">
-                View All <ArrowRight className="h-4 w-4" />
+                View All <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {upcomingEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
+            {upcomingEvents.map((event, index) => (
+              <div 
+                key={event.id}
+                className="opacity-0 animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+              >
+                <EventCard event={event} />
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section - Premium glass */}
+      {/* CTA Section - Premium glass with pulse effect */}
       <section className="py-20 md:py-28 relative overflow-hidden">
         <div className="absolute inset-0 gradient-section" />
         <div className="absolute top-10 left-1/4 w-40 h-40 bg-primary/10 rounded-full blur-3xl float" />
@@ -183,7 +198,7 @@ const Index = () => {
         <div className="relative mx-auto max-w-3xl px-4 text-center">
           <div className="mb-8 mx-auto relative">
             <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl pulse-glow" />
-            <div className="relative h-24 w-24 mx-auto rounded-full gradient-primary flex items-center justify-center shadow-glow-lg">
+            <div className="relative h-24 w-24 mx-auto rounded-full gradient-primary flex items-center justify-center shadow-glow-lg hover:scale-110 transition-transform duration-300">
               <Heart className="h-12 w-12 text-primary-foreground" fill="currentColor" />
             </div>
           </div>
@@ -194,7 +209,7 @@ const Index = () => {
             Join hundreds of OKC singles who are tired of catfishing and ghosting.
             Real connections start with real meetings.
           </p>
-          <Button size="lg" className="gap-2 h-14 px-10 rounded-2xl gradient-primary shadow-glow hover:shadow-glow-lg transition-all text-base" asChild>
+          <Button variant="glow" size="xl" className="gap-2 rounded-2xl" asChild>
             <Link to="/auth">
               Get Started Now
               <ArrowRight className="h-5 w-5" />

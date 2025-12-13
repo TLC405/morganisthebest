@@ -121,12 +121,13 @@ const Events = () => {
 
   return (
     <Layout>
-      {/* Warm gradient header */}
-      <div className="gradient-hero border-b border-border">
-        <div className="mx-auto max-w-7xl px-4 py-12">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-primary" />
+      {/* Warm gradient header with animation */}
+      <div className="gradient-hero border-b border-border/50 relative overflow-hidden">
+        <div className="absolute inset-0 gradient-spotlight pointer-events-none" />
+        <div className="mx-auto max-w-7xl px-4 py-12 relative">
+          <div className="flex items-center gap-3 mb-2 animate-fade-in-up">
+            <div className="h-12 w-12 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+              <Calendar className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-foreground">Upcoming Events</h1>
@@ -141,27 +142,29 @@ const Events = () => {
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Profile completion prompt */}
         {user && profileComplete === false && (
-          <div className="mb-6 rounded-xl bg-accent/30 border border-accent p-4 flex items-center justify-between">
+          <div className="mb-6 rounded-2xl bg-gradient-to-r from-accent/20 to-primary/20 border border-accent/30 p-4 flex items-center justify-between animate-fade-in-up shadow-inner-glow">
             <div className="flex items-center gap-3">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <p className="text-sm text-foreground">
+              <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <p className="text-sm text-foreground font-medium">
                 Complete your profile to RSVP for events!
               </p>
             </div>
-            <Button size="sm" onClick={() => navigate('/profile')}>
+            <Button size="sm" variant="glow" onClick={() => navigate('/profile')}>
               Complete Profile
             </Button>
           </div>
         )}
 
-        {/* Category Filter */}
-        <div className="mb-8 flex flex-wrap items-center gap-2">
+        {/* Category Filter with premium badges */}
+        <div className="mb-8 flex flex-wrap items-center gap-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
           <Filter className="h-4 w-4 text-muted-foreground" />
           {categories.map((cat) => (
             <Badge
               key={cat.value}
-              variant={selectedCategory === cat.value ? 'default' : 'outline'}
-              className="cursor-pointer transition-colors hover:bg-primary hover:text-primary-foreground"
+              variant={selectedCategory === cat.value ? 'glow' : 'outline'}
+              className="cursor-pointer transition-all hover:scale-105"
               onClick={() => setSelectedCategory(cat.value)}
             >
               {cat.label}
@@ -169,26 +172,37 @@ const Events = () => {
           ))}
         </div>
 
-        {/* Events Grid */}
+        {/* Events Grid with stagger animation */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredEvents.map((event) => (
-            <EventCard key={event.id} event={event} onRSVP={handleRSVP} />
+          {filteredEvents.map((event, index) => (
+            <div
+              key={event.id}
+              className="opacity-0 animate-fade-in-up"
+              style={{ animationDelay: `${index * 80 + 150}ms`, animationFillMode: 'forwards' }}
+            >
+              <EventCard event={event} onRSVP={handleRSVP} />
+            </div>
           ))}
         </div>
 
         {filteredEvents.length === 0 && (
-          <div className="py-16 text-center">
+          <div className="py-16 text-center animate-fade-in-up">
+            <div className="mx-auto w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+              <Calendar className="h-10 w-10 text-muted-foreground" />
+            </div>
             <p className="text-muted-foreground">No events in this category yet. Check back soon!</p>
           </div>
         )}
       </div>
 
-      {/* Simple RSVP Confirmation Dialog - NO door code shown */}
+      {/* RSVP Confirmation Dialog with premium styling */}
       <Dialog open={rsvpDialog.open} onOpenChange={(open) => setRsvpDialog({ ...rsvpDialog, open })}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md glass border-primary/20">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
+              <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-primary-foreground" />
+              </div>
               Confirm Your RSVP
             </DialogTitle>
             <DialogDescription>
@@ -196,8 +210,8 @@ const Events = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="rounded-xl bg-gradient-to-r from-primary/10 to-accent/20 p-6 text-center">
-              <p className="text-lg font-medium text-foreground mb-2">
+            <div className="rounded-2xl gradient-premium p-6 text-center shadow-inner-glow">
+              <p className="text-lg font-semibold text-foreground mb-2">
                 {rsvpDialog.event?.title}
               </p>
               <p className="text-sm text-muted-foreground">
@@ -210,12 +224,12 @@ const Events = () => {
             <div className="flex gap-3">
               <Button 
                 variant="outline" 
-                className="flex-1" 
+                className="flex-1 rounded-xl" 
                 onClick={() => setRsvpDialog({ open: false, event: null })}
               >
                 Cancel
               </Button>
-              <Button className="flex-1" onClick={confirmRSVP}>
+              <Button variant="glow" className="flex-1 rounded-xl" onClick={confirmRSVP}>
                 I'm In! 🎉
               </Button>
             </div>

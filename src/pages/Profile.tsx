@@ -37,7 +37,7 @@ const Profile = () => {
     if (!user) return;
 
     const fetchProfile = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -109,10 +109,10 @@ const Profile = () => {
     return (
       <Layout>
         <div className="mx-auto max-w-2xl px-4 py-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/3" />
-            <div className="h-40 bg-muted rounded" />
-            <div className="h-40 bg-muted rounded" />
+          <div className="space-y-4">
+            <div className="h-8 skeleton-shimmer rounded-xl w-1/3" />
+            <Card variant="glass" className="h-40 skeleton-shimmer" />
+            <Card variant="glass" className="h-40 skeleton-shimmer" />
           </div>
         </div>
       </Layout>
@@ -122,10 +122,12 @@ const Profile = () => {
   return (
     <Layout>
       <div className="mx-auto max-w-2xl px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
+        {/* Header with animation */}
+        <div className="mb-8 animate-fade-in-up">
           <div className="flex items-center gap-3 mb-2">
-            <User className="h-8 w-8 text-primary" />
+            <div className="h-10 w-10 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+              <User className="h-5 w-5 text-primary-foreground" />
+            </div>
             <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
           </div>
           <p className="text-muted-foreground">
@@ -134,20 +136,24 @@ const Profile = () => {
         </div>
 
         {/* Profile Photo */}
-        <Card className="mb-6">
+        <Card 
+          variant="glass" 
+          className="mb-6 opacity-0 animate-fade-in-up"
+          style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
+        >
           <CardHeader>
             <CardTitle>Profile Photo</CardTitle>
             <CardDescription>This will be blurred until you meet at events</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-6">
-              <div className="relative">
+              <div className="relative group">
                 <img
                   src={photoUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop'}
                   alt="Your profile"
-                  className="h-24 w-24 rounded-full object-cover"
+                  className="h-24 w-24 rounded-2xl object-cover ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all"
                 />
-                <button className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+                <button className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-glow hover:scale-110 transition-transform">
                   <Camera className="h-4 w-4" />
                 </button>
               </div>
@@ -155,7 +161,7 @@ const Profile = () => {
                 <p className="text-sm text-muted-foreground">
                   Upload a clear photo of yourself. Your face should be visible and well-lit.
                 </p>
-                <Button variant="outline" size="sm" className="mt-2">
+                <Button variant="premium" size="sm" className="mt-2">
                   Change Photo
                 </Button>
               </div>
@@ -164,7 +170,11 @@ const Profile = () => {
         </Card>
 
         {/* Basic Info */}
-        <Card className="mb-6">
+        <Card 
+          variant="glass" 
+          className="mb-6 opacity-0 animate-fade-in-up"
+          style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
+        >
           <CardHeader>
             <CardTitle>Basic Info</CardTitle>
           </CardHeader>
@@ -220,6 +230,7 @@ const Profile = () => {
                 placeholder="Tell others a bit about yourself..."
                 rows={4}
                 maxLength={200}
+                className="rounded-xl"
               />
               <p className="text-xs text-muted-foreground text-right">
                 {bio.length}/200 characters
@@ -229,7 +240,11 @@ const Profile = () => {
         </Card>
 
         {/* Compatibility Quiz CTA */}
-        <Card className="mb-6 border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10">
+        <Card 
+          variant={quizCompleted ? "glass" : "neon"}
+          className="mb-6 opacity-0 animate-fade-in-up"
+          style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
@@ -244,7 +259,7 @@ const Profile = () => {
           <CardContent>
             <Button 
               onClick={() => navigate('/quiz')}
-              variant={quizCompleted ? 'outline' : 'default'}
+              variant={quizCompleted ? 'premium' : 'glow'}
               className="gap-2"
             >
               <Sparkles className="h-4 w-4" />
@@ -254,7 +269,11 @@ const Profile = () => {
         </Card>
 
         {/* Interests */}
-        <Card className="mb-6">
+        <Card 
+          variant="glass" 
+          className="mb-6 opacity-0 animate-fade-in-up"
+          style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+        >
           <CardHeader>
             <CardTitle>Interests</CardTitle>
             <CardDescription>Select up to 6 interests to show on your profile</CardDescription>
@@ -264,8 +283,8 @@ const Profile = () => {
               {allInterests.map((interest) => (
                 <Badge
                   key={interest}
-                  variant={interests.includes(interest) ? 'default' : 'outline'}
-                  className="cursor-pointer transition-colors"
+                  variant={interests.includes(interest) ? 'glow' : 'outline'}
+                  className="cursor-pointer transition-all hover:scale-105"
                   onClick={() => toggleInterest(interest)}
                 >
                   {interest}
@@ -273,7 +292,7 @@ const Profile = () => {
               ))}
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              Selected: {interests.length}/6
+              Selected: <span className="text-primary font-medium">{interests.length}/6</span>
             </p>
           </CardContent>
         </Card>
@@ -281,9 +300,11 @@ const Profile = () => {
         {/* Save Button */}
         <Button 
           onClick={handleSave} 
-          className="w-full gap-2" 
-          size="lg"
+          variant="glow"
+          className="w-full gap-2 rounded-2xl opacity-0 animate-fade-in-up" 
+          size="xl"
           disabled={saving}
+          style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
         >
           <Save className="h-5 w-5" />
           {saving ? 'Saving...' : 'Save Profile'}
