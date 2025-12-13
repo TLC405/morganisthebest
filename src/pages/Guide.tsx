@@ -286,7 +286,7 @@ const Guide = () => {
             <div>
               <h3 className="font-semibold text-white">Need more help?</h3>
               <p className="text-sm text-white/80">
-                Click the chat bubble in the bottom-right corner to talk to LoveBot, your AI assistant!
+                Click the chat bubble in the bottom-right corner to talk to Lady Evans, your personal concierge!
               </p>
             </div>
           </CardContent>

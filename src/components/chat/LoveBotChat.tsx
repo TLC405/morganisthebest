@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles } from 'lucide-react';
+import { Send, Crown, User, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -11,15 +11,15 @@ interface Message {
   content: string;
 }
 
-interface LoveBotChatProps {
+interface LadyEvansChatProps {
   onClose: () => void;
 }
 
-export const LoveBotChat = ({ onClose }: LoveBotChatProps) => {
+export const LoveBotChat = ({ onClose }: LadyEvansChatProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hey there! 💕 I'm LoveBot, your dating event assistant. How can I help you today?",
+      content: "Hello darling! ✨ I'm Lady Evans, your personal connection concierge. How may I assist you on your journey to finding that special someone?",
     },
   ]);
   const [input, setInput] = useState('');
@@ -140,16 +140,19 @@ export const LoveBotChat = ({ onClose }: LoveBotChatProps) => {
   return (
     <Card variant="glass" className="flex h-[500px] flex-col overflow-hidden shadow-glow-lg">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-border/50 bg-gradient-to-r from-primary/10 to-secondary/10 p-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary">
-          <Bot className="h-5 w-5 text-white" />
+      <div className="flex items-center gap-3 border-b border-border/50 bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 p-4">
+        <div className="relative">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary via-accent to-secondary shadow-glow">
+            <Crown className="h-5 w-5 text-white" />
+          </div>
+          <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-accent animate-pulse" />
         </div>
         <div className="flex-1">
-          <h3 className="flex items-center gap-1 font-semibold">
-            LoveBot
-            <Sparkles className="h-4 w-4 text-primary" />
+          <h3 className="flex items-center gap-1.5 font-semibold text-foreground">
+            Lady Evans
+            <span className="text-xs font-normal text-muted-foreground">✨</span>
           </h3>
-          <p className="text-xs text-muted-foreground">Your dating event assistant</p>
+          <p className="text-xs text-muted-foreground">Your personal connection concierge</p>
         </div>
       </div>
 
@@ -165,13 +168,13 @@ export const LoveBotChat = ({ onClose }: LoveBotChatProps) => {
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
                   message.role === 'user'
                     ? 'bg-secondary'
-                    : 'bg-gradient-to-r from-primary to-secondary'
+                    : 'bg-gradient-to-br from-primary via-accent to-secondary'
                 }`}
               >
                 {message.role === 'user' ? (
                   <User className="h-4 w-4 text-white" />
                 ) : (
-                  <Bot className="h-4 w-4 text-white" />
+                  <Crown className="h-4 w-4 text-white" />
                 )}
               </div>
               <div
@@ -187,8 +190,8 @@ export const LoveBotChat = ({ onClose }: LoveBotChatProps) => {
           ))}
           {isLoading && messages[messages.length - 1]?.role === 'user' && (
             <div className="flex gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary">
-                <Bot className="h-4 w-4 text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary via-accent to-secondary">
+                <Crown className="h-4 w-4 text-white" />
               </div>
               <div className="flex items-center gap-1 rounded-2xl bg-muted px-4 py-3">
                 <span className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
