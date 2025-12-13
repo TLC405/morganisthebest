@@ -1,9 +1,14 @@
 import { Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
-export const Footer = () => {
+interface FooterProps {
+  className?: string;
+}
+
+export const Footer = ({ className }: FooterProps) => {
   return (
-    <footer className="bg-muted/50 border-t border-border mt-auto">
+    <footer className={cn("bg-muted/50 border-t border-border mt-auto", className)}>
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* TLC Branding */}
