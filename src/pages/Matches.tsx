@@ -5,13 +5,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Heart, MessageCircle, Sparkles, Star, MapPin, 
-  Calendar, CheckCircle, Clock, Send, X
+  Calendar, CheckCircle, Send
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -102,7 +101,7 @@ const Matches = () => {
 
       // Transform to matches
       const transformedMatches: Match[] = [];
-      waveMap.forEach((wave, key) => {
+      waveMap.forEach((wave) => {
         const otherId = wave.from_user_id === user.id ? wave.to_user_id : wave.from_user_id;
         const profile = profileMap.get(otherId);
         if (profile) {
@@ -144,7 +143,7 @@ const Matches = () => {
     navigate(`/chat/${matchId}`);
   };
 
-  const renderMatchCard = (match: Match, showActions = true) => {
+  const renderMatchCard = (match: Match, showActions = true, index = 0) => {
     const initials = match.profile.name
       ?.split(' ')
       .map((n) => n[0])
@@ -154,7 +153,9 @@ const Matches = () => {
     return (
       <Card 
         key={match.id} 
-        className="border-border/50 hover:shadow-lg transition-all duration-300 hover:border-primary/30 overflow-hidden"
+        variant="glass"
+        className="overflow-hidden hover-lift opacity-0 animate-fade-in-up"
+        style={{ animationDelay: `${index * 80}ms`, animationFillMode: 'forwards' }}
       >
         <CardContent className="p-0">
           {/* Photo area */}
@@ -177,14 +178,14 @@ const Matches = () => {
             {/* Badges */}
             <div className="absolute top-2 left-2 flex gap-1">
               {match.is_mutual && (
-                <Badge className="bg-primary/90 text-primary-foreground">
-                  <Heart className="h-3 w-3 mr-1 fill-current" />
+                <Badge variant="glow" className="gap-1">
+                  <Heart className="h-3 w-3 fill-current" />
                   Mutual
                 </Badge>
               )}
               {match.profile.community_trusted && (
-                <Badge className="bg-amber-500/90 text-white">
-                  <Star className="h-3 w-3 mr-1 fill-current" />
+                <Badge variant="warning" className="gap-1">
+                  <Star className="h-3 w-3 fill-current" />
                 </Badge>
               )}
             </div>
@@ -195,7 +196,7 @@ const Matches = () => {
                 className={cn(
                   'absolute top-2 right-2',
                   match.compatibility_score >= 80 
-                    ? 'bg-emerald-500/90' 
+                    ? 'bg-emerald-500/90 shadow-glow' 
                     : match.compatibility_score >= 60 
                     ? 'bg-amber-500/90' 
                     : 'bg-muted/90'
@@ -229,7 +230,7 @@ const Matches = () => {
             {match.profile.interests && match.profile.interests.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {match.profile.interests.slice(0, 3).map((interest, i) => (
-                  <Badge key={i} variant="secondary" className="text-xs">
+                  <Badge key={i} variant="premium-secondary" className="text-xs">
                     {interest}
                   </Badge>
                 ))}
@@ -244,6 +245,7 @@ const Matches = () => {
             {/* Actions */}
             {showActions && match.is_mutual && (
               <Button 
+                variant="glow"
                 className="w-full" 
                 onClick={() => handleStartChat(match.profile.id)}
               >
@@ -261,54 +263,58 @@ const Matches = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-            <Heart className="h-8 w-8 text-primary" />
+        <div className="mb-8 animate-fade-in-up">
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <div className="h-10 w-10 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+              <Heart className="h-5 w-5 text-primary-foreground" />
+            </div>
             Your Matches
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-2">
             Connect with people you've met at events
           </p>
         </div>
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
-            <TabsTrigger value="mutual" className="relative">
+          <TabsList className="grid w-full grid-cols-3 max-w-md glass border-0 p-1 rounded-2xl">
+            <TabsTrigger value="mutual" className="relative rounded-xl data-[state=active]:shadow-glow">
               Mutual
               {mutualMatches.length > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs flex items-center justify-center bg-primary">
+                <Badge variant="glow" className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs flex items-center justify-center">
                   {mutualMatches.length}
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="received" className="relative">
+            <TabsTrigger value="received" className="relative rounded-xl data-[state=active]:shadow-glow-thunder">
               Received
               {pendingWaves.length > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs flex items-center justify-center bg-secondary">
+                <Badge variant="glow-secondary" className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs flex items-center justify-center">
                   {pendingWaves.length}
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="sent">Sent</TabsTrigger>
+            <TabsTrigger value="sent" className="rounded-xl">Sent</TabsTrigger>
           </TabsList>
 
           <TabsContent value="mutual">
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(3)].map((_, i) => (
-                  <Card key={i} className="h-80 animate-pulse bg-muted/50" />
+                  <Card key={i} variant="glass" className="h-80 skeleton-shimmer" />
                 ))}
               </div>
             ) : mutualMatches.length === 0 ? (
-              <Card className="border-0 shadow-md">
+              <Card variant="glass" className="animate-fade-in-up">
                 <CardContent className="p-12 text-center">
-                  <Heart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <div className="mx-auto w-20 h-20 rounded-full gradient-primary/20 flex items-center justify-center mb-4">
+                    <Heart className="h-10 w-10 text-muted-foreground" />
+                  </div>
                   <h3 className="text-xl font-semibold mb-2">No Mutual Matches Yet</h3>
                   <p className="text-muted-foreground mb-6">
                     When someone you've waved to waves back, you'll see them here!
                   </p>
-                  <Button onClick={() => navigate('/events')}>
+                  <Button variant="glow" onClick={() => navigate('/events')}>
                     <Calendar className="h-4 w-4 mr-2" />
                     Find Events
                   </Button>
@@ -316,7 +322,7 @@ const Matches = () => {
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {mutualMatches.map((match) => renderMatchCard(match))}
+                {mutualMatches.map((match, index) => renderMatchCard(match, true, index))}
               </div>
             )}
           </TabsContent>
@@ -325,13 +331,15 @@ const Matches = () => {
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(3)].map((_, i) => (
-                  <Card key={i} className="h-80 animate-pulse bg-muted/50" />
+                  <Card key={i} variant="glass" className="h-80 skeleton-shimmer" />
                 ))}
               </div>
             ) : pendingWaves.length === 0 ? (
-              <Card className="border-0 shadow-md">
+              <Card variant="glass" className="animate-fade-in-up">
                 <CardContent className="p-12 text-center">
-                  <Sparkles className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <div className="mx-auto w-20 h-20 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
+                    <Sparkles className="h-10 w-10 text-muted-foreground" />
+                  </div>
                   <h3 className="text-xl font-semibold mb-2">No Waves Received</h3>
                   <p className="text-muted-foreground">
                     Attend more events and make great impressions to receive waves!
@@ -340,7 +348,7 @@ const Matches = () => {
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {pendingWaves.map((match) => renderMatchCard(match, false))}
+                {pendingWaves.map((match, index) => renderMatchCard(match, false, index))}
               </div>
             )}
           </TabsContent>
@@ -349,18 +357,20 @@ const Matches = () => {
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(3)].map((_, i) => (
-                  <Card key={i} className="h-80 animate-pulse bg-muted/50" />
+                  <Card key={i} variant="glass" className="h-80 skeleton-shimmer" />
                 ))}
               </div>
             ) : sentWaves.length === 0 ? (
-              <Card className="border-0 shadow-md">
+              <Card variant="glass" className="animate-fade-in-up">
                 <CardContent className="p-12 text-center">
-                  <Send className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <div className="mx-auto w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mb-4">
+                    <Send className="h-10 w-10 text-muted-foreground" />
+                  </div>
                   <h3 className="text-xl font-semibold mb-2">No Waves Sent</h3>
                   <p className="text-muted-foreground mb-6">
                     Check in at events and enter someone's PIN to send them a wave!
                   </p>
-                  <Button onClick={() => navigate('/check-in')}>
+                  <Button variant="gradient-thunder" onClick={() => navigate('/check-in')}>
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Check In
                   </Button>
@@ -368,7 +378,7 @@ const Matches = () => {
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sentWaves.map((match) => renderMatchCard(match, false))}
+                {sentWaves.map((match, index) => renderMatchCard(match, false, index))}
               </div>
             )}
           </TabsContent>

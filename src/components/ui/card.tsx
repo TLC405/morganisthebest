@@ -10,8 +10,14 @@ const cardVariants = cva(
       variant: {
         default: "border bg-card shadow-sm",
         glass: "glass border-0 shadow-premium",
+        "glass-strong": "glass-strong border-0 shadow-premium",
         gradient: "gradient-card border-0 shadow-premium",
         elevated: "bg-card border-0 shadow-premium hover-lift",
+        premium: "premium-card rounded-2xl",
+        spotlight: "spotlight-card bg-card border border-border/50 shadow-depth",
+        neon: "bg-card/50 border border-primary/30 shadow-glow hover:border-primary/50",
+        "neon-blue": "bg-card/50 border border-secondary/30 shadow-glow-thunder hover:border-secondary/50",
+        floating: "bg-card border-0 shadow-depth hover-lift float",
       },
     },
     defaultVariants: {
