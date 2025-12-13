@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: AppRole | null;
+  userRole: AppRole | null; // Alias for role
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, name: string) => Promise<{ error: Error | null }>;
@@ -94,7 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, role, isLoading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, role, userRole: role, isLoading, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

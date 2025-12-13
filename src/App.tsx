@@ -15,6 +15,7 @@ import Quiz from "./pages/Quiz";
 import Chats from "./pages/Chats";
 import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
+import Guide from "./pages/Guide";
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsers from "./pages/admin/Users";
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/events" element={<Events />} />
+            <Route path="/guide" element={<Guide />} />
             
             {/* Singles Routes */}
             <Route path="/connections" element={<Connections />} />
