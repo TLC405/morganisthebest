@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Camera, Save, Sparkles } from 'lucide-react';
+import { User, Camera, Save, Sparkles, Check, ChevronRight, Heart } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { HingePrompt, HINGE_PROMPTS } from '@/components/profiles/HingePrompt';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
 
 const allInterests = [
   'hiking', 'coffee', 'live music', 'travel', 'food', 'photography',
@@ -111,72 +113,84 @@ const Profile = () => {
         <div className="mx-auto max-w-2xl px-4 py-8">
           <div className="space-y-4">
             <div className="h-8 skeleton-shimmer rounded-xl w-1/3" />
-            <Card variant="glass" className="h-40 skeleton-shimmer" />
-            <Card variant="glass" className="h-40 skeleton-shimmer" />
+            <div className="h-64 skeleton-shimmer rounded-3xl" />
+            <div className="h-48 skeleton-shimmer rounded-3xl" />
           </div>
         </div>
       </Layout>
     );
   }
 
+  const initials = name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U';
+
   return (
     <Layout>
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        {/* Header with animation */}
+      <div className="mx-auto max-w-2xl px-4 py-8 pb-24 md:pb-8">
+        {/* Header */}
         <div className="mb-8 animate-fade-in-up">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-10 w-10 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
-              <User className="h-5 w-5 text-primary-foreground" />
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+              <User className="h-7 w-7 text-primary-foreground" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
+              <p className="text-muted-foreground">This is how you'll appear to other singles</p>
+            </div>
           </div>
-          <p className="text-muted-foreground">
-            This is how you'll appear to other singles after revealing
-          </p>
         </div>
 
-        {/* Profile Photo */}
+        {/* Photo Section - Tinder style large photo */}
         <Card 
-          variant="glass" 
-          className="mb-6 opacity-0 animate-fade-in-up"
+          variant="photo-card" 
+          className="mb-6 opacity-0 animate-slide-up-spring overflow-hidden"
           style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
         >
-          <CardHeader>
-            <CardTitle>Profile Photo</CardTitle>
-            <CardDescription>This will be blurred until you meet at events</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-6">
-              <div className="relative group">
-                <img
-                  src={photoUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop'}
-                  alt="Your profile"
-                  className="h-24 w-24 rounded-2xl object-cover ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all"
-                />
-                <button className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-glow hover:scale-110 transition-transform">
-                  <Camera className="h-4 w-4" />
-                </button>
+          <div className="relative aspect-[4/5] bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20">
+            {photoUrl ? (
+              <img
+                src={photoUrl}
+                alt="Your profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="text-8xl font-bold text-foreground/20">{initials}</span>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  Upload a clear photo of yourself. Your face should be visible and well-lit.
-                </p>
-                <Button variant="premium" size="sm" className="mt-2">
-                  Change Photo
-                </Button>
-              </div>
+            )}
+            
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 photo-card-gradient" />
+            
+            {/* Camera button */}
+            <button className="absolute bottom-4 right-4 h-14 w-14 rounded-full gradient-primary text-primary-foreground shadow-glow flex items-center justify-center hover:scale-110 transition-transform">
+              <Camera className="h-6 w-6" />
+            </button>
+            
+            {/* Name overlay */}
+            <div className="absolute bottom-4 left-4">
+              <p className="text-2xl font-bold text-white">
+                {name || 'Your Name'}{age && `, ${age}`}
+              </p>
+              {area && <p className="text-white/80 text-sm">{area}</p>}
             </div>
-          </CardContent>
+          </div>
         </Card>
+
+        {/* Carousel Dots Indicator */}
+        <div className="carousel-dots mb-6 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+          <div className="carousel-dot active" />
+          <div className="carousel-dot" />
+          <div className="carousel-dot" />
+        </div>
 
         {/* Basic Info */}
         <Card 
           variant="glass" 
-          className="mb-6 opacity-0 animate-fade-in-up"
+          className="mb-6 opacity-0 animate-slide-up-spring"
           style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
         >
           <CardHeader>
-            <CardTitle>Basic Info</CardTitle>
+            <CardTitle className="text-lg">Basic Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
@@ -187,6 +201,7 @@ const Profile = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your first name"
+                  className="rounded-xl"
                 />
               </div>
               <div className="space-y-2">
@@ -198,17 +213,19 @@ const Profile = () => {
                   onChange={(e) => setAge(e.target.value)}
                   min="18"
                   max="99"
+                  className="rounded-xl"
                 />
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="area">Area/Neighborhood</Label>
+                <Label htmlFor="area">Area</Label>
                 <Input
                   id="area"
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
                   placeholder="e.g., Midtown OKC"
+                  className="rounded-xl"
                 />
               </div>
               <div className="space-y-2">
@@ -218,82 +235,111 @@ const Profile = () => {
                   value={lookingFor}
                   onChange={(e) => setLookingFor(e.target.value)}
                   placeholder="e.g., Long-term relationship"
+                  className="rounded-xl"
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="bio">About Me</Label>
-              <Textarea
-                id="bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Tell others a bit about yourself..."
-                rows={4}
-                maxLength={200}
-                className="rounded-xl"
-              />
-              <p className="text-xs text-muted-foreground text-right">
-                {bio.length}/200 characters
-              </p>
+          </CardContent>
+        </Card>
+
+        {/* Hinge-Style Prompt Section */}
+        <Card 
+          variant="glass" 
+          className="mb-6 opacity-0 animate-slide-up-spring"
+          style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}
+        >
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Heart className="h-5 w-5 text-primary" />
+              About Me
+            </CardTitle>
+            <CardDescription>Share your personality with prompts</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Tell others a bit about yourself..."
+              rows={4}
+              maxLength={200}
+              className="rounded-xl"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Share what makes you unique</span>
+              <span>{bio.length}/200</span>
             </div>
-        </CardContent>
+          </CardContent>
         </Card>
 
         {/* Compatibility Quiz CTA */}
         <Card 
           variant={quizCompleted ? "glass" : "neon"}
-          className="mb-6 opacity-0 animate-fade-in-up"
+          className="mb-6 opacity-0 animate-slide-up-spring cursor-pointer hover-lift"
           style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+          onClick={() => navigate('/quiz')}
         >
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              {quizCompleted ? 'Compatibility Quiz Complete!' : 'Take the Compatibility Quiz'}
-            </CardTitle>
-            <CardDescription>
-              {quizCompleted 
-                ? 'Your matches are being calculated based on your answers.'
-                : 'Answer 8 quick questions to find your best matches!'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button 
-              onClick={() => navigate('/quiz')}
-              variant={quizCompleted ? 'premium' : 'glow'}
-              className="gap-2"
-            >
-              <Sparkles className="h-4 w-4" />
-              {quizCompleted ? 'Retake Quiz' : 'Start Quiz'}
-            </Button>
+          <CardContent className="p-5 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className={cn(
+                "h-14 w-14 rounded-2xl flex items-center justify-center",
+                quizCompleted 
+                  ? "bg-primary/20" 
+                  : "gradient-primary shadow-glow animate-pulse-ring"
+              )}>
+                <Sparkles className={cn("h-7 w-7", quizCompleted ? "text-primary" : "text-primary-foreground")} />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">
+                  {quizCompleted ? 'Compatibility Quiz Complete!' : 'Take the Compatibility Quiz'}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {quizCompleted ? 'Your matches are being calculated' : 'Answer 8 quick questions to find your best matches'}
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </CardContent>
         </Card>
 
-        {/* Interests */}
+        {/* Interests - Interactive Pills */}
         <Card 
           variant="glass" 
-          className="mb-6 opacity-0 animate-fade-in-up"
-          style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+          className="mb-6 opacity-0 animate-slide-up-spring"
+          style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}
         >
           <CardHeader>
-            <CardTitle>Interests</CardTitle>
-            <CardDescription>Select up to 6 interests to show on your profile</CardDescription>
+            <CardTitle className="text-lg">Interests</CardTitle>
+            <CardDescription>Select up to 6 interests that represent you</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {allInterests.map((interest) => (
-                <Badge
+                <button
                   key={interest}
-                  variant={interests.includes(interest) ? 'glow' : 'outline'}
-                  className="cursor-pointer transition-all hover:scale-105"
                   onClick={() => toggleInterest(interest)}
+                  className={cn(
+                    "interest-pill transition-all",
+                    interests.includes(interest) && "selected"
+                  )}
                 >
+                  {interests.includes(interest) && <Check className="h-3.5 w-3.5" />}
                   {interest}
-                </Badge>
+                </button>
               ))}
             </div>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Selected: <span className="text-primary font-medium">{interests.length}/6</span>
-            </p>
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Selected: <span className="text-primary font-semibold">{interests.length}/6</span>
+              </p>
+              <div className="flex gap-1">
+                {interests.map((_, i) => (
+                  <div key={i} className="w-2 h-2 rounded-full bg-primary" />
+                ))}
+                {[...Array(6 - interests.length)].map((_, i) => (
+                  <div key={i + interests.length} className="w-2 h-2 rounded-full bg-muted" />
+                ))}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -301,10 +347,10 @@ const Profile = () => {
         <Button 
           onClick={handleSave} 
           variant="glow"
-          className="w-full gap-2 rounded-2xl opacity-0 animate-fade-in-up" 
-          size="xl"
+          className="w-full gap-2 rounded-2xl opacity-0 animate-slide-up-spring h-14 text-lg" 
+          size="lg"
           disabled={saving}
-          style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
+          style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
         >
           <Save className="h-5 w-5" />
           {saving ? 'Saving...' : 'Save Profile'}

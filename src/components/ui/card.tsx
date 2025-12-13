@@ -18,6 +18,12 @@ const cardVariants = cva(
         neon: "bg-card/50 border border-primary/30 shadow-glow hover:border-primary/50",
         "neon-blue": "bg-card/50 border border-secondary/30 shadow-glow-thunder hover:border-secondary/50",
         floating: "bg-card border-0 shadow-depth hover-lift float",
+        // New Hinge/Tinder inspired variants
+        "photo-card": "photo-card border-0 shadow-depth overflow-hidden",
+        "swipe-card": "photo-card border-0 shadow-depth overflow-hidden cursor-grab active:cursor-grabbing",
+        "prompt": "prompt-card",
+        "story": "rounded-2xl overflow-hidden border-0 shadow-lg",
+        "action": "bg-card/80 backdrop-blur-xl border border-border/20 shadow-depth rounded-3xl",
       },
     },
     defaultVariants: {
