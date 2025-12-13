@@ -14,8 +14,12 @@
     --primary: 342 100% 71%;
     --primary-foreground: 0 0% 100%;
     /* Soft Sky Blue accent */
-    --secondary: 200 80% 70%;
-    --secondary-foreground: 200 80% 15%;
+    /* Thunder Blue: #007AC1 */
+    --secondary: 199 100% 38%;
+    --secondary-foreground: 0 0% 100%;
+    --thunder-blue: 199 100% 38%;
+    --thunder-dark: 199 100% 28%;
+    --thunder-light: 199 80% 55%;
     /* Gentle cream & peach gradients */
     --muted: 25 50% 92%;
     --muted-foreground: 342 15% 40%;
@@ -46,8 +50,11 @@
     --popover-foreground: 342 15% 95%;
     --primary: 342 90% 65%;
     --primary-foreground: 342 25% 8%;
-    --secondary: 200 70% 55%;
+    --secondary: 199 100% 45%;
     --secondary-foreground: 0 0% 100%;
+    --thunder-blue: 199 100% 45%;
+    --thunder-dark: 199 100% 35%;
+    --thunder-light: 199 80% 60%;
     --muted: 342 20% 18%;
     --muted-foreground: 342 15% 65%;
     --accent: 20 70% 65%;

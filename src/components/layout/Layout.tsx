@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { RoleBasedNavbar } from './RoleBasedNavbar';
 import { Footer } from './Footer';
+import { LoveBotWidget } from '@/components/chat/LoveBotWidget';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <RoleBasedNavbar />
       <main className="flex-1">{children}</main>
       <Footer />
+      <LoveBotWidget />
     </div>
   );
 };

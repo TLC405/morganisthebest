@@ -23,6 +23,8 @@ import {
   Shield
 } from 'lucide-react';
 
+import { HelpCircle } from 'lucide-react';
+
 // Navigation links by role
 const singlesLinks = [
   { to: '/', label: 'Home', icon: Heart },
@@ -30,6 +32,7 @@ const singlesLinks = [
   { to: '/connections', label: 'Connections', icon: Users },
   { to: '/chats', label: 'Chats', icon: MessageCircle },
   { to: '/check-in', label: 'Check In', icon: MapPin },
+  { to: '/guide', label: 'Guide', icon: HelpCircle },
   { to: '/profile', label: 'Profile', icon: User },
 ];
 
