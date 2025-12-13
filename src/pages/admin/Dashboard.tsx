@@ -441,6 +441,26 @@ const AdminDashboard = () => {
                   className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
                   asChild
                 >
+                  <Link to="/admin/shop">
+                    <Star className="h-4 w-4 mr-3 text-primary" />
+                    Shop & Products
+                  </Link>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
+                  asChild
+                >
+                  <Link to="/admin/coupons">
+                    <Star className="h-4 w-4 mr-3 text-primary" />
+                    Coupon Codes
+                  </Link>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
+                  asChild
+                >
                   <Link to="/admin/team">
                     <Star className="h-4 w-4 mr-3 text-primary" />
                     Team Performance

@@ -41,6 +41,54 @@ export type Database = {
         }
         Relationships: []
       }
+      coupon_codes: {
+        Row: {
+          applicable_products: string[] | null
+          code: string
+          created_at: string | null
+          created_by: string | null
+          current_uses: number | null
+          discount_type: string
+          discount_value: number
+          id: string
+          max_uses: number | null
+          min_purchase: number | null
+          status: string | null
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          applicable_products?: string[] | null
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          current_uses?: number | null
+          discount_type: string
+          discount_value: number
+          id?: string
+          max_uses?: number | null
+          min_purchase?: number | null
+          status?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          applicable_products?: string[] | null
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          current_uses?: number | null
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          max_uses?: number | null
+          min_purchase?: number | null
+          status?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       event_attendance: {
         Row: {
           check_in_latitude: number | null
@@ -248,6 +296,45 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          coupon_code: string | null
+          created_at: string | null
+          discount_applied: number | null
+          id: string
+          items: Json
+          status: string | null
+          subtotal: number
+          total: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          coupon_code?: string | null
+          created_at?: string | null
+          discount_applied?: number | null
+          id?: string
+          items: Json
+          status?: string | null
+          subtotal: number
+          total: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          coupon_code?: string | null
+          created_at?: string | null
+          discount_applied?: number | null
+          id?: string
+          items?: Json
+          status?: string | null
+          subtotal?: number
+          total?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
@@ -357,6 +444,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      shop_products: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          inventory_count: number | null
+          name: string
+          price: number
+          sale_price: number | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          inventory_count?: number | null
+          name: string
+          price: number
+          sale_price?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          inventory_count?: number | null
+          name?: string
+          price?: number
+          sale_price?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       team_performance: {
         Row: {

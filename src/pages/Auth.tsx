@@ -15,15 +15,27 @@ const Auth = () => {
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { signIn, signUp, user, isLoading } = useAuth();
+  const { signIn, signUp, user, role, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (user && !isLoading) {
-      navigate('/');
+    if (user && !isLoading && role) {
+      // Role-based redirect after login
+      switch (role) {
+        case 'admin':
+          navigate('/admin/dashboard', { replace: true });
+          break;
+        case 'team':
+          navigate('/team/dashboard', { replace: true });
+          break;
+        case 'single':
+        default:
+          navigate('/dashboard', { replace: true });
+          break;
+      }
     }
-  }, [user, isLoading, navigate]);
+  }, [user, role, isLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
