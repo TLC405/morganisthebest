@@ -43,6 +43,8 @@ const teamLinks = [
   { to: '/team/performance', label: 'My Performance', icon: Star },
 ];
 
+import { Brain } from 'lucide-react';
+
 const adminLinks = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin/users', label: 'Users', icon: Users },
@@ -50,6 +52,7 @@ const adminLinks = [
   { to: '/admin/venues', label: 'Venues', icon: Building2 },
   { to: '/admin/feedback', label: 'Feedback', icon: MessageCircle },
   { to: '/admin/team', label: 'Team', icon: Star },
+  { to: '/admin/market-intel', label: 'Intel', icon: Brain },
 ];
 
 export const RoleBasedNavbar = () => {

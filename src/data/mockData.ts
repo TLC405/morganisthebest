@@ -1,4 +1,6 @@
 // Mock data for frontend-only MVP
+import { celebrityProfiles } from './mockCelebrityProfiles';
+import { realOkcEvents } from './realOkcEvents';
 
 export type UserRole = 'single' | 'team' | 'admin' | 'coder';
 
@@ -178,65 +180,11 @@ export const mockProfiles: User[] = [
   },
 ];
 
-// Mock events
-export const mockEvents: Event[] = [
-  {
-    id: 'event-1',
-    title: 'Friday Night Mixer',
-    date: '2024-12-20',
-    time: '7:00 PM',
-    location: 'The Social Lounge, OKC',
-    description: 'Casual drinks and conversation in a relaxed atmosphere. Perfect for first-timers!',
-    category: 'mixer',
-    attendeeCount: 24,
-    maxCapacity: 40,
-    imageUrl: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600',
-    attendeeAgeRanges: ['25-30', '30-35'],
-    popularInterests: ['Drinks', 'Conversation', 'Networking'],
-  },
-  {
-    id: 'event-2',
-    title: 'Speed Dating Spectacular',
-    date: '2024-12-22',
-    time: '6:30 PM',
-    location: 'Ember Restaurant, Bricktown',
-    description: 'Quick connections, lasting impressions. 8-minute rounds with complimentary appetizers.',
-    category: 'speed-dating',
-    attendeeCount: 18,
-    maxCapacity: 30,
-    imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600',
-    attendeeAgeRanges: ['25-30', '30-35', '35-40'],
-    popularInterests: ['Dating', 'Conversation', 'Food'],
-  },
-  {
-    id: 'event-3',
-    title: 'Bowling & Bonding',
-    date: '2024-12-28',
-    time: '5:00 PM',
-    location: 'Heritage Lanes, Norman',
-    description: 'Strike up a conversation while bowling! Teams mixed for maximum mingling.',
-    category: 'activity',
-    attendeeCount: 32,
-    maxCapacity: 48,
-    imageUrl: 'https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?w=600',
-    attendeeAgeRanges: ['21-25', '25-30', '30-35'],
-    popularInterests: ['Bowling', 'Games', 'Fun'],
-  },
-  {
-    id: 'event-4',
-    title: 'New Years Eve Gala',
-    date: '2024-12-31',
-    time: '8:00 PM',
-    location: 'The Grand Ballroom, Downtown OKC',
-    description: 'Ring in the new year with fellow singles! Formal attire, champagne toast at midnight.',
-    category: 'social',
-    attendeeCount: 85,
-    maxCapacity: 150,
-    imageUrl: 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=600',
-    attendeeAgeRanges: ['25-30', '30-35', '35-40', '40-45'],
-    popularInterests: ['Party', 'Dancing', 'Celebration'],
-  },
-];
+// Use real OKC events
+export const mockEvents: Event[] = realOkcEvents;
+
+// Combine original profiles with celebrity profiles for 300+ total
+export const allProfiles: User[] = [...mockProfiles, ...celebrityProfiles];
 
 // Mock RSVPs for current user
 export const userRSVPs: RSVP[] = [

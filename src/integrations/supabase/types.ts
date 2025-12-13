@@ -269,6 +269,8 @@ export type Database = {
           response_rate: number | null
           show_up_rate: number | null
           total_feedback_count: number | null
+          trust_index: number | null
+          trust_level: string | null
           updated_at: string | null
           verification_level: string | null
         }
@@ -292,6 +294,8 @@ export type Database = {
           response_rate?: number | null
           show_up_rate?: number | null
           total_feedback_count?: number | null
+          trust_index?: number | null
+          trust_level?: string | null
           updated_at?: string | null
           verification_level?: string | null
         }
@@ -315,6 +319,8 @@ export type Database = {
           response_rate?: number | null
           show_up_rate?: number | null
           total_feedback_count?: number | null
+          trust_index?: number | null
+          trust_level?: string | null
           updated_at?: string | null
           verification_level?: string | null
         }
@@ -392,6 +398,77 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_behavior_metrics: {
+        Row: {
+          avg_response_time_mins: number | null
+          conversations_ended_gracefully: number | null
+          conversations_started: number | null
+          created_at: string | null
+          events_attended: number | null
+          events_rsvpd: number | null
+          id: string
+          messages_received: number | null
+          messages_sent: number | null
+          on_time_percentage: number | null
+          positive_feedback_received: number | null
+          reports_received: number | null
+          trust_index: number | null
+          trust_level: string | null
+          updated_at: string | null
+          user_id: string
+          waves_received: number | null
+          waves_sent: number | null
+        }
+        Insert: {
+          avg_response_time_mins?: number | null
+          conversations_ended_gracefully?: number | null
+          conversations_started?: number | null
+          created_at?: string | null
+          events_attended?: number | null
+          events_rsvpd?: number | null
+          id?: string
+          messages_received?: number | null
+          messages_sent?: number | null
+          on_time_percentage?: number | null
+          positive_feedback_received?: number | null
+          reports_received?: number | null
+          trust_index?: number | null
+          trust_level?: string | null
+          updated_at?: string | null
+          user_id: string
+          waves_received?: number | null
+          waves_sent?: number | null
+        }
+        Update: {
+          avg_response_time_mins?: number | null
+          conversations_ended_gracefully?: number | null
+          conversations_started?: number | null
+          created_at?: string | null
+          events_attended?: number | null
+          events_rsvpd?: number | null
+          id?: string
+          messages_received?: number | null
+          messages_sent?: number | null
+          on_time_percentage?: number | null
+          positive_feedback_received?: number | null
+          reports_received?: number | null
+          trust_index?: number | null
+          trust_level?: string | null
+          updated_at?: string | null
+          user_id?: string
+          waves_received?: number | null
+          waves_sent?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_behavior_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -502,6 +579,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_trust_index: { Args: { p_user_id: string }; Returns: number }
       generate_event_pin: { Args: { p_event_id: string }; Returns: string }
       get_user_role: {
         Args: { _user_id: string }

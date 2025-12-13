@@ -23,6 +23,7 @@ import AdminEvents from "./pages/admin/Events";
 import AdminVenues from "./pages/admin/Venues";
 import AdminFeedback from "./pages/admin/Feedback";
 import AdminTeam from "./pages/admin/Team";
+import MarketIntel from "./pages/admin/MarketIntel";
 // Team pages
 import TeamDashboard from "./pages/team/Dashboard";
 import TeamEvents from "./pages/team/Events";
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/admin/events" element={<AdminEvents />} />
             <Route path="/admin/venues" element={<AdminVenues />} />
             <Route path="/admin/feedback" element={<AdminFeedback />} />
+            <Route path="/admin/market-intel" element={<MarketIntel />} />
             <Route path="/admin/team" element={<AdminTeam />} />
             
             {/* Team Routes */}
