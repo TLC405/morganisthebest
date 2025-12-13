@@ -20,10 +20,10 @@ import {
   LogOut,
   LogIn,
   Crown,
-  Shield
+  Shield,
+  HelpCircle,
+  Brain
 } from 'lucide-react';
-
-import { HelpCircle } from 'lucide-react';
 
 // Navigation links by role
 const singlesLinks = [
@@ -42,8 +42,6 @@ const teamLinks = [
   { to: '/team/check-ins', label: 'Check-Ins', icon: ClipboardList },
   { to: '/team/performance', label: 'My Performance', icon: Star },
 ];
-
-import { Brain } from 'lucide-react';
 
 const adminLinks = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -130,14 +128,16 @@ export const RoleBasedNavbar = () => {
     <header className="sticky top-0 z-50 glass-strong border-b border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="relative">
-              <Heart className="h-7 w-7 text-primary fill-primary transition-transform group-hover:scale-110" />
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+          {/* Logo - Text Only */}
+          <Link to="/" className="flex flex-col group">
+            <div className="flex items-center gap-1">
+              <span className="font-black text-xl tracking-tight" style={{ color: '#E3F93C' }}>
+                SOCIAL SINGLES
+              </span>
+              <span className="font-black text-xl text-secondary">OKC</span>
             </div>
-            <span className="font-bold text-lg text-foreground">
-              Social Singles <span className="text-gradient">OKC</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium -mt-0.5">
+              Date in Real Life
             </span>
           </Link>
 
