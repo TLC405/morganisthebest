@@ -21,6 +21,7 @@ import Guide from "./pages/Guide";
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsers from "./pages/admin/Users";
+import AdminMembers from "./pages/admin/Members";
 import AdminEvents from "./pages/admin/Events";
 import AdminVenues from "./pages/admin/Venues";
 import AdminFeedback from "./pages/admin/Feedback";
@@ -34,6 +35,8 @@ import TeamDashboard from "./pages/team/Dashboard";
 import TeamEvents from "./pages/team/Events";
 import TeamCheckIns from "./pages/team/CheckIns";
 import TeamPerformance from "./pages/team/Performance";
+// Member pages
+import Matches from "./pages/Matches";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +57,7 @@ const App = () => (
               
               {/* Singles Routes */}
               <Route path="/connections" element={<Connections />} />
+              <Route path="/matches" element={<Matches />} />
               <Route path="/check-in" element={<CheckIn />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
@@ -64,6 +68,7 @@ const App = () => (
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/members" element={<AdminMembers />} />
               <Route path="/admin/events" element={<AdminEvents />} />
               <Route path="/admin/venues" element={<AdminVenues />} />
               <Route path="/admin/feedback" element={<AdminFeedback />} />

@@ -152,6 +152,41 @@ export type Database = {
           },
         ]
       }
+      event_attendee_roles: {
+        Row: {
+          assigned_by: string | null
+          attendance_id: string
+          created_at: string | null
+          id: string
+          role_description: string | null
+          role_type: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          attendance_id: string
+          created_at?: string | null
+          id?: string
+          role_description?: string | null
+          role_type: string
+        }
+        Update: {
+          assigned_by?: string | null
+          attendance_id?: string
+          created_at?: string | null
+          id?: string
+          role_description?: string | null
+          role_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendee_roles_attendance_id_fkey"
+            columns: ["attendance_id"]
+            isOneToOne: false
+            referencedRelation: "event_attendance"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           age_range_max: number | null
@@ -342,15 +377,21 @@ export type Database = {
           bio: string | null
           community_trusted: boolean | null
           created_at: string | null
+          education: string | null
           events_attended: number | null
+          height_inches: number | null
           id: string
           interests: string[] | null
           looking_for: string | null
+          match_preferences: Json | null
           name: string
+          occupation: string | null
           personality_quote: string | null
           personality_vector: Json | null
           photo_url: string | null
+          photos: Json | null
           positive_feedback_count: number | null
+          prompts: Json | null
           quiz_completed: boolean | null
           religion: string | null
           response_rate: number | null
@@ -367,15 +408,21 @@ export type Database = {
           bio?: string | null
           community_trusted?: boolean | null
           created_at?: string | null
+          education?: string | null
           events_attended?: number | null
+          height_inches?: number | null
           id: string
           interests?: string[] | null
           looking_for?: string | null
+          match_preferences?: Json | null
           name: string
+          occupation?: string | null
           personality_quote?: string | null
           personality_vector?: Json | null
           photo_url?: string | null
+          photos?: Json | null
           positive_feedback_count?: number | null
+          prompts?: Json | null
           quiz_completed?: boolean | null
           religion?: string | null
           response_rate?: number | null
@@ -392,15 +439,21 @@ export type Database = {
           bio?: string | null
           community_trusted?: boolean | null
           created_at?: string | null
+          education?: string | null
           events_attended?: number | null
+          height_inches?: number | null
           id?: string
           interests?: string[] | null
           looking_for?: string | null
+          match_preferences?: Json | null
           name?: string
+          occupation?: string | null
           personality_quote?: string | null
           personality_vector?: Json | null
           photo_url?: string | null
+          photos?: Json | null
           positive_feedback_count?: number | null
+          prompts?: Json | null
           quiz_completed?: boolean | null
           religion?: string | null
           response_rate?: number | null
@@ -664,6 +717,7 @@ export type Database = {
       }
       waves: {
         Row: {
+          compatibility_score: number | null
           created_at: string | null
           event_id: string | null
           from_user_id: string
@@ -674,6 +728,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          compatibility_score?: number | null
           created_at?: string | null
           event_id?: string | null
           from_user_id: string
@@ -684,6 +739,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          compatibility_score?: number | null
           created_at?: string | null
           event_id?: string | null
           from_user_id?: string
