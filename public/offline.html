@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - Morgan Is The Best</title>
+  <style>
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #fef2f2 0%, #fff 100%);
+      color: #1f2937;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 500px;
+    }
+    .icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 2rem;
+      opacity: 0.8;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #e11d48;
+    }
+    p {
+      color: #6b7280;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    button {
+      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      <line x1="2" y1="2" x2="22" y2="22" stroke="#e11d48" stroke-width="2"></line>
+    </svg>
+    <h1>You're Offline</h1>
+    <p>It looks like you've lost your internet connection. Don't worry - some features are still available offline!</p>
+    <button onclick="window.location.reload()">Try Again</button>
+  </div>
+</body>
+</html>
