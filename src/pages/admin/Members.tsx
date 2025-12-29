@@ -11,9 +11,11 @@ import { MemberDetail } from '@/components/members/MemberDetail';
 import { RoleType } from '@/components/events/EventRoleSelector';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { ThemeVariantProvider, useThemeVariant } from '@/contexts/ThemeVariantContext';
+import { ThemeVariantSwitcher } from '@/components/admin/ThemeVariantSwitcher';
 import { 
   Search, Grid, List, Users, Star, CheckCircle, 
-  TrendingUp, RefreshCw, Activity
+  TrendingUp, RefreshCw, Filter, Download, SlidersHorizontal
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -21,7 +23,8 @@ interface MemberWithMetrics extends MemberData {
   behaviorMetrics?: BehaviorMetrics;
 }
 
-const AdminMembers = () => {
+const MembersContent = () => {
+  const { variant } = useThemeVariant();
   const [members, setMembers] = useState<MemberWithMetrics[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -40,7 +43,6 @@ const AdminMembers = () => {
   const fetchMembers = async () => {
     setLoading(true);
     try {
-      // Fetch profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -48,18 +50,12 @@ const AdminMembers = () => {
 
       if (profilesError) throw profilesError;
 
-      // Fetch behavior metrics
       const userIds = profilesData?.map(p => p.id) || [];
-      const { data: metricsData, error: metricsError } = await supabase
+      const { data: metricsData } = await supabase
         .from('user_behavior_metrics')
         .select('*')
         .in('user_id', userIds);
 
-      if (metricsError) {
-        console.error('Error fetching metrics:', metricsError);
-      }
-
-      // Combine profiles with metrics
       const metricsMap = new Map(metricsData?.map(m => [m.user_id, m]) || []);
       
       const membersWithMetrics: MemberWithMetrics[] = (profilesData || []).map(profile => ({
@@ -80,11 +76,7 @@ const AdminMembers = () => {
       setMembers(membersWithMetrics);
     } catch (error) {
       console.error('Error fetching members:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load members',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: 'Failed to load members', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -109,8 +101,7 @@ const AdminMembers = () => {
       (filterEvents === '0' && (member.events_attended || 0) === 0);
 
     const matchesTrustLevel =
-      filterTrustLevel === 'all' ||
-      (member.behaviorMetrics?.trust_level === filterTrustLevel);
+      filterTrustLevel === 'all' || member.behaviorMetrics?.trust_level === filterTrustLevel;
 
     return matchesSearch && matchesTrust && matchesEvents && matchesTrustLevel;
   });
@@ -127,259 +118,242 @@ const AdminMembers = () => {
     setDetailOpen(true);
   };
 
-  const handleRolesChange = async (roles: RoleType[], description?: string) => {
-    toast({
-      title: 'Roles Updated',
-      description: `Updated roles for ${selectedMember?.name}`,
-    });
+  const handleRolesChange = async () => {
+    toast({ title: 'Roles Updated', description: `Updated roles for ${selectedMember?.name}` });
     setDetailOpen(false);
+  };
+
+  const cardStyles = {
+    glass: 'bg-card/60 backdrop-blur-xl border-border/40',
+    neumorphic: 'bg-card shadow-[4px_4px_8px_hsl(0_0%_0%/0.2),-4px_-4px_8px_hsl(var(--border)/0.08)]',
+    swiss: 'bg-card border-l-4 border-l-primary',
+    luxe: 'bg-gradient-to-br from-card to-[hsl(225_24%_6%)] border-[hsl(45_30%_30%/0.2)]',
   };
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8 animate-fade-in-up">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+          {/* Header */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Members</h1>
+              <p className="text-muted-foreground">
+                {stats.total} members • {stats.trusted} trusted • {stats.active} active
+              </p>
+            </div>
+            
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
-                <Users className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">Member Database</h1>
-                <p className="text-muted-foreground">
-                  Manage members, track behavior, and assign roles
-                </p>
-              </div>
+              <ThemeVariantSwitcher />
+              <Button variant="outline" size="icon">
+                <Download className="h-4 w-4" />
+              </Button>
+              <Button onClick={fetchMembers} variant="outline" className="gap-2">
+                <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+                Refresh
+              </Button>
             </div>
-            <Button onClick={fetchMembers} variant="premium">
-              <RefreshCw className={cn('h-4 w-4 mr-2', loading && 'animate-spin')} />
-              Refresh
-            </Button>
           </div>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { icon: Users, label: 'Total Members', value: stats.total, color: 'primary' },
-            { icon: Star, label: 'Community Trusted', value: stats.trusted, color: 'amber-400' },
-            { icon: CheckCircle, label: 'Verified', value: stats.verified, color: 'emerald-400' },
-            { icon: TrendingUp, label: 'Active (3+ events)', value: stats.active, color: 'secondary' },
-          ].map((stat, index) => (
-            <Card 
-              key={stat.label} 
-              variant="glass"
-              className="opacity-0 animate-fade-in-up"
-              style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
-            >
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className={`h-12 w-12 rounded-xl bg-${stat.color}/20 flex items-center justify-center`}>
-                  <stat.icon className={`h-6 w-6 text-${stat.color}`} />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold animate-count-up">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Filters and Search */}
-        <Card variant="glass" className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
-          <CardContent className="p-4">
-            <div className="flex flex-col md:flex-row gap-4 items-center">
-              <div className="relative flex-1 w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by name, location, or occupation..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              
-              <div className="flex flex-wrap gap-2 w-full md:w-auto">
-                <Select value={filterTrust} onValueChange={setFilterTrust}>
-                  <SelectTrigger className="w-[130px]">
-                    <SelectValue placeholder="Trust Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="trusted">Trusted</SelectItem>
-                    <SelectItem value="verified">Verified</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={filterTrustLevel} onValueChange={setFilterTrustLevel}>
-                  <SelectTrigger className="w-[140px]">
-                    <Activity className="h-4 w-4 mr-1" />
-                    <SelectValue placeholder="Trust Level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Levels</SelectItem>
-                    <SelectItem value="rising_star">Rising Star</SelectItem>
-                    <SelectItem value="community_trusted">Community Trusted</SelectItem>
-                    <SelectItem value="veteran">Veteran</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={filterEvents} onValueChange={setFilterEvents}>
-                  <SelectTrigger className="w-[130px]">
-                    <SelectValue placeholder="Events" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Events</SelectItem>
-                    <SelectItem value="0">No Events</SelectItem>
-                    <SelectItem value="5+">5+ Events</SelectItem>
-                    <SelectItem value="10+">10+ Events</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'grid' | 'list')}>
-                  <TabsList className="h-10 glass border-0">
-                    <TabsTrigger value="grid" className="px-3">
-                      <Grid className="h-4 w-4" />
-                    </TabsTrigger>
-                    <TabsTrigger value="list" className="px-3">
-                      <List className="h-4 w-4" />
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Members Grid/List */}
-        {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {[...Array(10)].map((_, i) => (
-              <Card key={i} variant="glass" className="h-48 skeleton-shimmer" />
+          {/* Stats Row */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            {[
+              { label: 'Total', value: stats.total, icon: Users },
+              { label: 'Trusted', value: stats.trusted, icon: Star },
+              { label: 'Verified', value: stats.verified, icon: CheckCircle },
+              { label: 'Active', value: stats.active, icon: TrendingUp },
+            ].map((stat) => (
+              <Card key={stat.label} className={cn('rounded-xl border', cardStyles[variant])}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-muted/50 flex items-center justify-center">
+                    <stat.icon className="h-5 w-5 text-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground">{stat.label}</p>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        ) : filteredMembers.length === 0 ? (
-          <Card variant="glass" className="animate-fade-in-up">
-            <CardContent className="p-12 text-center">
-              <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
-                <Users className="h-8 w-8 text-muted-foreground" />
+
+          {/* Filters */}
+          <Card className={cn('rounded-xl border mb-6', cardStyles[variant])}>
+            <CardContent className="p-4">
+              <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by name, location, or occupation..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 bg-transparent"
+                  />
+                </div>
+                
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Select value={filterTrust} onValueChange={setFilterTrust}>
+                    <SelectTrigger className="w-[120px] bg-transparent">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="trusted">Trusted</SelectItem>
+                      <SelectItem value="verified">Verified</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={filterEvents} onValueChange={setFilterEvents}>
+                    <SelectTrigger className="w-[110px] bg-transparent">
+                      <SelectValue placeholder="Events" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="0">New</SelectItem>
+                      <SelectItem value="5+">5+</SelectItem>
+                      <SelectItem value="10+">10+</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/50">
+                    <Button
+                      variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setViewMode('grid')}
+                    >
+                      <Grid className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setViewMode('list')}
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold mb-2">No Members Found</h3>
-              <p className="text-muted-foreground">
-                {searchQuery
-                  ? 'Try adjusting your search or filters'
-                  : 'Members will appear here once they sign up'}
-              </p>
             </CardContent>
           </Card>
-        ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {filteredMembers.map((member, index) => (
-              <div key={member.id} style={{ animationDelay: `${index * 50}ms` }}>
-                <MemberCard
-                  member={member}
-                  behaviorMetrics={member.behaviorMetrics}
-                  onClick={() => handleMemberClick(member)}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <Card variant="glass">
-            <CardContent className="p-0">
+
+          {/* Members Grid */}
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {[...Array(12)].map((_, i) => (
+                <div key={i} className="h-48 rounded-2xl bg-muted/30 animate-pulse" />
+              ))}
+            </div>
+          ) : filteredMembers.length === 0 ? (
+            <Card className={cn('rounded-2xl', cardStyles[variant])}>
+              <CardContent className="p-16 text-center">
+                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No Members Found</h3>
+                <p className="text-muted-foreground">
+                  {searchQuery ? 'Try adjusting your search or filters' : 'Members will appear here once they sign up'}
+                </p>
+              </CardContent>
+            </Card>
+          ) : viewMode === 'grid' ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {filteredMembers.map((member, index) => (
+                <div 
+                  key={member.id} 
+                  className="opacity-0 animate-fade-in-up"
+                  style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'forwards' }}
+                >
+                  <MemberCard
+                    member={member}
+                    behaviorMetrics={member.behaviorMetrics}
+                    onClick={() => handleMemberClick(member)}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Card className={cn('rounded-2xl overflow-hidden', cardStyles[variant])}>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Member</th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Location</th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Trust</th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Events</th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Waves</th>
-                      <th className="text-center py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Member</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Location</th>
+                      <th className="text-center py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Trust</th>
+                      <th className="text-center py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Events</th>
+                      <th className="text-center py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredMembers.map((member) => (
                       <tr 
                         key={member.id} 
-                        className="border-b border-border hover:bg-muted/50 cursor-pointer transition-colors"
+                        className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
                         onClick={() => handleMemberClick(member)}
                       >
-                        <td className="py-3 px-4">
+                        <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-sm font-semibold">
+                            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold">
                               {member.name?.split(' ').map(n => n[0]).join('').toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-medium text-foreground">
-                                {member.name}{member.age && `, ${member.age}`}
-                              </p>
-                              {member.looking_for && (
-                                <p className="text-xs text-muted-foreground">
-                                  Looking for {member.looking_for}
-                                </p>
-                              )}
+                              <p className="font-medium text-foreground">{member.name}{member.age && `, ${member.age}`}</p>
+                              <p className="text-xs text-muted-foreground">{member.occupation || '-'}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-muted-foreground">{member.area || '-'}</td>
-                        <td className="py-3 px-4 text-center">
+                        <td className="py-4 px-4 text-sm text-muted-foreground">{member.area || '-'}</td>
+                        <td className="py-4 px-4 text-center">
                           <span className={cn(
-                            'font-semibold',
+                            'text-sm font-semibold',
                             (member.behaviorMetrics?.trust_index || 50) >= 70 ? 'text-emerald-400' : 
                             (member.behaviorMetrics?.trust_index || 50) >= 50 ? 'text-amber-400' : 'text-muted-foreground'
                           )}>
-                            {Math.round(member.behaviorMetrics?.trust_index || member.trust_index || 50)}%
+                            {Math.round(member.behaviorMetrics?.trust_index || member.trust_index || 50)}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-center">{member.events_attended || 0}</td>
-                        <td className="py-3 px-4 text-center">
-                          <span className="text-primary">{member.behaviorMetrics?.waves_sent || 0}</span>
-                          <span className="text-muted-foreground">/</span>
-                          <span className="text-secondary">{member.behaviorMetrics?.waves_received || 0}</span>
-                        </td>
-                        <td className="py-3 px-4 text-center">
+                        <td className="py-4 px-4 text-center text-sm text-muted-foreground">{member.events_attended || 0}</td>
+                        <td className="py-4 px-4 text-center">
                           {member.community_trusted ? (
-                            <Badge variant="glow" className="text-xs">
-                              <Star className="h-3 w-3 mr-1 fill-current" />
-                              Trusted
-                            </Badge>
+                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">Trusted</Badge>
                           ) : (
-                            <Badge variant="outline" className="text-xs">Member</Badge>
+                            <Badge variant="outline">Member</Badge>
                           )}
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <Button variant="ghost" size="sm">View</Button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </Card>
+          )}
 
-        {/* Showing count */}
-        <div className="mt-4 text-sm text-muted-foreground text-center">
-          Showing {filteredMembers.length} of {members.length} members
+          {/* Count */}
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Showing {filteredMembers.length} of {members.length} members
+          </p>
+
+          {/* Member Detail */}
+          <MemberDetail
+            member={selectedMember}
+            open={detailOpen}
+            onClose={() => setDetailOpen(false)}
+            behaviorMetrics={selectedMember?.behaviorMetrics}
+            onRolesChange={handleRolesChange}
+            mode="admin"
+          />
         </div>
-
-        {/* Member Detail Modal */}
-        <MemberDetail
-          member={selectedMember}
-          open={detailOpen}
-          onClose={() => setDetailOpen(false)}
-          behaviorMetrics={selectedMember?.behaviorMetrics}
-          onRolesChange={handleRolesChange}
-          mode="admin"
-        />
       </div>
     </Layout>
+  );
+};
+
+const AdminMembers = () => {
+  return (
+    <ThemeVariantProvider>
+      <MembersContent />
+    </ThemeVariantProvider>
   );
 };
 

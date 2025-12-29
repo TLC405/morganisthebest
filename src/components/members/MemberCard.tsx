@@ -1,8 +1,10 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
-import { Crown, Star, Sparkles, Target, Heart, Users, CheckCircle, Clock, MapPin, Send, MessageCircle, TrendingUp } from 'lucide-react';
+import { 
+  Crown, Star, Sparkles, Target, Heart, Users, CheckCircle, 
+  Clock, MapPin, Send, MessageCircle, TrendingUp, Shield 
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface MemberData {
@@ -62,15 +64,6 @@ const roleIcons: Record<string, typeof Crown> = {
   success_story: Heart,
 };
 
-const roleColors: Record<string, string> = {
-  host: 'bg-primary/20 text-primary border-primary/30',
-  icebreaker: 'bg-secondary/20 text-secondary border-secondary/30',
-  mentor: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  newcomer: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  regular: 'bg-muted text-muted-foreground border-border',
-  success_story: 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-};
-
 const roleLabels: Record<string, string> = {
   host: 'Host',
   icebreaker: 'Icebreaker',
@@ -78,12 +71,6 @@ const roleLabels: Record<string, string> = {
   newcomer: 'Newcomer',
   regular: 'Regular',
   success_story: 'Success Story',
-};
-
-const trustLevelColors: Record<string, string> = {
-  rising_star: 'text-emerald-400',
-  community_trusted: 'text-amber-400',
-  veteran: 'text-purple-400',
 };
 
 export const MemberCard = ({
@@ -104,99 +91,130 @@ export const MemberCard = ({
     .toUpperCase() || '?';
 
   const trustIndex = behaviorMetrics?.trust_index ?? member.trust_index ?? 50;
-  const trustLevel = behaviorMetrics?.trust_level ?? member.trust_level ?? 'rising_star';
+  const eventsCount = member.events_attended || 0;
+
+  // Determine tier based on trust and activity
+  const getTier = () => {
+    if (trustIndex >= 80 && eventsCount >= 10) return 'platinum';
+    if (trustIndex >= 60 && eventsCount >= 5) return 'gold';
+    if (trustIndex >= 40) return 'silver';
+    return 'bronze';
+  };
+
+  const tier = getTier();
+
+  const tierStyles = {
+    platinum: 'from-[hsl(280_60%_50%)] to-[hsl(320_70%_45%)]',
+    gold: 'from-[hsl(45_80%_50%)] to-[hsl(35_90%_40%)]',
+    silver: 'from-[hsl(220_20%_60%)] to-[hsl(220_15%_45%)]',
+    bronze: 'from-[hsl(30_50%_40%)] to-[hsl(20_40%_30%)]',
+  };
 
   return (
     <Card
-      variant="glass"
       className={cn(
-        'cursor-pointer hover-lift border-border/50 opacity-0 animate-fade-in-up',
+        'group relative overflow-hidden cursor-pointer transition-all duration-300',
+        'bg-card border-border/50 rounded-2xl',
+        'hover:border-border hover:-translate-y-1',
+        'hover:shadow-[0_20px_40px_hsl(0_0%_0%/0.25)]',
         selected && 'ring-2 ring-primary border-primary',
         compact ? 'p-2' : ''
       )}
-      style={{ animationFillMode: 'forwards' }}
       onClick={onClick}
     >
-      <CardContent className={compact ? 'p-2' : 'p-4'}>
+      {/* Tier indicator line */}
+      <div className={cn(
+        'absolute top-0 left-0 right-0 h-1',
+        `bg-gradient-to-r ${tierStyles[tier]}`
+      )} />
+
+      <CardContent className={cn('pt-5', compact ? 'p-3' : 'p-5')}>
         <div className="flex flex-col items-center text-center">
-          {/* Avatar with status indicator */}
-          <div className="relative mb-3">
-            <Avatar className={cn('border-2 border-border', compact ? 'h-16 w-16' : 'h-20 w-20')}>
-              <AvatarImage src={member.photo_url || ''} alt={member.name} />
-              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-lg font-semibold">
+          {/* Avatar */}
+          <div className="relative mb-4">
+            <Avatar className={cn(
+              'border-2 transition-transform duration-300',
+              'group-hover:scale-105',
+              tier === 'platinum' ? 'border-[hsl(280_60%_50%)]' :
+              tier === 'gold' ? 'border-[hsl(45_80%_50%)]' :
+              tier === 'silver' ? 'border-[hsl(220_20%_60%)]' :
+              'border-border',
+              compact ? 'h-14 w-14' : 'h-16 w-16'
+            )}>
+              <AvatarImage src={member.photo_url || ''} alt={member.name} className="object-cover" />
+              <AvatarFallback className="bg-muted text-foreground font-semibold">
                 {initials}
               </AvatarFallback>
             </Avatar>
             
-            {/* Check-in status indicator */}
+            {/* Status indicators */}
             {checkInStatus && (
-              <div
-                className={cn(
-                  'absolute -bottom-1 -right-1 h-6 w-6 rounded-full flex items-center justify-center border-2 border-background',
-                  checkInStatus === 'checked_in' && 'bg-emerald-500',
-                  checkInStatus === 'pending' && 'bg-amber-500',
-                  checkInStatus === 'late' && 'bg-orange-500'
-                )}
-              >
+              <div className={cn(
+                'absolute -bottom-1 -right-1 h-5 w-5 rounded-full flex items-center justify-center border-2 border-card',
+                checkInStatus === 'checked_in' && 'bg-emerald-500',
+                checkInStatus === 'pending' && 'bg-amber-500',
+                checkInStatus === 'late' && 'bg-orange-500'
+              )}>
                 {checkInStatus === 'checked_in' ? (
-                  <CheckCircle className="h-3.5 w-3.5 text-white" />
+                  <CheckCircle className="h-3 w-3 text-white" />
                 ) : (
-                  <Clock className="h-3.5 w-3.5 text-white" />
+                  <Clock className="h-3 w-3 text-white" />
                 )}
               </div>
             )}
 
-            {/* Community trusted badge */}
             {member.community_trusted && (
-              <div className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-primary flex items-center justify-center border-2 border-background shadow-glow">
-                <Star className="h-3.5 w-3.5 text-primary-foreground fill-primary-foreground" />
+              <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary flex items-center justify-center border-2 border-card">
+                <Shield className="h-2.5 w-2.5 text-primary-foreground" />
               </div>
             )}
           </div>
 
-          {/* Name and age */}
-          <h3 className="font-semibold text-foreground truncate w-full">
-            {member.name}{member.age && `, ${member.age}`}
+          {/* Name & Basic Info */}
+          <h3 className="font-semibold text-foreground text-sm truncate w-full">
+            {member.name}{member.age ? `, ${member.age}` : ''}
           </h3>
 
-          {/* Location */}
           {member.area && !compact && (
-            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <MapPin className="h-3 w-3" />
               {member.area}
             </p>
           )}
 
-          {/* Trust Index Bar */}
+          {/* Trust Score - Minimal */}
           {!compact && (
-            <div className="w-full mt-3 space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1 text-muted-foreground">
-                  <TrendingUp className="h-3 w-3" />
-                  Trust
-                </span>
-                <span className={cn('font-semibold', trustLevelColors[trustLevel] || 'text-foreground')}>
-                  {Math.round(trustIndex)}%
+            <div className="flex items-center gap-2 mt-3">
+              <div className="flex items-center gap-1">
+                <TrendingUp className="h-3 w-3 text-muted-foreground" />
+                <span className={cn(
+                  'text-xs font-semibold',
+                  trustIndex >= 70 ? 'text-emerald-400' :
+                  trustIndex >= 50 ? 'text-amber-400' : 'text-muted-foreground'
+                )}>
+                  {Math.round(trustIndex)}
                 </span>
               </div>
-              <Progress 
-                value={trustIndex} 
-                className="h-1.5"
-              />
+              
+              <span className="text-muted-foreground/30">•</span>
+              
+              <span className="text-xs text-muted-foreground">
+                {eventsCount} events
+              </span>
             </div>
           )}
 
-          {/* Behavior metrics summary */}
+          {/* Activity indicators */}
           {!compact && behaviorMetrics && (
-            <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-3 mt-2">
               {behaviorMetrics.waves_sent !== undefined && (
-                <span className="flex items-center gap-1" title="Waves sent/received">
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Send className="h-3 w-3 text-primary" />
-                  {behaviorMetrics.waves_sent}/{behaviorMetrics.waves_received || 0}
+                  {behaviorMetrics.waves_sent}
                 </span>
               )}
               {behaviorMetrics.messages_sent !== undefined && (
-                <span className="flex items-center gap-1" title="Messages">
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
                   <MessageCircle className="h-3 w-3 text-secondary" />
                   {behaviorMetrics.messages_sent}
                 </span>
@@ -204,60 +222,33 @@ export const MemberCard = ({
             </div>
           )}
 
-          {/* Compatibility score */}
+          {/* Compatibility */}
           {compatibilityScore !== undefined && (
-            <div className="mt-2">
-              <Badge 
-                variant="outline" 
-                className={cn(
-                  'font-bold',
-                  compatibilityScore >= 80 && 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-                  compatibilityScore >= 60 && compatibilityScore < 80 && 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-                  compatibilityScore < 60 && 'bg-muted text-muted-foreground'
-                )}
-              >
-                {compatibilityScore}% Match
-              </Badge>
-            </div>
-          )}
-
-          {/* Check-in time */}
-          {checkInTime && checkInStatus === 'checked_in' && !compact && (
-            <p className="text-xs text-muted-foreground mt-1">
-              ✓ {checkInTime}
-            </p>
+            <Badge 
+              variant="outline" 
+              className={cn(
+                'mt-3 text-xs font-semibold',
+                compatibilityScore >= 80 && 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+                compatibilityScore >= 60 && compatibilityScore < 80 && 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+                compatibilityScore < 60 && 'bg-muted text-muted-foreground'
+              )}
+            >
+              {compatibilityScore}% Match
+            </Badge>
           )}
 
           {/* Event roles */}
           {eventRoles.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2 justify-center">
-              {eventRoles.map((role, idx) => {
+            <div className="flex flex-wrap gap-1 mt-3 justify-center">
+              {eventRoles.slice(0, 2).map((role, idx) => {
                 const Icon = roleIcons[role.role_type] || Target;
                 return (
-                  <Badge
-                    key={idx}
-                    variant="outline"
-                    className={cn('text-xs', roleColors[role.role_type])}
-                  >
+                  <Badge key={idx} variant="outline" className="text-xs py-0.5">
                     <Icon className="h-3 w-3 mr-1" />
                     {roleLabels[role.role_type]}
                   </Badge>
                 );
               })}
-            </div>
-          )}
-
-          {/* Stats row - fallback if no behavior metrics */}
-          {!compact && !behaviorMetrics && (
-            <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
-              {member.events_attended !== undefined && member.events_attended !== null && (
-                <span>{member.events_attended} events</span>
-              )}
-              {member.show_up_rate !== undefined && member.show_up_rate !== null && (
-                <span className={member.show_up_rate >= 90 ? 'text-emerald-400' : ''}>
-                  {member.show_up_rate}% show-up
-                </span>
-              )}
             </div>
           )}
         </div>
