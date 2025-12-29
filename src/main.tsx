@@ -10,15 +10,19 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/sw.js')
       .then((registration) => {
-        console.log('ServiceWorker registered: ', registration);
+        if (import.meta.env.DEV) {
+          console.log('ServiceWorker registered: ', registration);
+        }
         
-        // Check for updates periodically
+        // Check for updates periodically (every 30 minutes)
         setInterval(() => {
           registration.update();
-        }, 60000); // Check every minute
+        }, 1800000); // 30 minutes
       })
       .catch((error) => {
-        console.log('ServiceWorker registration failed: ', error);
+        if (import.meta.env.DEV) {
+          console.log('ServiceWorker registration failed: ', error);
+        }
       });
   });
 }

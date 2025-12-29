@@ -10,15 +10,14 @@ const PRECACHE_URLS = [
   '/icon-192x192.png',
   '/icon-512x512.png',
   '/apple-touch-icon.png',
+  '/offline.html',
 ];
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('[ServiceWorker] Install event');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('[ServiceWorker] Caching app shell');
         return cache.addAll(PRECACHE_URLS);
       })
       .then(() => self.skipWaiting())
@@ -27,7 +26,6 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[ServiceWorker] Activate event');
   const currentCaches = [CACHE_NAME, RUNTIME_CACHE];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -76,7 +74,7 @@ self.addEventListener('fetch', (event) => {
         
         return fetch(event.request).then((response) => {
           // Don't cache non-successful responses
-          if (!response || response.status !== 200 || response.type === 'error') {
+          if (!response || !response.ok || response.type === 'error') {
             return response;
           }
 
@@ -101,20 +99,19 @@ self.addEventListener('fetch', (event) => {
 
 // Background sync for offline actions
 self.addEventListener('sync', (event) => {
-  console.log('[ServiceWorker] Background sync', event.tag);
   if (event.tag === 'sync-data') {
     event.waitUntil(syncData());
   }
 });
 
 async function syncData() {
-  // Implement background sync logic here
-  console.log('[ServiceWorker] Syncing data...');
+  // Background sync logic can be implemented here when needed
+  // For now, this is a placeholder for future functionality
+  return Promise.resolve();
 }
 
 // Push notifications support (for future use)
 self.addEventListener('push', (event) => {
-  console.log('[ServiceWorker] Push received', event);
   const options = {
     body: event.data ? event.data.text() : 'New notification',
     icon: '/icon-192x192.png',

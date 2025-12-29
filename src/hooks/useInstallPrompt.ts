@@ -12,7 +12,10 @@ export const useInstallPrompt = () => {
 
   useEffect(() => {
     // Check if app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    const isMinimalUI = window.matchMedia('(display-mode: minimal-ui)').matches;
+    
+    if (isStandalone || isMinimalUI) {
       setIsInstalled(true);
       return;
     }
@@ -26,7 +29,6 @@ export const useInstallPrompt = () => {
     };
 
     const handleAppInstalled = () => {
-      console.log('PWA was installed');
       setIsInstalled(true);
       setIsInstallable(false);
       setDeferredPrompt(null);
@@ -51,8 +53,6 @@ export const useInstallPrompt = () => {
 
     // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
-    
-    console.log(`User response to the install prompt: ${outcome}`);
 
     // Clear the deferredPrompt for the next time
     setDeferredPrompt(null);
