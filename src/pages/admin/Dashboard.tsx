@@ -1,26 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  Users, 
-  Calendar, 
-  Building2, 
-  Star, 
-  MessageCircle, 
-  TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
-  Sparkles,
-  Activity,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  Plus
-} from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { 
+  Users, Calendar, Building2, Star, MessageCircle, TrendingUp,
+  Plus, Command, ArrowRight, Activity, Sparkles
+} from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+
+import { ThemeVariantProvider, useThemeVariant } from '@/contexts/ThemeVariantContext';
+import { ThemeVariantSwitcher } from '@/components/admin/ThemeVariantSwitcher';
+import { LiveActivityFeed } from '@/components/admin/LiveActivityFeed';
+import { AdminChatObserver } from '@/components/admin/AdminChatObserver';
+import { StatCard } from '@/components/admin/StatCard';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface DashboardStats {
   totalUsers: number;
@@ -31,106 +26,62 @@ interface DashboardStats {
   checkInRate: number;
 }
 
-interface RecentActivity {
-  id: string;
-  type: 'check_in' | 'feedback' | 'signup' | 'event';
-  description: string;
-  time: string;
-}
+const checkInData = [
+  { name: 'Mon', onTime: 45, late: 8, noShow: 3 },
+  { name: 'Tue', onTime: 52, late: 6, noShow: 2 },
+  { name: 'Wed', onTime: 38, late: 10, noShow: 5 },
+  { name: 'Thu', onTime: 62, late: 4, noShow: 1 },
+  { name: 'Fri', onTime: 78, late: 12, noShow: 4 },
+  { name: 'Sat', onTime: 95, late: 15, noShow: 6 },
+  { name: 'Sun', onTime: 42, late: 5, noShow: 2 },
+];
 
-const AdminDashboard = () => {
+const userGrowthData = [
+  { name: 'Week 1', users: 120 },
+  { name: 'Week 2', users: 185 },
+  { name: 'Week 3', users: 267 },
+  { name: 'Week 4', users: 389 },
+  { name: 'Week 5', users: 524 },
+  { name: 'Week 6', users: 698 },
+];
+
+const DashboardContent = () => {
+  const { variant } = useThemeVariant();
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0,
     activeEvents: 0,
     venues: 0,
     communityTrusted: 0,
     feedbackToday: 0,
-    checkInRate: 0
+    checkInRate: 94
   });
-  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Mock chart data - will be replaced with real data
-  const checkInData = [
-    { name: 'Mon', onTime: 45, late: 8, noShow: 3 },
-    { name: 'Tue', onTime: 52, late: 6, noShow: 2 },
-    { name: 'Wed', onTime: 38, late: 10, noShow: 5 },
-    { name: 'Thu', onTime: 62, late: 4, noShow: 1 },
-    { name: 'Fri', onTime: 78, late: 12, noShow: 4 },
-    { name: 'Sat', onTime: 95, late: 15, noShow: 6 },
-    { name: 'Sun', onTime: 42, late: 5, noShow: 2 },
-  ];
-
-  const userGrowthData = [
-    { name: 'Week 1', users: 120 },
-    { name: 'Week 2', users: 185 },
-    { name: 'Week 3', users: 267 },
-    { name: 'Week 4', users: 389 },
-    { name: 'Week 5', users: 524 },
-    { name: 'Week 6', users: 698 },
-  ];
+  const [showChatObserver, setShowChatObserver] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Fetch total users
-        const { count: usersCount } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true });
-
-        // Fetch active events
-        const { count: eventsCount } = await supabase
-          .from('events')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'upcoming');
-
-        // Fetch venues
-        const { count: venuesCount } = await supabase
-          .from('venues')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'active');
-
-        // Fetch community trusted users
-        const { count: trustedCount } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true })
-          .eq('community_trusted', true);
-
-        // Fetch today's feedback
-        const today = new Date().toISOString().split('T')[0];
-        const { count: feedbackCount } = await supabase
-          .from('feedback')
-          .select('*', { count: 'exact', head: true })
-          .gte('created_at', today);
-
-        // Calculate check-in rate from attendance
-        const { data: attendanceData } = await supabase
-          .from('event_attendance')
-          .select('check_in_status')
-          .not('check_in_status', 'is', null);
-
-        const totalCheckins = attendanceData?.length || 0;
-        const onTimeCheckins = attendanceData?.filter(a => a.check_in_status === 'on_time').length || 0;
-        const checkInRate = totalCheckins > 0 ? Math.round((onTimeCheckins / totalCheckins) * 100) : 0;
-
-        setStats({
-          totalUsers: usersCount || 0,
-          activeEvents: eventsCount || 0,
-          venues: venuesCount || 0,
-          communityTrusted: trustedCount || 0,
-          feedbackToday: feedbackCount || 0,
-          checkInRate: checkInRate || 94
-        });
-
-        // Set mock recent activity
-        setRecentActivity([
-          { id: '1', type: 'check_in', description: 'Sarah checked in at Wine & Mingle', time: '2 min ago' },
-          { id: '2', type: 'feedback', description: 'New positive feedback received', time: '5 min ago' },
-          { id: '3', type: 'signup', description: 'New user: Michael joined', time: '12 min ago' },
-          { id: '4', type: 'event', description: 'Speed Dating event created', time: '1 hour ago' },
-          { id: '5', type: 'check_in', description: 'John checked in at Game Night', time: '2 hours ago' },
+        const [usersRes, eventsRes, venuesRes, trustedRes, feedbackRes, attendanceRes] = await Promise.all([
+          supabase.from('profiles').select('*', { count: 'exact', head: true }),
+          supabase.from('events').select('*', { count: 'exact', head: true }).eq('status', 'upcoming'),
+          supabase.from('venues').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+          supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('community_trusted', true),
+          supabase.from('feedback').select('*', { count: 'exact', head: true }).gte('created_at', new Date().toISOString().split('T')[0]),
+          supabase.from('event_attendance').select('check_in_status').not('check_in_status', 'is', null),
         ]);
 
+        const totalCheckins = attendanceRes.data?.length || 0;
+        const onTimeCheckins = attendanceRes.data?.filter(a => a.check_in_status === 'on_time').length || 0;
+        const checkInRate = totalCheckins > 0 ? Math.round((onTimeCheckins / totalCheckins) * 100) : 94;
+
+        setStats({
+          totalUsers: usersRes.count || 0,
+          activeEvents: eventsRes.count || 0,
+          venues: venuesRes.count || 0,
+          communityTrusted: trustedRes.count || 0,
+          feedbackToday: feedbackRes.count || 0,
+          checkInRate,
+        });
       } catch (error) {
         console.error('Error fetching stats:', error);
       } finally {
@@ -142,336 +93,263 @@ const AdminDashboard = () => {
   }, []);
 
   const statsConfig = [
-    { 
-      title: 'Total Users', 
-      value: stats.totalUsers.toLocaleString(), 
-      icon: Users, 
-      trend: '+12%',
-      trendUp: true,
-      gradient: 'from-primary/20 to-accent/20'
-    },
-    { 
-      title: 'Active Events', 
-      value: stats.activeEvents.toString(), 
-      icon: Calendar, 
-      trend: '+2',
-      trendUp: true,
-      gradient: 'from-secondary/20 to-primary/20'
-    },
-    { 
-      title: 'Venues', 
-      value: stats.venues.toString(), 
-      icon: Building2, 
-      trend: '+1',
-      trendUp: true,
-      gradient: 'from-accent/20 to-secondary/20'
-    },
-    { 
-      title: 'Community Trusted', 
-      value: stats.communityTrusted.toString(), 
-      icon: Star, 
-      trend: '+23',
-      trendUp: true,
-      gradient: 'from-primary/20 to-secondary/20'
-    },
-    { 
-      title: 'Feedback Today', 
-      value: stats.feedbackToday.toString(), 
-      icon: MessageCircle, 
-      trend: '+8',
-      trendUp: true,
-      gradient: 'from-secondary/20 to-accent/20'
-    },
-    { 
-      title: 'Check-in Rate', 
-      value: `${stats.checkInRate}%`, 
-      icon: TrendingUp, 
-      trend: '+3%',
-      trendUp: true,
-      gradient: 'from-accent/20 to-primary/20'
-    },
+    { title: 'Total Users', value: stats.totalUsers.toLocaleString(), icon: Users, trend: '+12%', trendUp: true },
+    { title: 'Active Events', value: stats.activeEvents.toString(), icon: Calendar, trend: '+2', trendUp: true },
+    { title: 'Venues', value: stats.venues.toString(), icon: Building2, trend: '+1', trendUp: true },
+    { title: 'Trusted Members', value: stats.communityTrusted.toString(), icon: Star, trend: '+23', trendUp: true },
+    { title: 'Feedback Today', value: stats.feedbackToday.toString(), icon: MessageCircle, trend: '+8', trendUp: true },
+    { title: 'Check-in Rate', value: `${stats.checkInRate}%`, icon: TrendingUp, trend: '+3%', trendUp: true },
   ];
 
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'check_in': return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-      case 'feedback': return <MessageCircle className="h-4 w-4 text-primary" />;
-      case 'signup': return <Users className="h-4 w-4 text-secondary" />;
-      case 'event': return <Calendar className="h-4 w-4 text-accent" />;
-      default: return <Activity className="h-4 w-4 text-muted-foreground" />;
-    }
+  const cardStyles = {
+    glass: 'bg-card/60 backdrop-blur-xl border-border/40 shadow-[0_8px_32px_hsl(0_0%_0%/0.2)]',
+    neumorphic: 'bg-card shadow-[6px_6px_12px_hsl(0_0%_0%/0.25),-6px_-6px_12px_hsl(var(--border)/0.1)]',
+    swiss: 'bg-card border-l-4 border-l-primary border-border/20',
+    luxe: 'bg-gradient-to-br from-card to-[hsl(225_24%_6%)] border-[hsl(45_30%_30%/0.3)]',
   };
 
   return (
     <Layout>
-      <div className="min-h-screen gradient-section">
-        <div className="container mx-auto px-4 py-8">
-          {/* Header with Sparkle */}
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-foreground flex items-center gap-3">
-                <Sparkles className="h-8 w-8 text-primary" />
-                <span className="text-gradient">Admin Dashboard</span>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div className="space-y-1">
+              <h1 className={cn(
+                'text-3xl font-bold tracking-tight',
+                variant === 'luxe' ? 'text-[hsl(45_80%_60%)]' : 'text-foreground'
+              )}>
+                Dashboard
               </h1>
-              <p className="text-muted-foreground mt-1">
-                Real-time overview of Social Singles OKC
+              <p className="text-muted-foreground">
+                Real-time overview of your community
               </p>
             </div>
-            <Button className="gradient-primary shadow-glow hover:shadow-glow-lg transition-all rounded-xl" asChild>
-              <Link to="/admin/events">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Event
-              </Link>
-            </Button>
+            
+            <div className="flex items-center gap-3">
+              <ThemeVariantSwitcher />
+              
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={() => setShowChatObserver(!showChatObserver)}
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span className="hidden md:inline">Chat</span>
+              </Button>
+              
+              <Button asChild className="gap-2">
+                <Link to="/admin/events">
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden md:inline">New Event</span>
+                </Link>
+              </Button>
+            </div>
           </div>
 
-          {/* Stats Grid - Glass Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {statsConfig.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <Card 
-                  key={stat.title} 
-                  className="glass border-0 shadow-premium hover-lift rounded-2xl overflow-hidden"
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-50`} />
-                  <CardHeader className="relative flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      {stat.title}
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Left Column - Stats & Charts */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {statsConfig.map((stat, index) => (
+                  <div
+                    key={stat.title}
+                    className="opacity-0 animate-fade-in-up"
+                    style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}
+                  >
+                    <StatCard
+                      title={stat.title}
+                      value={isLoading ? '...' : stat.value}
+                      icon={stat.icon}
+                      trend={stat.trend}
+                      trendUp={stat.trendUp}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Charts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Check-in Chart */}
+                <Card className={cn('rounded-2xl border', cardStyles[variant])}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-primary" />
+                      Check-in Performance
                     </CardTitle>
-                    <div className="h-10 w-10 rounded-xl bg-card/50 flex items-center justify-center shadow-sm">
-                      <Icon className="h-5 w-5 text-primary" />
+                    <div className="flex gap-4 text-xs mt-2">
+                      <span className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                        On Time
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-amber-400" />
+                        Late
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-destructive" />
+                        No Show
+                      </span>
                     </div>
                   </CardHeader>
-                  <CardContent className="relative">
-                    <div className="text-4xl font-bold text-foreground tracking-tight">
-                      {isLoading ? '...' : stat.value}
-                    </div>
-                    <div className="flex items-center gap-1 mt-2">
-                      {stat.trendUp ? (
-                        <ArrowUpRight className="h-4 w-4 text-green-500" />
-                      ) : (
-                        <ArrowDownRight className="h-4 w-4 text-destructive" />
-                      )}
-                      <span className={`text-sm font-medium ${stat.trendUp ? 'text-green-500' : 'text-destructive'}`}>
-                        {stat.trend}
-                      </span>
-                      <span className="text-xs text-muted-foreground ml-1">vs last month</span>
+                  <CardContent>
+                    <div className="h-52">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={checkInData}>
+                          <XAxis 
+                            dataKey="name" 
+                            stroke="hsl(var(--muted-foreground))" 
+                            fontSize={11} 
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <YAxis 
+                            stroke="hsl(var(--muted-foreground))" 
+                            fontSize={11}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <Tooltip 
+                            contentStyle={{ 
+                              background: 'hsl(var(--card))', 
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: '12px',
+                              boxShadow: '0 10px 40px hsl(0 0% 0% / 0.3)'
+                            }}
+                          />
+                          <Bar dataKey="onTime" stackId="a" fill="hsl(142 76% 36%)" radius={[0, 0, 0, 0]} />
+                          <Bar dataKey="late" stackId="a" fill="hsl(38 92% 50%)" radius={[0, 0, 0, 0]} />
+                          <Bar dataKey="noShow" stackId="a" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
-              );
-            })}
-          </div>
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Check-in Performance Chart */}
-            <Card className="glass border-0 shadow-premium rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
-                  Check-in Performance
-                </CardTitle>
-                <div className="flex gap-4 text-xs">
-                  <span className="flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
-                    On Time
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                    Late
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-destructive" />
-                    No Show
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={checkInData}>
-                      <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <Tooltip 
-                        contentStyle={{ 
-                          background: 'hsl(var(--card))', 
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: '12px',
-                          boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)'
-                        }}
-                      />
-                      <Bar dataKey="onTime" stackId="a" fill="hsl(142 76% 36%)" radius={[0, 0, 0, 0]} />
-                      <Bar dataKey="late" stackId="a" fill="hsl(38 92% 50%)" radius={[0, 0, 0, 0]} />
-                      <Bar dataKey="noShow" stackId="a" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* User Growth Chart */}
-            <Card className="glass border-0 shadow-premium rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                  User Growth
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={userGrowthData}>
-                      <defs>
-                        <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <Tooltip 
-                        contentStyle={{ 
-                          background: 'hsl(var(--card))', 
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: '12px',
-                          boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)'
-                        }}
-                      />
-                      <Area 
-                        type="monotone" 
-                        dataKey="users" 
-                        stroke="hsl(var(--primary))" 
-                        strokeWidth={3}
-                        fillOpacity={1} 
-                        fill="url(#colorUsers)" 
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Bottom Section - Activity & Quick Actions */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Recent Activity */}
-            <Card className="lg:col-span-2 glass border-0 shadow-premium rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
-                  Live Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentActivity.map((activity) => (
-                    <div 
-                      key={activity.id}
-                      className="flex items-center gap-4 p-3 rounded-xl bg-card/50 hover:bg-card/80 transition-colors"
-                    >
-                      <div className="h-10 w-10 rounded-full bg-muted/50 flex items-center justify-center">
-                        {getActivityIcon(activity.type)}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground">{activity.description}</p>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {activity.time}
-                        </p>
-                      </div>
+                {/* Growth Chart */}
+                <Card className={cn('rounded-2xl border', cardStyles[variant])}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-primary" />
+                      User Growth
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-52">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={userGrowthData}>
+                          <defs>
+                            <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                              <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <XAxis 
+                            dataKey="name" 
+                            stroke="hsl(var(--muted-foreground))" 
+                            fontSize={11}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <YAxis 
+                            stroke="hsl(var(--muted-foreground))" 
+                            fontSize={11}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <Tooltip 
+                            contentStyle={{ 
+                              background: 'hsl(var(--card))', 
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: '12px',
+                              boxShadow: '0 10px 40px hsl(0 0% 0% / 0.3)'
+                            }}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="users" 
+                            stroke="hsl(var(--primary))" 
+                            strokeWidth={2}
+                            fillOpacity={1} 
+                            fill="url(#colorGrowth)" 
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
 
-            {/* Quick Actions */}
-            <Card className="glass border-0 shadow-premium rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  Quick Actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
-                  asChild
-                >
-                  <Link to="/admin/events">
-                    <Calendar className="h-4 w-4 mr-3 text-primary" />
-                    Manage Events
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
-                  asChild
-                >
-                  <Link to="/admin/users">
-                    <Users className="h-4 w-4 mr-3 text-primary" />
-                    View All Users
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
-                  asChild
-                >
-                  <Link to="/admin/venues">
-                    <Building2 className="h-4 w-4 mr-3 text-primary" />
-                    Manage Venues
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
-                  asChild
-                >
-                  <Link to="/admin/feedback">
-                    <MessageCircle className="h-4 w-4 mr-3 text-primary" />
-                    Review Feedback
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
-                  asChild
-                >
-                  <Link to="/admin/shop">
-                    <Star className="h-4 w-4 mr-3 text-primary" />
-                    Shop & Products
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
-                  asChild
-                >
-                  <Link to="/admin/coupons">
-                    <Star className="h-4 w-4 mr-3 text-primary" />
-                    Coupon Codes
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start rounded-xl hover:bg-primary/10 hover:border-primary/50 transition-all"
-                  asChild
-                >
-                  <Link to="/admin/team">
-                    <Star className="h-4 w-4 mr-3 text-primary" />
-                    Team Performance
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+              {/* Quick Actions */}
+              <Card className={cn('rounded-2xl border', cardStyles[variant])}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                    <Command className="h-5 w-5 text-primary" />
+                    Quick Actions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      { label: 'Events', icon: Calendar, href: '/admin/events', color: 'primary' },
+                      { label: 'Members', icon: Users, href: '/admin/members', color: 'secondary' },
+                      { label: 'Venues', icon: Building2, href: '/admin/venues', color: 'accent' },
+                      { label: 'Feedback', icon: MessageCircle, href: '/admin/feedback', color: 'primary' },
+                    ].map((action) => (
+                      <Link
+                        key={action.label}
+                        to={action.href}
+                        className={cn(
+                          'group flex items-center gap-3 p-4 rounded-xl transition-all',
+                          'hover:bg-muted/50',
+                          variant === 'neumorphic' && 'hover:shadow-[inset_2px_2px_4px_hsl(0_0%_0%/0.2)]'
+                        )}
+                      >
+                        <div className={cn(
+                          'h-10 w-10 rounded-xl flex items-center justify-center',
+                          `bg-${action.color}/10`
+                        )}>
+                          <action.icon className={cn('h-5 w-5', `text-${action.color}`)} />
+                        </div>
+                        <span className="font-medium text-sm">{action.label}</span>
+                        <ArrowRight className="h-4 w-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground" />
+                      </Link>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Live Activity & Chat */}
+            <div className="space-y-6">
+              {/* Live Activity */}
+              <Card className={cn('rounded-2xl border', cardStyles[variant])}>
+                <CardContent className="p-4">
+                  <LiveActivityFeed />
+                </CardContent>
+              </Card>
+
+              {/* Chat Observer Panel */}
+              {showChatObserver && (
+                <Card className={cn('rounded-2xl border h-[500px]', cardStyles[variant])}>
+                  <AdminChatObserver />
+                </Card>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </Layout>
+  );
+};
+
+const AdminDashboard = () => {
+  return (
+    <ThemeVariantProvider>
+      <DashboardContent />
+    </ThemeVariantProvider>
   );
 };
 
