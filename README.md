@@ -60,6 +60,56 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## PWA (Progressive Web App) Features
+
+This application is a fully-featured Progressive Web App with the following capabilities:
+
+### Installation
+- **Desktop & Mobile**: Users can install the app directly from their browser
+- **Custom Install Prompt**: A beautiful custom UI prompts users to install the app
+- **iOS Support**: Full support for iOS home screen installation
+
+### Offline Support
+- **Service Worker**: Caches static assets and API responses for offline access
+- **Offline Fallback**: Custom offline page when no connection is available
+- **Background Sync**: Queues actions when offline and syncs when connection returns
+
+### Performance Optimizations
+- **Lazy Loading**: Routes are loaded on-demand to reduce initial bundle size
+- **Code Splitting**: Vendor libraries split into separate chunks for optimal caching
+- **Cache Strategies**:
+  - Cache-first for static assets (HTML, CSS, JS, images)
+  - Network-first for API calls with offline fallback
+
+### How to Install the PWA
+
+**On Desktop (Chrome, Edge):**
+1. Visit the app in your browser
+2. Look for the install button in the address bar or custom prompt
+3. Click "Install" to add it to your desktop
+
+**On Mobile (Android):**
+1. Visit the app in Chrome or Firefox
+2. Tap the custom install prompt or browser menu
+3. Select "Add to Home Screen" or "Install App"
+
+**On iOS:**
+1. Visit the app in Safari
+2. Tap the Share button
+3. Select "Add to Home Screen"
+
+### Development Notes
+
+The PWA implementation includes:
+- `public/manifest.json` - App metadata and configuration
+- `public/sw.js` - Service worker for caching and offline support
+- `src/hooks/useInstallPrompt.ts` - Install prompt management
+- `src/hooks/useOnlineStatus.ts` - Network status tracking
+- `src/components/InstallPrompt.tsx` - Custom install UI
+- `src/pages/Offline.tsx` - Offline fallback page
+
+Service worker updates are checked every 30 minutes to ensure users get the latest version without excessive battery drain.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
