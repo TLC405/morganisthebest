@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeVariantProvider } from "@/contexts/ThemeVariantContext";
 import { RoleRouter } from "@/components/RoleRouter";
 import { PanelSwitcher } from "@/components/admin/PanelSwitcher";
 import Index from "./pages/Index";
@@ -41,11 +42,12 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+    <ThemeVariantProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
           <RoleRouter>
             <Routes>
               {/* Public Routes */}
@@ -89,8 +91,9 @@ const App = () => (
             <PanelSwitcher />
           </RoleRouter>
         </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+        </TooltipProvider>
+      </AuthProvider>
+    </ThemeVariantProvider>
   </QueryClientProvider>
 );
 
