@@ -4,20 +4,41 @@ import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { currentUser, mockProfiles, mockEvents, userRSVPs, canRevealProfile } from '@/data/mockData';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useUserRSVPs } from '@/hooks/useEvents';
+import { useProfiles } from '@/hooks/useProfiles';
 import { VerificationBadge } from '@/components/profiles/VerificationBadge';
 
 const Dashboard = () => {
-  const revealedProfiles = mockProfiles.filter(p => canRevealProfile(p.id));
-  const upcomingRSVPs = userRSVPs.filter(r => !r.checkedIn);
-  const checkedInEvents = userRSVPs.filter(r => r.checkedIn);
+  const { profile, isLoading: profileLoading } = useCurrentUser();
+  const { upcoming, past, isLoading: rsvpsLoading } = useUserRSVPs();
+  const { profiles: revealedProfiles, isLoading: profilesLoading } = useProfiles({ limit: 10 });
+
+  const isLoading = profileLoading || rsvpsLoading || profilesLoading;
 
   const stats = [
-    { label: 'Events Attended', value: currentUser.eventsAttended.length, icon: Calendar, color: 'primary' },
+    { label: 'Events Attended', value: past.length, icon: Calendar, color: 'primary' },
     { label: 'People Met', value: revealedProfiles.length, icon: Sparkles, color: 'secondary' },
-    { label: 'Waves Sent', value: currentUser.totalConnections, icon: Send, color: 'accent' },
-    { label: 'Mutual Waves', value: 3, icon: Heart, color: 'primary' },
+    { label: 'Waves Sent', value: 0, icon: Send, color: 'accent' },
+    { label: 'Mutual Waves', value: 0, icon: Heart, color: 'primary' },
   ];
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="mx-auto max-w-7xl px-4 py-8">
+          <Skeleton className="h-10 w-64 mb-4" />
+          <Skeleton className="h-6 w-48 mb-8" />
+          <div className="grid gap-4 md:grid-cols-4 mb-8">
+            {[1, 2, 3, 4].map(i => (
+              <Skeleton key={i} className="h-24" />
+            ))}
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -26,9 +47,11 @@ const Dashboard = () => {
         <div className="mb-8 animate-fade-in-up">
           <div className="flex items-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-foreground">
-              Welcome back!
+              Welcome back, {profile?.name || 'there'}!
             </h1>
-            <VerificationBadge level={currentUser.verificationLevel} showLabel size="lg" />
+            {profile?.verification_level && (
+              <VerificationBadge level={profile.verification_level} showLabel size="lg" />
+            )}
           </div>
           <p className="text-muted-foreground">
             Zero Catfishing • Zero Ghosting • 100% Real
@@ -85,24 +108,24 @@ const Dashboard = () => {
               </Button>
             </CardHeader>
             <CardContent>
-              {upcomingRSVPs.length > 0 ? (
+              {upcoming.length > 0 ? (
                 <div className="space-y-4">
-                  {upcomingRSVPs.map((rsvp) => {
-                    const event = mockEvents.find(e => e.id === rsvp.eventId);
+                  {upcoming.map((rsvp) => {
+                    const event = rsvp.events;
                     if (!event) return null;
                     return (
-                      <div key={rsvp.eventId} className="flex items-center gap-4 rounded-xl bg-muted/50 p-4 hover:bg-muted/70 transition-colors group">
-                        <img
-                          src={event.imageUrl}
-                          alt={event.title}
-                          className="h-16 w-16 rounded-lg object-cover group-hover:scale-105 transition-transform"
-                        />
+                      <div key={rsvp.id} className="flex items-center gap-4 rounded-xl bg-muted/50 p-4 hover:bg-muted/70 transition-colors group">
+                        <div className="h-16 w-16 rounded-lg bg-primary/20 flex items-center justify-center">
+                          <Calendar className="h-8 w-8 text-primary" />
+                        </div>
                         <div className="flex-1">
                           <h4 className="font-medium text-foreground">{event.title}</h4>
-                          <p className="text-sm text-muted-foreground">{event.date} at {event.time}</p>
-                          <Badge variant="premium" className="mt-1">
-                            Code: {rsvp.doorCode}
-                          </Badge>
+                          <p className="text-sm text-muted-foreground">{event.date} at {event.start_time}</p>
+                          {rsvp.nametag_pin && (
+                            <Badge variant="premium" className="mt-1">
+                              PIN: {rsvp.nametag_pin}
+                            </Badge>
+                          )}
                         </div>
                         <Button size="sm" variant="glow" asChild>
                           <Link to="/check-in">Check In</Link>
@@ -149,19 +172,27 @@ const Dashboard = () => {
             <CardContent>
               {revealedProfiles.length > 0 ? (
                 <div className="space-y-4">
-                  {revealedProfiles.slice(0, 3).map((profile) => (
-                    <div key={profile.id} className="flex items-center gap-4 rounded-xl bg-muted/50 p-4 hover:bg-muted/70 transition-colors group">
-                      <img
-                        src={profile.photoUrl}
-                        alt={profile.name}
-                        className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all"
-                      />
+                  {revealedProfiles.slice(0, 3).map((person) => (
+                    <div key={person.id} className="flex items-center gap-4 rounded-xl bg-muted/50 p-4 hover:bg-muted/70 transition-colors group">
+                      {person.photo_url ? (
+                        <img
+                          src={person.photo_url}
+                          alt={person.name}
+                          className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all"
+                        />
+                      ) : (
+                        <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                          <Users className="h-6 w-6 text-primary" />
+                        </div>
+                      )}
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-medium text-foreground">{profile.name}, {profile.age}</h4>
-                          <VerificationBadge level={profile.verificationLevel} />
+                          <h4 className="font-medium text-foreground">{person.name}{person.age ? `, ${person.age}` : ''}</h4>
+                          {person.verification_level && (
+                            <VerificationBadge level={person.verification_level} />
+                          )}
                         </div>
-                        <p className="text-sm text-muted-foreground line-clamp-1">{profile.bio}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-1">{person.bio || 'No bio yet'}</p>
                       </div>
                       <Button size="sm" variant="premium" className="gap-1">
                         <Send className="h-3 w-3" />
@@ -198,21 +229,25 @@ const Dashboard = () => {
               <CardDescription>Events you've attended</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {checkedInEvents.map((rsvp) => {
-                  const event = mockEvents.find(e => e.id === rsvp.eventId);
-                  if (!event) return null;
-                  return (
-                    <div key={rsvp.eventId} className="flex items-center gap-3 text-sm p-2 rounded-lg hover:bg-muted/30 transition-colors">
-                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <CheckCircle className="h-4 w-4 text-primary" />
+              {past.length > 0 ? (
+                <div className="space-y-3">
+                  {past.slice(0, 5).map((rsvp) => {
+                    const event = rsvp.events;
+                    if (!event) return null;
+                    return (
+                      <div key={rsvp.id} className="flex items-center gap-3 text-sm p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <CheckCircle className="h-4 w-4 text-primary" />
+                        </div>
+                        <span className="text-foreground font-medium">{event.title}</span>
+                        <span className="text-muted-foreground">— {event.date}</span>
                       </div>
-                      <span className="text-foreground font-medium">{event.title}</span>
-                      <span className="text-muted-foreground">— {event.date}</span>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-4">No events attended yet</p>
+              )}
             </CardContent>
           </Card>
 

@@ -2,7 +2,6 @@ import { Send } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, canRevealProfile } from '@/data/mockData';
 import { VerificationBadge } from './VerificationBadge';
 import { ResponseStats } from './ResponseStats';
 import { MysteryCard } from './MysteryCard';
@@ -11,8 +10,29 @@ import { useThemeVariant } from '@/contexts/ThemeVariantContext';
 import { cn } from '@/lib/utils';
 import { getStaggerDelay } from '@/lib/animations';
 
+// Simple profile type for display (works with both mock and real data)
+interface DisplayProfile {
+  id: string;
+  name: string;
+  age: number;
+  ageRange?: string;
+  area: string;
+  bio: string;
+  interests: string[];
+  interestTags?: string[];
+  photoUrl: string;
+  eventsAttended?: string[];
+  role?: string;
+  verificationLevel: string;
+  responseRate: number;
+  showUpRate: number;
+  totalConnections?: number;
+  religion?: string | null;
+  lookingFor?: string | null;
+}
+
 interface ProfileCardProps {
-  profile: User;
+  profile: DisplayProfile;
   onWave?: (profileId: string) => void;
   forceReveal?: boolean;
   compatibilityPercentage?: number;
@@ -29,14 +49,15 @@ export const ProfileCard = ({
   index = 0 
 }: ProfileCardProps) => {
   const { variant } = useThemeVariant();
-  const isRevealed = forceReveal || canRevealProfile(profile.id);
+  
+  // Always reveal if forceReveal is true (for connections page)
+  const isRevealed = forceReveal;
 
   // Show mystery card for unrevealed profiles
   if (!isRevealed) {
-    return <MysteryCard profile={profile} upcomingEventCount={1} />;
+    return <MysteryCard profile={profile as any} upcomingEventCount={1} />;
   }
 
-  // Variant-specific card styles
   const variantCardStyles: Record<string, string> = {
     glass: 'card-variant bg-transparent',
     neumorphic: 'card-variant',
@@ -48,7 +69,6 @@ export const ProfileCard = ({
     aurora: 'card-variant bg-transparent',
   };
 
-  // Variant-specific image container styles
   const variantImageStyles: Record<string, string> = {
     glass: 'rounded-t-2xl',
     neumorphic: 'rounded-t-[1.25rem]',
@@ -60,7 +80,6 @@ export const ProfileCard = ({
     aurora: 'rounded-t-3xl',
   };
 
-  // Variant-specific button styles
   const variantButtonStyles: Record<string, string> = {
     glass: 'btn-variant rounded-full',
     neumorphic: 'btn-variant rounded-xl',
@@ -84,11 +103,17 @@ export const ProfileCard = ({
     >
       {/* Profile Image */}
       <div className={cn('relative h-64 overflow-hidden', variantImageStyles[variant])}>
-        <img
-          src={profile.photoUrl}
-          alt={profile.name}
-          className="h-full w-full object-cover transition-all duration-500 group-hover:scale-105"
-        />
+        {profile.photoUrl ? (
+          <img
+            src={profile.photoUrl}
+            alt={profile.name}
+            className="h-full w-full object-cover transition-all duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="h-full w-full bg-primary/20 flex items-center justify-center">
+            <span className="text-4xl">👤</span>
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
         
         {/* Compatibility Badge */}
@@ -122,7 +147,7 @@ export const ProfileCard = ({
               variant === 'brutal' && 'font-grotesk uppercase',
               variant === 'editorial' && 'font-sora font-light text-2xl'
             )}>
-              {profile.name}, {profile.age}
+              {profile.name}{profile.age ? `, ${profile.age}` : ''}
             </h3>
             <VerificationBadge level={profile.verificationLevel} size="lg" />
           </div>
@@ -134,7 +159,7 @@ export const ProfileCard = ({
       </div>
 
       <CardContent className="space-y-3 pt-4">
-        {/* Response Stats - Anti-Ghosting */}
+        {/* Response Stats */}
         <ResponseStats 
           responseRate={profile.responseRate} 
           showUpRate={profile.showUpRate}
@@ -164,11 +189,11 @@ export const ProfileCard = ({
         <p className={cn(
           'text-sm text-muted-foreground line-clamp-2',
           variant === 'editorial' && 'font-light leading-relaxed'
-        )}>{profile.bio}</p>
+        )}>{profile.bio || 'No bio yet'}</p>
         
         {/* Interests */}
         <div className="flex flex-wrap gap-2">
-          {profile.interests.slice(0, 4).map((interest) => (
+          {(profile.interestTags || profile.interests || []).slice(0, 4).map((interest) => (
             <Badge 
               key={interest} 
               variant="outline" 
@@ -181,7 +206,7 @@ export const ProfileCard = ({
               {interest}
             </Badge>
           ))}
-          {profile.interests.length > 4 && (
+          {(profile.interests?.length || 0) > 4 && (
             <Badge 
               variant="secondary" 
               className={cn(

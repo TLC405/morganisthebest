@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Layout } from '@/components/layout/Layout';
-import { mockEvents } from '@/data/mockData';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useUpcomingEvents } from '@/hooks/useEvents';
 import { EventCard } from '@/components/events/EventCard';
 
 const features = [
@@ -37,14 +38,28 @@ const howItWorks = [
   { step: 4, title: 'Match & Connect', description: 'Exchange PINs with people you like - mutual matches unlock chat!' },
 ];
 
+// Map database events to display format
+const mapEventForDisplay = (event: any) => ({
+  id: event.id,
+  title: event.title,
+  date: event.date,
+  time: event.start_time,
+  location: event.venues?.name || 'TBD',
+  description: event.description || '',
+  category: 'mixer' as const,
+  attendeeCount: 0,
+  maxCapacity: event.max_attendees || 50,
+  imageUrl: 'https://images.unsplash.com/photo-1529543544277-068cc8eda7b4?w=800',
+});
+
 const Index = () => {
-  const upcomingEvents = mockEvents.slice(0, 3);
+  const { events: dbEvents, isLoading } = useUpcomingEvents(3);
+  const upcomingEvents = dbEvents.map(mapEventForDisplay);
 
   return (
     <Layout>
-      {/* Hero Section - Premium gradient with floating elements */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden gradient-hero min-h-[80vh] flex items-center">
-        {/* Animated floating decorative elements */}
         <div className="absolute top-20 left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl float animate-morph" />
         <div className="absolute bottom-20 right-10 w-52 h-52 bg-accent/10 rounded-full blur-3xl float" style={{ animationDelay: '2s' }} />
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-secondary/10 rounded-full blur-2xl float" style={{ animationDelay: '4s' }} />
@@ -52,7 +67,6 @@ const Index = () => {
         
         <div className="relative mx-auto max-w-7xl px-4 py-20 md:py-32">
           <div className="mx-auto max-w-3xl text-center">
-            {/* Trust Badges - Glass style with stagger animation */}
             <div className="mb-8 flex flex-wrap justify-center gap-3">
               <Badge variant="glass" className="gap-1.5 py-2 px-4 animate-fade-in-up opacity-0 stagger-1">
                 <ShieldCheck className="h-3.5 w-3.5 text-green-500" />
@@ -96,7 +110,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section - Glass cards with stagger */}
+      {/* Features Section */}
       <section className="gradient-section py-20 md:py-28 relative">
         <div className="absolute inset-0 gradient-spotlight pointer-events-none" />
         <div className="mx-auto max-w-7xl px-4 relative">
@@ -129,7 +143,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How It Works - Premium timeline with animated steps */}
+      {/* How It Works */}
       <section className="py-20 md:py-28 bg-card relative overflow-hidden">
         <div className="absolute inset-0 gradient-premium opacity-50" />
         <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
@@ -158,7 +172,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Upcoming Events Preview - Glass design */}
+      {/* Upcoming Events */}
       <section className="gradient-warm py-20 md:py-28 relative">
         <div className="absolute inset-0 particles opacity-30" />
         <div className="mx-auto max-w-7xl px-4 relative">
@@ -175,21 +189,35 @@ const Index = () => {
               </Link>
             </Button>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {upcomingEvents.map((event, index) => (
-              <div 
-                key={event.id}
-                className="opacity-0 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
-              >
-                <EventCard event={event} />
-              </div>
-            ))}
-          </div>
+          
+          {isLoading ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map(i => (
+                <Skeleton key={i} className="h-[420px]" />
+              ))}
+            </div>
+          ) : upcomingEvents.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {upcomingEvents.map((event, index) => (
+                <div 
+                  key={event.id}
+                  className="opacity-0 animate-fade-in-up"
+                  style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+                >
+                  <EventCard event={event} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">No upcoming events. Check back soon!</p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* CTA Section - Premium glass with pulse effect */}
+      {/* CTA Section */}
       <section className="py-20 md:py-28 relative overflow-hidden">
         <div className="absolute inset-0 gradient-section" />
         <div className="absolute top-10 left-1/4 w-40 h-40 bg-primary/10 rounded-full blur-3xl float" />

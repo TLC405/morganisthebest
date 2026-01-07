@@ -1,16 +1,30 @@
 import { Calendar, Clock, MapPin, Users, Sparkles, TrendingUp, Heart } from 'lucide-react';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Event, userRSVPs, getEventCompatibility, getCompatibleSinglesCount } from '@/data/mockData';
 import { useThemeVariant } from '@/contexts/ThemeVariantContext';
 import { cn } from '@/lib/utils';
 import { getStaggerDelay } from '@/lib/animations';
 
+// Simple event type for display
+interface DisplayEvent {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description?: string;
+  category: 'mixer' | 'speed-dating' | 'activity' | 'social';
+  attendeeCount: number;
+  maxCapacity: number;
+  imageUrl: string;
+}
+
 interface EventCardProps {
-  event: Event;
+  event: DisplayEvent;
   onRSVP?: (eventId: string) => void;
   index?: number;
+  isRSVPd?: boolean;
 }
 
 const categoryStyles = {
@@ -20,16 +34,12 @@ const categoryStyles = {
   social: { bg: 'from-primary to-secondary', label: 'Social', icon: '✨' },
 };
 
-export const EventCard = ({ event, onRSVP, index = 0 }: EventCardProps) => {
-  const { variant, config } = useThemeVariant();
-  const isRSVPd = userRSVPs.some((r) => r.eventId === event.id);
+export const EventCard = ({ event, onRSVP, index = 0, isRSVPd = false }: EventCardProps) => {
+  const { variant } = useThemeVariant();
   const spotsLeft = event.maxCapacity - event.attendeeCount;
-  const compatibility = getEventCompatibility(event);
-  const compatibleCount = getCompatibleSinglesCount(event.id);
   const category = categoryStyles[event.category];
   const spotsPercentage = (spotsLeft / event.maxCapacity) * 100;
 
-  // Variant-specific card styles
   const variantCardStyles: Record<string, string> = {
     glass: 'card-variant bg-transparent backdrop-blur-xl border-0',
     neumorphic: 'card-variant bg-card border-0',
@@ -41,7 +51,6 @@ export const EventCard = ({ event, onRSVP, index = 0 }: EventCardProps) => {
     aurora: 'card-variant bg-transparent',
   };
 
-  // Variant-specific image styles
   const variantImageStyles: Record<string, string> = {
     glass: 'rounded-2xl',
     neumorphic: 'rounded-[1.25rem]',
@@ -53,7 +62,6 @@ export const EventCard = ({ event, onRSVP, index = 0 }: EventCardProps) => {
     aurora: 'rounded-3xl',
   };
 
-  // Variant-specific button styles
   const variantButtonStyles: Record<string, string> = {
     glass: 'btn-variant rounded-full',
     neumorphic: 'btn-variant rounded-2xl',
@@ -75,7 +83,6 @@ export const EventCard = ({ event, onRSVP, index = 0 }: EventCardProps) => {
       )}
       style={{ animationDelay: staggerDelay }}
     >
-      {/* Photo Card Container */}
       <div className={cn(
         'relative h-[420px] overflow-hidden shadow-xl',
         variantImageStyles[variant]
@@ -89,70 +96,19 @@ export const EventCard = ({ event, onRSVP, index = 0 }: EventCardProps) => {
           )}
         />
         
-        {/* Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-transparent" />
         
         {/* Top Badges Row */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-          {/* Category Badge */}
           <Badge className={cn(
             `bg-gradient-to-r ${category.bg} text-white shadow-lg border-0`,
             variant === 'brutal' && 'rounded-none border-2 border-foreground',
             variant === 'swiss' && 'rounded-none uppercase text-xs tracking-wider',
-            variant === 'editorial' && 'rounded-none bg-transparent border-b-2 border-white',
           )}>
             <span className="mr-1.5">{category.icon}</span>
             {category.label}
           </Badge>
-
-          {/* Compatibility Ring */}
-          {compatibility > 0 && (
-            <div className={cn(
-              'flex items-center gap-2 bg-background/80 backdrop-blur-md px-3 py-1.5 shadow-lg border border-border/50',
-              variant === 'glass' && 'rounded-full',
-              variant === 'neumorphic' && 'rounded-xl',
-              variant === 'swiss' && 'rounded-none border-2 border-foreground',
-              variant === 'luxe' && 'rounded-lg border-[hsl(45_80%_50%/0.3)]',
-              variant === 'flutter' && 'rounded-full',
-              variant === 'brutal' && 'rounded-none border-2 border-foreground',
-              variant === 'editorial' && 'rounded-none',
-              variant === 'aurora' && 'rounded-full',
-            )}>
-              <div className="relative w-8 h-8">
-                <svg className="w-8 h-8 -rotate-90" viewBox="0 0 36 36">
-                  <circle
-                    cx="18" cy="18" r="14"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    className="text-muted/30"
-                  />
-                  <circle
-                    cx="18" cy="18" r="14"
-                    fill="none"
-                    stroke="url(#compat-gradient)"
-                    strokeWidth="3"
-                    strokeDasharray={`${compatibility * 0.88} 88`}
-                    strokeLinecap={variant === 'brutal' || variant === 'swiss' ? 'butt' : 'round'}
-                    className="transition-all duration-1000"
-                  />
-                  <defs>
-                    <linearGradient id="compat-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" />
-                      <stop offset="100%" stopColor="hsl(var(--secondary))" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <Sparkles className="absolute inset-0 m-auto h-4 w-4 text-primary" />
-              </div>
-              <span className={cn(
-                'text-sm font-bold text-foreground',
-                variant === 'luxe' && 'font-playfair',
-                variant === 'brutal' && 'font-grotesk uppercase'
-              )}>{compatibility}%</span>
-            </div>
-          )}
         </div>
 
         {/* Spots Progress Bar */}
@@ -182,8 +138,6 @@ export const EventCard = ({ event, onRSVP, index = 0 }: EventCardProps) => {
                 spotsPercentage < 20 
                   ? 'bg-gradient-to-r from-red-500 to-orange-500 animate-pulse' 
                   : 'bg-gradient-to-r from-primary via-secondary to-accent',
-                variant === 'brutal' && 'rounded-none',
-                variant === 'swiss' && 'rounded-none',
               )}
               style={{ width: `${100 - spotsPercentage}%` }}
             />
@@ -240,22 +194,6 @@ export const EventCard = ({ event, onRSVP, index = 0 }: EventCardProps) => {
               <span className="font-medium">{event.location}</span>
             </div>
           </div>
-
-          {/* Compatible Singles Pill */}
-          {compatibleCount > 0 && (
-            <div className={cn(
-              'inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 mb-4',
-              variant === 'glass' && 'rounded-full',
-              variant === 'brutal' && 'rounded-none',
-              variant === 'swiss' && 'rounded-none',
-              variant !== 'glass' && variant !== 'brutal' && variant !== 'swiss' && 'rounded-full'
-            )}>
-              <TrendingUp className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-white">
-                {compatibleCount} compatible singles
-              </span>
-            </div>
-          )}
 
           {/* CTA Buttons */}
           <div className="flex items-center gap-3">

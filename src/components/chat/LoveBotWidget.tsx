@@ -8,10 +8,10 @@ export const LoveBotWidget = () => {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button - Bottom LEFT to not conflict with PanelSwitcher */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-glow-lg transition-all duration-300 ${
+        className={`fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-glow-lg transition-all duration-300 ${
           isOpen 
             ? 'bg-muted hover:bg-muted/80' 
             : 'bg-gradient-to-r from-primary to-secondary hover:scale-110'
@@ -25,9 +25,9 @@ export const LoveBotWidget = () => {
         )}
       </Button>
 
-      {/* Chat Panel */}
+      {/* Chat Panel - Bottom LEFT */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] animate-fade-in">
+        <div className="fixed bottom-24 left-6 z-50 w-[380px] max-w-[calc(100vw-48px)] animate-fade-in">
           <LoveBotChat onClose={() => setIsOpen(false)} />
         </div>
       )}

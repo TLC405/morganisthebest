@@ -1,49 +1,32 @@
-import { useState, useEffect } from 'react';
-import { Users, Sparkles, ShieldCheck, MessageCircle, Calendar, Clock, Star } from 'lucide-react';
+import { useState } from 'react';
+import { Users, Sparkles, ShieldCheck, MessageCircle, Calendar, Star } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProfileCard } from '@/components/profiles/ProfileCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { mockProfiles, currentUser, canRevealProfile, mockEvents, User } from '@/data/mockData';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useConnectionsByEvent } from '@/hooks/useProfiles';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useToast } from '@/hooks/use-toast';
 import { FeedbackModal } from '@/components/feedback/FeedbackModal';
-
-interface EventConnection {
-  eventId: string;
-  eventTitle: string;
-  eventDate: string;
-  profiles: User[];
-}
+import type { Profile } from '@/types/database';
 
 const Connections = () => {
   const { toast } = useToast();
+  const { profile } = useCurrentUser();
+  const { connections, isLoading, error } = useConnectionsByEvent();
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [selectedEventForFeedback, setSelectedEventForFeedback] = useState<string | null>(null);
 
-  // Only show profiles from events you've attended
-  const connectionsByEvent: EventConnection[] = currentUser.eventsAttended.map(eventId => {
-    const event = mockEvents.find(e => e.id === eventId);
-    const profilesFromEvent = mockProfiles.filter(profile => 
-      profile.eventsAttended.includes(eventId)
-    );
-    
-    return {
-      eventId,
-      eventTitle: event?.title || 'Unknown Event',
-      eventDate: event?.date || '',
-      profiles: profilesFromEvent,
-    };
-  }).filter(ec => ec.profiles.length > 0);
-
-  const totalConnections = connectionsByEvent.reduce((acc, ec) => acc + ec.profiles.length, 0);
+  const totalConnections = connections.reduce((acc, ec) => acc + ec.profiles.length, 0);
 
   const handleWave = (profileId: string) => {
-    const profile = mockProfiles.find(p => p.id === profileId);
-    if (profile) {
+    const person = connections.flatMap(c => c.profiles).find(p => p.id === profileId);
+    if (person) {
       toast({
         title: "Wave Sent! 👋",
-        description: `${profile.name} will be notified. If they wave back, you'll match!`,
+        description: `${person.name} will be notified. If they wave back, you'll match!`,
       });
     }
   };
@@ -53,20 +36,41 @@ const Connections = () => {
     setFeedbackModalOpen(true);
   };
 
-  // Check for recent events that need feedback (within 48 hours)
-  const getRecentEventsNeedingFeedback = () => {
-    const now = new Date();
-    return currentUser.eventsAttended.filter(eventId => {
-      const event = mockEvents.find(e => e.id === eventId);
-      if (!event) return false;
-      
-      const eventDate = new Date(event.date);
-      const hoursSinceEvent = (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60);
-      return hoursSinceEvent >= 0 && hoursSinceEvent <= 48;
-    });
-  };
+  // Transform Profile to match ProfileCard expected type
+  const transformProfile = (p: Profile) => ({
+    id: p.id,
+    name: p.name,
+    age: p.age || 0,
+    ageRange: '25-30' as const,
+    area: (p.area || 'OKC') as any,
+    bio: p.bio || '',
+    interests: p.interests || [],
+    interestTags: p.interests?.slice(0, 4) || [],
+    photoUrl: p.photo_url || '',
+    eventsAttended: [],
+    role: 'single' as const,
+    verificationLevel: (p.verification_level || 'pending') as any,
+    responseRate: p.response_rate || 0,
+    showUpRate: p.show_up_rate || 0,
+    totalConnections: 0,
+    religion: p.religion,
+    lookingFor: p.looking_for as any,
+  });
 
-  const recentEventsForFeedback = getRecentEventsNeedingFeedback();
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="mx-auto max-w-7xl px-4 py-8">
+          <Skeleton className="h-10 w-64 mb-8" />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[1, 2, 3, 4].map(i => (
+              <Skeleton key={i} className="h-80" />
+            ))}
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -80,7 +84,6 @@ const Connections = () => {
           <p className="text-muted-foreground">
             People you've met at events. Real connections, real chemistry.
           </p>
-          <p className="text-xs text-muted-foreground mt-1">Social Singles OKC by TLC</p>
         </div>
 
         {/* Trust Badges Banner */}
@@ -104,41 +107,6 @@ const Connections = () => {
           </p>
         </div>
 
-        {/* Feedback Window Alert */}
-        {recentEventsForFeedback.length > 0 && (
-          <Card className="mb-8 border-primary bg-primary/5">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Clock className="h-5 w-5 text-primary" />
-                Feedback Window Open!
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Help new members build trust by leaving feedback for people you met. This helps them earn their Community Trusted badge!
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {recentEventsForFeedback.map(eventId => {
-                  const event = mockEvents.find(e => e.id === eventId);
-                  return (
-                    <Button 
-                      key={eventId} 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => openFeedbackForEvent(eventId)}
-                      className="gap-2"
-                    >
-                      <Star className="h-4 w-4" />
-                      Leave feedback for {event?.title}
-                    </Button>
-                  );
-                })}
-              </div>
-              <FeedbackCountdown />
-            </CardContent>
-          </Card>
-        )}
-
         {/* Stats */}
         <div className="mb-8 rounded-xl bg-muted p-6">
           <div className="grid gap-4 md:grid-cols-3">
@@ -147,18 +115,18 @@ const Connections = () => {
               <p className="text-sm text-muted-foreground">People You've Met</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-foreground">{currentUser.eventsAttended.length}</p>
+              <p className="text-3xl font-bold text-foreground">{connections.length}</p>
               <p className="text-sm text-muted-foreground">Events Attended</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-foreground">{currentUser.totalConnections}</p>
+              <p className="text-3xl font-bold text-foreground">0</p>
               <p className="text-sm text-muted-foreground">Total Waves Sent</p>
             </div>
           </div>
         </div>
 
         {/* No Events Attended */}
-        {currentUser.eventsAttended.length === 0 && (
+        {connections.length === 0 && (
           <Card className="border-primary/50 bg-primary/5">
             <CardContent className="py-16 text-center">
               <div className="text-6xl mb-4">🎉</div>
@@ -175,7 +143,7 @@ const Connections = () => {
         )}
 
         {/* Connections by Event */}
-        {connectionsByEvent.map((eventConnection) => (
+        {connections.map((eventConnection) => (
           <div key={eventConnection.eventId} className="mb-10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -185,15 +153,26 @@ const Connections = () => {
                   {eventConnection.profiles.length} {eventConnection.profiles.length === 1 ? 'person' : 'people'}
                 </Badge>
               </h2>
-              <span className="text-sm text-muted-foreground">
-                {new Date(eventConnection.eventDate).toLocaleDateString()}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {new Date(eventConnection.eventDate).toLocaleDateString()}
+                </span>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => openFeedbackForEvent(eventConnection.eventId)}
+                  className="gap-2"
+                >
+                  <Star className="h-4 w-4" />
+                  Leave Feedback
+                </Button>
+              </div>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {eventConnection.profiles.map((profile) => (
+              {eventConnection.profiles.map((p) => (
                 <ProfileCard 
-                  key={profile.id} 
-                  profile={profile} 
+                  key={p.id} 
+                  profile={transformProfile(p)} 
                   onWave={handleWave}
                   forceReveal={true}
                 />
@@ -201,18 +180,6 @@ const Connections = () => {
             </div>
           </div>
         ))}
-
-        {currentUser.eventsAttended.length > 0 && totalConnections === 0 && (
-          <div className="py-16 text-center">
-            <div className="text-4xl mb-4">🤔</div>
-            <p className="text-muted-foreground mb-4">
-              Looks like no one else was at those events yet. Keep attending to meet new people!
-            </p>
-            <Button asChild>
-              <a href="/events">Find More Events</a>
-            </Button>
-          </div>
-        )}
       </div>
 
       {/* Feedback Modal */}
@@ -222,31 +189,6 @@ const Connections = () => {
         eventId={selectedEventForFeedback}
       />
     </Layout>
-  );
-};
-
-// Countdown component for feedback window
-const FeedbackCountdown = () => {
-  const [timeLeft, setTimeLeft] = useState('');
-
-  useEffect(() => {
-    const updateCountdown = () => {
-      // Mock: assuming event was 24 hours ago, 24 hours left
-      const hoursLeft = 24;
-      const minutesLeft = 0;
-      setTimeLeft(`${hoursLeft}h ${minutesLeft}m remaining`);
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-      <Clock className="h-4 w-4" />
-      <span>Feedback window closes in: <strong className="text-foreground">{timeLeft}</strong></span>
-    </div>
   );
 };
 
