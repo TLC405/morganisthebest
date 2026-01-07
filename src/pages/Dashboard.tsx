@@ -9,6 +9,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useUserRSVPs } from '@/hooks/useEvents';
 import { useProfiles } from '@/hooks/useProfiles';
 import { VerificationBadge } from '@/components/profiles/VerificationBadge';
+import type { VerificationLevel } from '@/types/database';
 
 const Dashboard = () => {
   const { profile, isLoading: profileLoading } = useCurrentUser();
@@ -50,7 +51,7 @@ const Dashboard = () => {
               Welcome back, {profile?.name || 'there'}!
             </h1>
             {profile?.verification_level && (
-              <VerificationBadge level={profile.verification_level} showLabel size="lg" />
+              <VerificationBadge level={profile.verification_level as VerificationLevel} showLabel size="lg" />
             )}
           </div>
           <p className="text-muted-foreground">
@@ -189,7 +190,7 @@ const Dashboard = () => {
                         <div className="flex items-center gap-2">
                           <h4 className="font-medium text-foreground">{person.name}{person.age ? `, ${person.age}` : ''}</h4>
                           {person.verification_level && (
-                            <VerificationBadge level={person.verification_level} />
+                            <VerificationBadge level={person.verification_level as VerificationLevel} />
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-1">{person.bio || 'No bio yet'}</p>

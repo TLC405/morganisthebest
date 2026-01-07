@@ -9,6 +9,7 @@ import { CompatibilityBadge } from '@/components/quiz/CompatibilityBadge';
 import { useThemeVariant } from '@/contexts/ThemeVariantContext';
 import { cn } from '@/lib/utils';
 import { getStaggerDelay } from '@/lib/animations';
+import type { VerificationLevel } from '@/types/database';
 
 // Simple profile type for display (works with both mock and real data)
 interface DisplayProfile {
@@ -133,7 +134,7 @@ export const ProfileCard = ({
             variant === 'brutal' && 'rounded-none border-2 border-foreground',
             variant === 'swiss' && 'rounded-none uppercase text-[10px]'
           )}>
-            <VerificationBadge level={profile.verificationLevel} />
+            <VerificationBadge level={profile.verificationLevel as VerificationLevel} />
             Revealed
           </Badge>
         </div>
@@ -149,7 +150,7 @@ export const ProfileCard = ({
             )}>
               {profile.name}{profile.age ? `, ${profile.age}` : ''}
             </h3>
-            <VerificationBadge level={profile.verificationLevel} size="lg" />
+            <VerificationBadge level={profile.verificationLevel as VerificationLevel} size="lg" />
           </div>
           <p className={cn(
             'text-sm text-muted-foreground',

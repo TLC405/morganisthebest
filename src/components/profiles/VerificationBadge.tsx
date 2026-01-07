@@ -1,4 +1,4 @@
-import { VerificationLevel, getVerificationBadge } from '@/data/mockData';
+import { VerificationLevel, getVerificationBadge } from '@/types/database';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
