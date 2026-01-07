@@ -6,6 +6,8 @@ import {
   Clock, MapPin, Send, MessageCircle, TrendingUp, Shield 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useThemeVariant } from '@/contexts/ThemeVariantContext';
+import { getStaggerDelay } from '@/lib/animations';
 
 export interface MemberData {
   id: string;
@@ -53,6 +55,7 @@ interface MemberCardProps {
   onClick?: () => void;
   selected?: boolean;
   compact?: boolean;
+  index?: number;
 }
 
 const roleIcons: Record<string, typeof Crown> = {
@@ -83,7 +86,10 @@ export const MemberCard = ({
   onClick,
   selected = false,
   compact = false,
+  index = 0,
 }: MemberCardProps) => {
+  const { variant } = useThemeVariant();
+  
   const initials = member.name
     ?.split(' ')
     .map((n) => n[0])
@@ -103,29 +109,89 @@ export const MemberCard = ({
 
   const tier = getTier();
 
-  const tierStyles = {
-    platinum: 'from-[hsl(280_60%_50%)] to-[hsl(320_70%_45%)]',
-    gold: 'from-[hsl(45_80%_50%)] to-[hsl(35_90%_40%)]',
-    silver: 'from-[hsl(220_20%_60%)] to-[hsl(220_15%_45%)]',
-    bronze: 'from-[hsl(30_50%_40%)] to-[hsl(20_40%_30%)]',
+  // Variant-specific tier styles
+  const tierStyles: Record<string, Record<string, string>> = {
+    glass: {
+      platinum: 'from-[hsl(280_60%_50%/0.8)] to-[hsl(320_70%_45%/0.8)]',
+      gold: 'from-[hsl(45_80%_50%/0.8)] to-[hsl(35_90%_40%/0.8)]',
+      silver: 'from-[hsl(220_20%_60%/0.8)] to-[hsl(220_15%_45%/0.8)]',
+      bronze: 'from-[hsl(30_50%_40%/0.8)] to-[hsl(20_40%_30%/0.8)]',
+    },
+    brutal: {
+      platinum: 'bg-[hsl(280_60%_50%)]',
+      gold: 'bg-[hsl(45_80%_50%)]',
+      silver: 'bg-[hsl(220_20%_60%)]',
+      bronze: 'bg-[hsl(30_50%_40%)]',
+    },
+    luxe: {
+      platinum: 'from-[hsl(45_80%_50%)] to-[hsl(45_60%_30%)]',
+      gold: 'from-[hsl(45_80%_50%)] to-[hsl(35_90%_40%)]',
+      silver: 'from-[hsl(220_10%_50%)] to-[hsl(220_10%_30%)]',
+      bronze: 'from-[hsl(30_30%_35%)] to-[hsl(20_20%_25%)]',
+    },
+    default: {
+      platinum: 'from-[hsl(280_60%_50%)] to-[hsl(320_70%_45%)]',
+      gold: 'from-[hsl(45_80%_50%)] to-[hsl(35_90%_40%)]',
+      silver: 'from-[hsl(220_20%_60%)] to-[hsl(220_15%_45%)]',
+      bronze: 'from-[hsl(30_50%_40%)] to-[hsl(20_40%_30%)]',
+    }
   };
+
+  const currentTierStyles = tierStyles[variant] || tierStyles.default;
+
+  // Variant-specific card styles
+  const variantCardStyles: Record<string, string> = {
+    glass: 'card-variant bg-transparent',
+    neumorphic: 'card-variant',
+    swiss: 'card-variant',
+    luxe: 'card-variant',
+    flutter: 'card-variant',
+    brutal: 'card-variant',
+    editorial: 'card-variant',
+    aurora: 'card-variant bg-transparent',
+  };
+
+  // Variant-specific avatar border colors
+  const getAvatarBorderClass = () => {
+    const base = 'border-2 transition-transform duration-300 group-hover:scale-105';
+    
+    if (variant === 'brutal') {
+      return cn(base, 'rounded-none border-foreground');
+    }
+    
+    if (variant === 'swiss') {
+      return cn(base, 'rounded-none border-foreground');
+    }
+
+    const tierBorders: Record<string, string> = {
+      platinum: 'border-[hsl(280_60%_50%)]',
+      gold: 'border-[hsl(45_80%_50%)]',
+      silver: 'border-[hsl(220_20%_60%)]',
+      bronze: 'border-border',
+    };
+    
+    return cn(base, tierBorders[tier]);
+  };
+
+  const staggerDelay = getStaggerDelay(index, variant);
 
   return (
     <Card
       className={cn(
         'group relative overflow-hidden cursor-pointer transition-all duration-300',
-        'bg-card border-border/50 rounded-2xl',
-        'hover:border-border hover:-translate-y-1',
-        'hover:shadow-[0_20px_40px_hsl(0_0%_0%/0.25)]',
+        'hover:-translate-y-1',
+        variantCardStyles[variant],
         selected && 'ring-2 ring-primary border-primary',
         compact ? 'p-2' : ''
       )}
       onClick={onClick}
+      style={{ animationDelay: staggerDelay }}
     >
       {/* Tier indicator line */}
       <div className={cn(
-        'absolute top-0 left-0 right-0 h-1',
-        `bg-gradient-to-r ${tierStyles[tier]}`
+        'absolute top-0 left-0 right-0',
+        variant === 'brutal' ? 'h-2' : 'h-1',
+        variant === 'brutal' ? currentTierStyles[tier] : `bg-gradient-to-r ${currentTierStyles[tier]}`
       )} />
 
       <CardContent className={cn('pt-5', compact ? 'p-3' : 'p-5')}>
@@ -133,16 +199,17 @@ export const MemberCard = ({
           {/* Avatar */}
           <div className="relative mb-4">
             <Avatar className={cn(
-              'border-2 transition-transform duration-300',
-              'group-hover:scale-105',
-              tier === 'platinum' ? 'border-[hsl(280_60%_50%)]' :
-              tier === 'gold' ? 'border-[hsl(45_80%_50%)]' :
-              tier === 'silver' ? 'border-[hsl(220_20%_60%)]' :
-              'border-border',
-              compact ? 'h-14 w-14' : 'h-16 w-16'
+              getAvatarBorderClass(),
+              compact ? 'h-14 w-14' : 'h-16 w-16',
+              variant === 'brutal' && 'rounded-none',
+              variant === 'swiss' && 'rounded-none'
             )}>
               <AvatarImage src={member.photo_url || ''} alt={member.name} className="object-cover" />
-              <AvatarFallback className="bg-muted text-foreground font-semibold">
+              <AvatarFallback className={cn(
+                'bg-muted text-foreground font-semibold',
+                variant === 'brutal' && 'rounded-none font-grotesk',
+                variant === 'luxe' && 'font-playfair'
+              )}>
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -150,10 +217,11 @@ export const MemberCard = ({
             {/* Status indicators */}
             {checkInStatus && (
               <div className={cn(
-                'absolute -bottom-1 -right-1 h-5 w-5 rounded-full flex items-center justify-center border-2 border-card',
+                'absolute -bottom-1 -right-1 h-5 w-5 flex items-center justify-center border-2 border-card',
                 checkInStatus === 'checked_in' && 'bg-emerald-500',
                 checkInStatus === 'pending' && 'bg-amber-500',
-                checkInStatus === 'late' && 'bg-orange-500'
+                checkInStatus === 'late' && 'bg-orange-500',
+                variant === 'brutal' ? 'rounded-none' : 'rounded-full'
               )}>
                 {checkInStatus === 'checked_in' ? (
                   <CheckCircle className="h-3 w-3 text-white" />
@@ -164,19 +232,31 @@ export const MemberCard = ({
             )}
 
             {member.community_trusted && (
-              <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary flex items-center justify-center border-2 border-card">
+              <div className={cn(
+                'absolute -top-1 -right-1 h-5 w-5 bg-primary flex items-center justify-center border-2 border-card',
+                variant === 'brutal' ? 'rounded-none' : 'rounded-full'
+              )}>
                 <Shield className="h-2.5 w-2.5 text-primary-foreground" />
               </div>
             )}
           </div>
 
           {/* Name & Basic Info */}
-          <h3 className="font-semibold text-foreground text-sm truncate w-full">
+          <h3 className={cn(
+            'font-semibold text-foreground text-sm truncate w-full',
+            variant === 'luxe' && 'font-playfair text-base',
+            variant === 'brutal' && 'font-grotesk uppercase',
+            variant === 'swiss' && 'uppercase tracking-wider text-xs',
+            variant === 'editorial' && 'font-sora font-light'
+          )}>
             {member.name}{member.age ? `, ${member.age}` : ''}
           </h3>
 
           {member.area && !compact && (
-            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+            <p className={cn(
+              'text-xs text-muted-foreground flex items-center gap-1 mt-1',
+              variant === 'swiss' && 'uppercase tracking-wider text-[10px]'
+            )}>
               <MapPin className="h-3 w-3" />
               {member.area}
             </p>
@@ -190,7 +270,8 @@ export const MemberCard = ({
                 <span className={cn(
                   'text-xs font-semibold',
                   trustIndex >= 70 ? 'text-emerald-400' :
-                  trustIndex >= 50 ? 'text-amber-400' : 'text-muted-foreground'
+                  trustIndex >= 50 ? 'text-amber-400' : 'text-muted-foreground',
+                  variant === 'brutal' && 'font-grotesk'
                 )}>
                   {Math.round(trustIndex)}
                 </span>
@@ -198,7 +279,10 @@ export const MemberCard = ({
               
               <span className="text-muted-foreground/30">•</span>
               
-              <span className="text-xs text-muted-foreground">
+              <span className={cn(
+                'text-xs text-muted-foreground',
+                variant === 'swiss' && 'uppercase tracking-wider text-[10px]'
+              )}>
                 {eventsCount} events
               </span>
             </div>
@@ -227,10 +311,12 @@ export const MemberCard = ({
             <Badge 
               variant="outline" 
               className={cn(
-                'mt-3 text-xs font-semibold',
+                'mt-3 text-xs font-semibold badge-variant',
                 compatibilityScore >= 80 && 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
                 compatibilityScore >= 60 && compatibilityScore < 80 && 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-                compatibilityScore < 60 && 'bg-muted text-muted-foreground'
+                compatibilityScore < 60 && 'bg-muted text-muted-foreground',
+                variant === 'brutal' && 'rounded-none',
+                variant === 'swiss' && 'rounded-none uppercase text-[10px]'
               )}
             >
               {compatibilityScore}% Match
@@ -243,7 +329,15 @@ export const MemberCard = ({
               {eventRoles.slice(0, 2).map((role, idx) => {
                 const Icon = roleIcons[role.role_type] || Target;
                 return (
-                  <Badge key={idx} variant="outline" className="text-xs py-0.5">
+                  <Badge 
+                    key={idx} 
+                    variant="outline" 
+                    className={cn(
+                      'text-xs py-0.5 badge-variant',
+                      variant === 'brutal' && 'rounded-none',
+                      variant === 'swiss' && 'rounded-none uppercase text-[10px]'
+                    )}
+                  >
                     <Icon className="h-3 w-3 mr-1" />
                     {roleLabels[role.role_type]}
                   </Badge>

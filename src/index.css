@@ -1023,13 +1023,377 @@
   }
 }
 
+/* ========== 8-VARIANT THEME SYSTEM ========== */
+
+/* Glass Variant */
+[data-variant="glass"] {
+  --font-family: 'Poppins', sans-serif;
+  --radius-card: 1rem;
+  --spacing-unit: 1rem;
+}
+
+[data-variant="glass"] .card-variant {
+  background: hsl(var(--card) / 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--border) / 0.3);
+  box-shadow: 0 8px 32px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(var(--foreground) / 0.05);
+  border-radius: 1rem;
+}
+
+[data-variant="glass"] .card-variant:hover {
+  box-shadow: 0 20px 50px hsl(var(--primary) / 0.2), inset 0 1px 0 hsl(var(--foreground) / 0.08);
+  transform: translateY(-4px);
+}
+
+/* Neumorphic Variant */
+[data-variant="neumorphic"] {
+  --font-family: 'Inter', sans-serif;
+  --radius-card: 1.25rem;
+  --spacing-unit: 1rem;
+}
+
+[data-variant="neumorphic"] .card-variant {
+  background: hsl(var(--card));
+  border: none;
+  border-radius: 1.25rem;
+  box-shadow: 
+    8px 8px 20px hsl(0 0% 0% / 0.4),
+    -8px -8px 20px hsl(var(--foreground) / 0.03),
+    inset 0 0 0 1px hsl(var(--foreground) / 0.02);
+}
+
+[data-variant="neumorphic"] .card-variant:hover {
+  box-shadow: 
+    4px 4px 10px hsl(0 0% 0% / 0.4),
+    -4px -4px 10px hsl(var(--foreground) / 0.03),
+    inset 0 0 0 1px hsl(var(--foreground) / 0.04);
+}
+
+/* Swiss Variant */
+[data-variant="swiss"] {
+  --font-family: 'Inter', sans-serif;
+  --radius-card: 0.25rem;
+  --spacing-unit: 0.75rem;
+}
+
+[data-variant="swiss"] .card-variant {
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--foreground));
+  border-radius: 0.25rem;
+  box-shadow: none;
+}
+
+[data-variant="swiss"] .card-variant:hover {
+  background: hsl(var(--foreground) / 0.05);
+  box-shadow: 4px 4px 0 hsl(var(--foreground));
+  transform: translate(-2px, -2px);
+}
+
+/* Luxe Variant */
+[data-variant="luxe"] {
+  --font-family: 'Playfair Display', serif;
+  --radius-card: 0.5rem;
+  --spacing-unit: 1.25rem;
+}
+
+[data-variant="luxe"] .card-variant {
+  background: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(225 25% 8%) 100%);
+  border: 1px solid hsl(45 80% 50% / 0.2);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 30px hsl(0 0% 0% / 0.4);
+}
+
+[data-variant="luxe"] .card-variant:hover {
+  border-color: hsl(45 80% 50% / 0.4);
+  box-shadow: 0 8px 40px hsl(45 80% 50% / 0.15);
+}
+
+/* Flutter Variant */
+[data-variant="flutter"] {
+  --font-family: 'Roboto', sans-serif;
+  --radius-card: 0.75rem;
+  --spacing-unit: 1rem;
+}
+
+[data-variant="flutter"] .card-variant {
+  background: hsl(var(--card));
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 1px 3px hsl(0 0% 0% / 0.12),
+    0 1px 2px hsl(0 0% 0% / 0.24);
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-variant="flutter"] .card-variant:hover {
+  box-shadow: 
+    0 10px 20px hsl(0 0% 0% / 0.19),
+    0 6px 6px hsl(0 0% 0% / 0.23);
+}
+
+/* Brutal Variant */
+[data-variant="brutal"] {
+  --font-family: 'Space Grotesk', sans-serif;
+  --radius-card: 0;
+  --spacing-unit: 0.5rem;
+}
+
+[data-variant="brutal"] .card-variant {
+  background: hsl(var(--card));
+  border: 3px solid hsl(var(--foreground));
+  border-radius: 0;
+  box-shadow: 6px 6px 0 hsl(var(--foreground));
+}
+
+[data-variant="brutal"] .card-variant:hover {
+  box-shadow: 8px 8px 0 hsl(var(--primary));
+  border-color: hsl(var(--primary));
+}
+
+/* Editorial Variant */
+[data-variant="editorial"] {
+  --font-family: 'Sora', sans-serif;
+  --radius-card: 0.125rem;
+  --spacing-unit: 1.5rem;
+}
+
+[data-variant="editorial"] .card-variant {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 0.125rem;
+  box-shadow: none;
+  position: relative;
+}
+
+[data-variant="editorial"] .card-variant::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--accent)));
+}
+
+[data-variant="editorial"] .card-variant:hover {
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+/* Aurora Variant */
+[data-variant="aurora"] {
+  --font-family: 'DM Sans', sans-serif;
+  --radius-card: 1.5rem;
+  --spacing-unit: 1rem;
+}
+
+[data-variant="aurora"] .card-variant {
+  background: linear-gradient(135deg, 
+    hsl(var(--card) / 0.8) 0%, 
+    hsl(var(--primary) / 0.1) 50%,
+    hsl(var(--secondary) / 0.1) 100%
+  );
+  backdrop-filter: blur(10px);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 30px hsl(var(--primary) / 0.1);
+}
+
+[data-variant="aurora"] .card-variant:hover {
+  box-shadow: 0 8px 40px hsl(var(--primary) / 0.25), 0 0 60px hsl(var(--secondary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+/* ========== VARIANT-SPECIFIC ANIMATIONS ========== */
+
+/* Glass Animations */
+@keyframes fadeInGlass {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); filter: blur(10px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+.animate-fade-in-glass { animation: fadeInGlass 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+/* Spring Animations */
+@keyframes springIn {
+  0% { opacity: 0; transform: scale(0.8); }
+  60% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-spring-in { animation: springIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
+
+/* Snap Animations (Swiss) */
+@keyframes snapIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-snap-in { animation: snapIn 0.2s cubic-bezier(0.4, 0, 1, 1) forwards; }
+
+/* Elegant Animations (Luxe) */
+@keyframes elegantIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-elegant-in { animation: elegantIn 0.7s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; }
+
+/* Material Animations (Flutter) */
+@keyframes materialIn {
+  0% { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-material-in { animation: materialIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+/* Brutal Animations */
+@keyframes brutalIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-brutal-in { animation: brutalIn 0.1s linear forwards; }
+
+/* Editorial Animations */
+@keyframes editorialIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-editorial-in { animation: editorialIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* Aurora Animations */
+@keyframes auroraIn {
+  0% { opacity: 0; transform: translateY(20px) rotate(-2deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+.animate-aurora-in { animation: auroraIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+/* ========== VARIANT-SPECIFIC BUTTONS ========== */
+
+[data-variant="glass"] .btn-variant {
+  background: hsl(var(--primary) / 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid hsl(var(--primary-foreground) / 0.2);
+}
+
+[data-variant="neumorphic"] .btn-variant {
+  background: hsl(var(--primary));
+  box-shadow: 
+    4px 4px 10px hsl(0 0% 0% / 0.3),
+    -2px -2px 8px hsl(var(--foreground) / 0.05);
+}
+
+[data-variant="swiss"] .btn-variant {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border-radius: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+[data-variant="luxe"] .btn-variant {
+  background: linear-gradient(135deg, hsl(45 80% 50%), hsl(35 90% 40%));
+  color: hsl(0 0% 10%);
+  font-family: 'Playfair Display', serif;
+}
+
+[data-variant="flutter"] .btn-variant {
+  background: hsl(var(--primary));
+  border-radius: 9999px;
+  box-shadow: 0 2px 4px hsl(0 0% 0% / 0.2);
+}
+
+[data-variant="brutal"] .btn-variant {
+  background: hsl(var(--primary));
+  border: 3px solid hsl(var(--foreground));
+  border-radius: 0;
+  box-shadow: 4px 4px 0 hsl(var(--foreground));
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+[data-variant="brutal"] .btn-variant:hover {
+  box-shadow: 2px 2px 0 hsl(var(--foreground));
+  transform: translate(2px, 2px);
+}
+
+[data-variant="editorial"] .btn-variant {
+  background: transparent;
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--foreground));
+  border-radius: 0;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-variant="aurora"] .btn-variant {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  border-radius: 9999px;
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.4);
+}
+
+/* ========== VARIANT-SPECIFIC BADGES ========== */
+
+[data-variant="glass"] .badge-variant {
+  background: hsl(var(--muted) / 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid hsl(var(--border) / 0.3);
+}
+
+[data-variant="neumorphic"] .badge-variant {
+  background: hsl(var(--muted));
+  box-shadow: 2px 2px 5px hsl(0 0% 0% / 0.2), -1px -1px 3px hsl(var(--foreground) / 0.03);
+}
+
+[data-variant="swiss"] .badge-variant {
+  background: transparent;
+  border: 1px solid hsl(var(--foreground));
+  border-radius: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+}
+
+[data-variant="luxe"] .badge-variant {
+  background: hsl(45 80% 50% / 0.15);
+  border: 1px solid hsl(45 80% 50% / 0.3);
+  color: hsl(45 80% 60%);
+}
+
+[data-variant="flutter"] .badge-variant {
+  background: hsl(var(--primary) / 0.12);
+  color: hsl(var(--primary));
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+[data-variant="brutal"] .badge-variant {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border-radius: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+[data-variant="editorial"] .badge-variant {
+  background: transparent;
+  border-bottom: 2px solid hsl(var(--primary));
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+[data-variant="aurora"] .badge-variant {
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--secondary) / 0.2));
+  border: 1px solid hsl(var(--primary) / 0.3);
+  border-radius: 9999px;
+}
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Poppins', sans-serif;
+    @apply bg-background text-foreground;
+    font-family: var(--font-family, 'Poppins', sans-serif);
   }
 }
 
