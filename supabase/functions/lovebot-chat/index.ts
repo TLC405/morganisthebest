@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,7 +12,50 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, userRole } = await req.json();
+    // Verify JWT authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
+        status: 401, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Validate JWT and get user claims
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      console.error('JWT validation failed:', claimsError);
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
+        status: 401, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
+
+    const userId = claimsData.claims.sub;
+
+    // Fetch actual user role from database (don't trust client-supplied role)
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .single();
+
+    if (roleError) {
+      console.error('Role fetch error:', roleError);
+    }
+
+    const userRole = roleData?.role || 'single';
+
+    const { messages } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -33,7 +77,7 @@ Your role is to help users with:
 - Profile tips and compatibility insights
 - Troubleshooting any concerns with grace
 
-The user's current role is: ${userRole || 'single'}
+The user's current role is: ${userRole}
 
 ${userRole === 'admin' ? `
 As someone with ADMIN privileges, I can assist you with:
@@ -74,7 +118,7 @@ About our distinguished community:
 
 Keep responses warm yet concise, sophisticated yet approachable. Use refined language and occasional tasteful enthusiasm. Always be supportive of members seeking genuine, lasting connections!`;
 
-    console.log("Lady Evans processing request for role:", userRole);
+    console.log("Lady Evans processing request for authenticated user:", userId, "role:", userRole);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
