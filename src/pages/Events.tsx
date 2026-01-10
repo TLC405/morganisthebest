@@ -110,13 +110,12 @@ const Events = () => {
   const confirmRSVP = async () => {
     if (!user || !rsvpDialog.event) return;
 
-    const pin = Math.floor(1000 + Math.random() * 9000).toString();
-
+    // PIN is automatically generated server-side by the database trigger (set_nametag_pin)
+    // using the generate_event_pin() function for better security
     const { error } = await supabase.from('event_attendance').insert({
       user_id: user.id,
       event_id: rsvpDialog.event.id,
       rsvp_status: 'going',
-      nametag_pin: pin,
     });
 
     if (error) {
