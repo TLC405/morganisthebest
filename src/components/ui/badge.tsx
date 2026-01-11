@@ -4,26 +4,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-sm border-2 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80 shadow-sm",
-        secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
-        destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80 shadow-sm",
-        outline: "text-foreground border-border",
-        // Premium variants
-        glow: "border-transparent bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg",
-        "glow-secondary": "border-transparent bg-secondary text-secondary-foreground shadow-glow-thunder",
-        gradient: "border-0 gradient-primary text-primary-foreground shadow-sm",
-        "gradient-thunder": "border-0 gradient-thunder text-secondary-foreground shadow-sm",
-        glass: "glass border-0 text-foreground shadow-sm",
-        premium: "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20",
-        "premium-secondary": "border-secondary/30 bg-secondary/10 text-secondary hover:bg-secondary/20",
-        success: "border-transparent bg-emerald-500/90 text-white shadow-sm",
-        warning: "border-transparent bg-amber-500/90 text-white shadow-sm",
-        pulse: "border-transparent bg-primary text-primary-foreground animate-pulse shadow-glow",
-        shimmer: "border-0 shimmer bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%] text-primary-foreground",
+        // Default - Stamped metal look
+        default: "border-primary bg-primary text-primary-foreground shadow-hard-sm",
+        // Secondary - Sage
+        secondary: "border-secondary bg-secondary text-secondary-foreground shadow-hard-sm",
+        // Destructive
+        destructive: "border-destructive bg-destructive text-destructive-foreground shadow-hard-sm",
+        // Outline - Industrial border
+        outline: "border-foreground bg-transparent text-foreground",
+        // Muted - Subtle tag
+        muted: "border-border bg-muted text-muted-foreground",
+        // Success
+        success: "border-[hsl(142_50%_40%)] bg-[hsl(142_50%_40%)] text-white shadow-hard-sm",
+        // Warning
+        warning: "border-[hsl(38_80%_55%)] bg-[hsl(38_80%_55%)] text-[hsl(30_8%_12%)] shadow-hard-sm",
       },
     },
     defaultVariants: {

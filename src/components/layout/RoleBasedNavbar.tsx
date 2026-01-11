@@ -24,6 +24,7 @@ import {
   HelpCircle,
   Brain
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 // Navigation links by role
 const singlesLinks = [
@@ -58,9 +59,8 @@ export const RoleBasedNavbar = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const location = useLocation();
-  const { user, role, signOut, isLoading } = useAuth();
+  const { user, role, signOut } = useAuth();
 
-  // Fetch user profile for personalized greeting
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user) return;
@@ -113,30 +113,31 @@ export const RoleBasedNavbar = () => {
     const Icon = isAdmin ? Crown : Shield;
     
     return (
-      <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+      <span className={cn(
+        'flex items-center gap-1.5 px-2 py-0.5 text-xs font-bold uppercase tracking-wider border-2',
         isAdmin 
-          ? 'bg-gradient-primary text-primary-foreground shadow-glow' 
-          : 'bg-secondary/20 text-secondary-foreground'
-      }`}>
+          ? 'bg-primary text-primary-foreground border-primary' 
+          : 'bg-secondary text-secondary-foreground border-secondary'
+      )}>
         <Icon className="h-3 w-3" />
-        {role.charAt(0).toUpperCase() + role.slice(1)}
+        {role}
       </span>
     );
   };
 
   return (
-    <header className="sticky top-0 z-50 glass-strong border-b border-border/50">
+    <header className="sticky top-0 z-50 bg-card border-b-4 border-primary">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo - Text Only */}
+          {/* Logo */}
           <Link to="/" className="flex flex-col group">
             <div className="flex items-center gap-1">
-              <span className="font-black text-xl tracking-tight" style={{ color: '#E3F93C' }}>
+              <span className="font-black text-xl tracking-tight text-accent">
                 SOCIAL SINGLES
               </span>
-              <span className="font-black text-xl text-secondary">OKC</span>
+              <span className="font-black text-xl text-primary">OKC</span>
             </div>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium -mt-0.5">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold -mt-0.5">
               Date in Real Life
             </span>
           </Link>
@@ -150,32 +151,33 @@ export const RoleBasedNavbar = () => {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={cn(
+                    'flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-150',
                     isActive
-                      ? 'bg-primary/10 text-primary shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                  }`}
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  )}
                 >
-                  <Icon className={`h-4 w-4 ${isActive ? 'text-primary' : ''}`} />
+                  <Icon className="h-4 w-4" />
                   {link.label}
                 </Link>
               );
             })}
           </nav>
 
-          {/* User Section with Personalized Greeting */}
+          {/* User Section */}
           <div className="hidden md:flex items-center gap-4">
             {user && getFirstName() && (
               <div className="flex items-center gap-3">
-                <Avatar className="h-9 w-9 border-2 border-primary/20 shadow-glow">
+                <Avatar className="h-9 w-9 border-2 border-primary rounded-sm">
                   <AvatarImage src={userPhoto || undefined} />
-                  <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm font-semibold">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold rounded-sm">
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-foreground">
-                    Hey, {getFirstName()}! ✨
+                  <span className="text-sm font-bold text-foreground uppercase tracking-wide">
+                    {getFirstName()}
                   </span>
                   {getRoleBadge()}
                 </div>
@@ -187,14 +189,13 @@ export const RoleBasedNavbar = () => {
                 variant="ghost" 
                 size="sm" 
                 onClick={signOut}
-                className="text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
               </Button>
             ) : (
               <Link to="/auth">
-                <Button size="sm" className="rounded-xl gradient-primary shadow-glow hover:shadow-glow-lg transition-all">
+                <Button size="sm">
                   <LogIn className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>
@@ -205,7 +206,7 @@ export const RoleBasedNavbar = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-foreground rounded-xl hover:bg-muted/50 transition-colors"
+            className="md:hidden p-2 text-foreground border-2 border-foreground hover:bg-foreground hover:text-background transition-colors"
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -213,19 +214,19 @@ export const RoleBasedNavbar = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-border/50 animate-fade-in">
+          <nav className="md:hidden py-4 border-t-2 border-border animate-fade-in">
             {/* Mobile User Greeting */}
             {user && getFirstName() && (
-              <div className="flex items-center gap-3 px-4 py-3 mb-2">
-                <Avatar className="h-10 w-10 border-2 border-primary/20">
+              <div className="flex items-center gap-3 px-4 py-3 mb-2 border-b-2 border-border">
+                <Avatar className="h-10 w-10 border-2 border-primary rounded-sm">
                   <AvatarImage src={userPhoto || undefined} />
-                  <AvatarFallback className="bg-gradient-primary text-primary-foreground">
+                  <AvatarFallback className="bg-primary text-primary-foreground rounded-sm">
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="text-base font-semibold text-foreground">
-                    Hey, {getFirstName()}! ✨
+                  <span className="text-base font-bold text-foreground uppercase">
+                    {getFirstName()}
                   </span>
                   {getRoleBadge()}
                 </div>
@@ -241,11 +242,12 @@ export const RoleBasedNavbar = () => {
                     key={link.to}
                     to={link.to}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-wider transition-all',
                       isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                    }`}
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    )}
                   >
                     <Icon className="h-5 w-5" />
                     {link.label}
@@ -253,14 +255,14 @@ export const RoleBasedNavbar = () => {
                 );
               })}
               
-              <div className="border-t border-border/50 mt-2 pt-2">
+              <div className="border-t-2 border-border mt-2 pt-2">
                 {user ? (
                   <button
                     onClick={() => {
                       signOut();
                       setMobileMenuOpen(false);
                     }}
-                    className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl"
+                    className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted"
                   >
                     <LogOut className="h-5 w-5" />
                     Sign Out
@@ -269,7 +271,7 @@ export const RoleBasedNavbar = () => {
                   <Link
                     to="/auth"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-primary hover:bg-primary/10 rounded-xl"
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-wider text-primary hover:bg-primary/10"
                   >
                     <LogIn className="h-5 w-5" />
                     Sign In

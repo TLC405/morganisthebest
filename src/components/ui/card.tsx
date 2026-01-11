@@ -4,26 +4,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const cardVariants = cva(
-  "rounded-2xl text-card-foreground transition-all duration-300",
+  "rounded-sm text-card-foreground transition-all duration-200",
   {
     variants: {
       variant: {
-        default: "border bg-card shadow-sm",
-        glass: "glass border-0 shadow-premium",
-        "glass-strong": "glass-strong border-0 shadow-premium",
-        gradient: "gradient-card border-0 shadow-premium",
-        elevated: "bg-card border-0 shadow-premium hover-lift",
-        premium: "premium-card rounded-2xl",
-        spotlight: "spotlight-card bg-card border border-border/50 shadow-depth",
-        neon: "bg-card/50 border border-primary/30 shadow-glow hover:border-primary/50",
-        "neon-blue": "bg-card/50 border border-secondary/30 shadow-glow-thunder hover:border-secondary/50",
-        floating: "bg-card border-0 shadow-depth hover-lift float",
-        // New Hinge/Tinder inspired variants
-        "photo-card": "photo-card border-0 shadow-depth overflow-hidden",
-        "swipe-card": "photo-card border-0 shadow-depth overflow-hidden cursor-grab active:cursor-grabbing",
-        "prompt": "prompt-card",
-        "story": "rounded-2xl overflow-hidden border-0 shadow-lg",
-        "action": "bg-card/80 backdrop-blur-xl border border-border/20 shadow-depth rounded-3xl",
+        // Default - Debossed industrial card
+        default: "bg-card border-2 border-border sku-raised",
+        // Elevated - Hard shadow
+        elevated: "bg-card border-2 border-foreground shadow-hard hover:-translate-y-1 hover:shadow-hard-primary",
+        // Inset - Sunken container
+        inset: "bg-muted border-2 border-border sku-inset",
+        // Accent - Left border accent
+        accent: "bg-card border-2 border-border border-l-4 border-l-primary",
+        // Minimal - Just background
+        minimal: "bg-card",
       },
     },
     defaultVariants: {
@@ -45,14 +39,14 @@ Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
+    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-5", className)} {...props} />
   ),
 );
 CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn("text-2xl font-semibold leading-none tracking-tight", className)} {...props} />
+    <h3 ref={ref} className={cn("text-xl font-bold uppercase tracking-tight", className)} {...props} />
   ),
 );
 CardTitle.displayName = "CardTitle";
@@ -65,13 +59,13 @@ const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttribu
 CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />,
+  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-5 pt-0", className)} {...props} />,
 );
 CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props} />
+    <div ref={ref} className={cn("flex items-center p-5 pt-0", className)} {...props} />
   ),
 );
 CardFooter.displayName = "CardFooter";

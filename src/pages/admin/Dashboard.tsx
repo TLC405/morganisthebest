@@ -4,12 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { 
   Users, Calendar, Building2, Star, MessageCircle, TrendingUp,
-  Plus, Command, ArrowRight, Activity, Sparkles
+  Plus, Command, ArrowRight, Activity
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
-import { ThemeVariantProvider, useThemeVariant } from '@/contexts/ThemeVariantContext';
-import { ThemeVariantSwitcher } from '@/components/admin/ThemeVariantSwitcher';
 import { LiveActivityFeed } from '@/components/admin/LiveActivityFeed';
 import { AdminChatObserver } from '@/components/admin/AdminChatObserver';
 import { StatCard } from '@/components/admin/StatCard';
@@ -45,8 +43,7 @@ const userGrowthData = [
   { name: 'Week 6', users: 698 },
 ];
 
-const DashboardContent = () => {
-  const { variant } = useThemeVariant();
+const AdminDashboard = () => {
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0,
     activeEvents: 0,
@@ -101,13 +98,6 @@ const DashboardContent = () => {
     { title: 'Check-in Rate', value: `${stats.checkInRate}%`, icon: TrendingUp, trend: '+3%', trendUp: true },
   ];
 
-  const cardStyles = {
-    glass: 'bg-card/60 backdrop-blur-xl border-border/40 shadow-[0_8px_32px_hsl(0_0%_0%/0.2)]',
-    neumorphic: 'bg-card shadow-[6px_6px_12px_hsl(0_0%_0%/0.25),-6px_-6px_12px_hsl(var(--border)/0.1)]',
-    swiss: 'bg-card border-l-4 border-l-primary border-border/20',
-    luxe: 'bg-gradient-to-br from-card to-[hsl(225_24%_6%)] border-[hsl(45_30%_30%/0.3)]',
-  };
-
   return (
     <Layout>
       <div className="min-h-screen bg-background">
@@ -115,20 +105,15 @@ const DashboardContent = () => {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div className="space-y-1">
-              <h1 className={cn(
-                'text-3xl font-bold tracking-tight',
-                variant === 'luxe' ? 'text-[hsl(45_80%_60%)]' : 'text-foreground'
-              )}>
+              <h1 className="text-3xl font-black uppercase tracking-tight text-foreground">
                 Dashboard
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground uppercase tracking-wide text-sm">
                 Real-time overview of your community
               </p>
             </div>
             
             <div className="flex items-center gap-3">
-              <ThemeVariantSwitcher />
-              
               <Button 
                 variant="outline" 
                 className="gap-2"
@@ -173,23 +158,23 @@ const DashboardContent = () => {
               {/* Charts */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Check-in Chart */}
-                <Card className={cn('rounded-2xl border', cardStyles[variant])}>
+                <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                    <CardTitle className="text-lg font-bold uppercase tracking-wide flex items-center gap-2">
                       <Activity className="h-5 w-5 text-primary" />
                       Check-in Performance
                     </CardTitle>
-                    <div className="flex gap-4 text-xs mt-2">
+                    <div className="flex gap-4 text-xs mt-2 uppercase tracking-wide">
                       <span className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                        <span className="h-2 w-2 rounded-sm bg-secondary" />
                         On Time
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full bg-amber-400" />
+                        <span className="h-2 w-2 rounded-sm bg-[hsl(38_80%_55%)]" />
                         Late
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full bg-destructive" />
+                        <span className="h-2 w-2 rounded-sm bg-destructive" />
                         No Show
                       </span>
                     </div>
@@ -214,14 +199,13 @@ const DashboardContent = () => {
                           <Tooltip 
                             contentStyle={{ 
                               background: 'hsl(var(--card))', 
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '12px',
-                              boxShadow: '0 10px 40px hsl(0 0% 0% / 0.3)'
+                              border: '2px solid hsl(var(--border))',
+                              borderRadius: '2px',
                             }}
                           />
-                          <Bar dataKey="onTime" stackId="a" fill="hsl(142 76% 36%)" radius={[0, 0, 0, 0]} />
-                          <Bar dataKey="late" stackId="a" fill="hsl(38 92% 50%)" radius={[0, 0, 0, 0]} />
-                          <Bar dataKey="noShow" stackId="a" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="onTime" stackId="a" fill="hsl(150 25% 45%)" radius={[0, 0, 0, 0]} />
+                          <Bar dataKey="late" stackId="a" fill="hsl(38 80% 55%)" radius={[0, 0, 0, 0]} />
+                          <Bar dataKey="noShow" stackId="a" fill="hsl(var(--destructive))" radius={[2, 2, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -229,9 +213,9 @@ const DashboardContent = () => {
                 </Card>
 
                 {/* Growth Chart */}
-                <Card className={cn('rounded-2xl border', cardStyles[variant])}>
+                <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                    <CardTitle className="text-lg font-bold uppercase tracking-wide flex items-center gap-2">
                       <TrendingUp className="h-5 w-5 text-primary" />
                       User Growth
                     </CardTitle>
@@ -262,9 +246,8 @@ const DashboardContent = () => {
                           <Tooltip 
                             contentStyle={{ 
                               background: 'hsl(var(--card))', 
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '12px',
-                              boxShadow: '0 10px 40px hsl(0 0% 0% / 0.3)'
+                              border: '2px solid hsl(var(--border))',
+                              borderRadius: '2px',
                             }}
                           />
                           <Area 
@@ -283,9 +266,9 @@ const DashboardContent = () => {
               </div>
 
               {/* Quick Actions */}
-              <Card className={cn('rounded-2xl border', cardStyles[variant])}>
+              <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                  <CardTitle className="text-lg font-bold uppercase tracking-wide flex items-center gap-2">
                     <Command className="h-5 w-5 text-primary" />
                     Quick Actions
                   </CardTitle>
@@ -293,27 +276,20 @@ const DashboardContent = () => {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
-                      { label: 'Events', icon: Calendar, href: '/admin/events', color: 'primary' },
-                      { label: 'Members', icon: Users, href: '/admin/members', color: 'secondary' },
-                      { label: 'Venues', icon: Building2, href: '/admin/venues', color: 'accent' },
-                      { label: 'Feedback', icon: MessageCircle, href: '/admin/feedback', color: 'primary' },
+                      { label: 'Events', icon: Calendar, href: '/admin/events' },
+                      { label: 'Members', icon: Users, href: '/admin/members' },
+                      { label: 'Venues', icon: Building2, href: '/admin/venues' },
+                      { label: 'Feedback', icon: MessageCircle, href: '/admin/feedback' },
                     ].map((action) => (
                       <Link
                         key={action.label}
                         to={action.href}
-                        className={cn(
-                          'group flex items-center gap-3 p-4 rounded-xl transition-all',
-                          'hover:bg-muted/50',
-                          variant === 'neumorphic' && 'hover:shadow-[inset_2px_2px_4px_hsl(0_0%_0%/0.2)]'
-                        )}
+                        className="group flex items-center gap-3 p-4 rounded-sm transition-all border-2 border-border hover:border-primary hover:bg-muted"
                       >
-                        <div className={cn(
-                          'h-10 w-10 rounded-xl flex items-center justify-center',
-                          `bg-${action.color}/10`
-                        )}>
-                          <action.icon className={cn('h-5 w-5', `text-${action.color}`)} />
+                        <div className="h-10 w-10 rounded-sm flex items-center justify-center bg-primary/10 border-2 border-primary/20">
+                          <action.icon className="h-5 w-5 text-primary" />
                         </div>
-                        <span className="font-medium text-sm">{action.label}</span>
+                        <span className="font-bold text-sm uppercase tracking-wide">{action.label}</span>
                         <ArrowRight className="h-4 w-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground" />
                       </Link>
                     ))}
@@ -322,18 +298,16 @@ const DashboardContent = () => {
               </Card>
             </div>
 
-            {/* Right Column - Live Activity & Chat */}
+            {/* Right Column - Live Activity */}
             <div className="space-y-6">
-              {/* Live Activity */}
-              <Card className={cn('rounded-2xl border', cardStyles[variant])}>
+              <Card>
                 <CardContent className="p-4">
                   <LiveActivityFeed />
                 </CardContent>
               </Card>
 
-              {/* Chat Observer Panel */}
               {showChatObserver && (
-                <Card className={cn('rounded-2xl border h-[500px]', cardStyles[variant])}>
+                <Card className="h-[500px]">
                   <AdminChatObserver />
                 </Card>
               )}
@@ -342,14 +316,6 @@ const DashboardContent = () => {
         </div>
       </div>
     </Layout>
-  );
-};
-
-const AdminDashboard = () => {
-  return (
-    <ThemeVariantProvider>
-      <DashboardContent />
-    </ThemeVariantProvider>
   );
 };
 
