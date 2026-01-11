@@ -6,12 +6,11 @@ import { VerificationBadge } from './VerificationBadge';
 import { ResponseStats } from './ResponseStats';
 import { MysteryCard } from './MysteryCard';
 import { CompatibilityBadge } from '@/components/quiz/CompatibilityBadge';
-import { useThemeVariant } from '@/contexts/ThemeVariantContext';
 import { cn } from '@/lib/utils';
 import { getStaggerDelay } from '@/lib/animations';
 import type { VerificationLevel } from '@/types/database';
 
-// Simple profile type for display (works with both mock and real data)
+// Simple profile type for display
 interface DisplayProfile {
   id: string;
   name: string;
@@ -49,69 +48,30 @@ export const ProfileCard = ({
   compatibilityReasons,
   index = 0 
 }: ProfileCardProps) => {
-  const { variant } = useThemeVariant();
-  
-  // Always reveal if forceReveal is true (for connections page)
+  // Always reveal if forceReveal is true
   const isRevealed = forceReveal;
 
-  // Show mystery card for unrevealed profiles
   if (!isRevealed) {
     return <MysteryCard profile={profile as any} upcomingEventCount={1} />;
   }
 
-  const variantCardStyles: Record<string, string> = {
-    glass: 'card-variant bg-transparent',
-    neumorphic: 'card-variant',
-    swiss: 'card-variant',
-    luxe: 'card-variant',
-    flutter: 'card-variant',
-    brutal: 'card-variant',
-    editorial: 'card-variant',
-    aurora: 'card-variant bg-transparent',
-  };
-
-  const variantImageStyles: Record<string, string> = {
-    glass: 'rounded-t-2xl',
-    neumorphic: 'rounded-t-[1.25rem]',
-    swiss: 'rounded-none',
-    luxe: 'rounded-t-lg',
-    flutter: 'rounded-t-xl',
-    brutal: 'rounded-none',
-    editorial: 'rounded-none',
-    aurora: 'rounded-t-3xl',
-  };
-
-  const variantButtonStyles: Record<string, string> = {
-    glass: 'btn-variant rounded-full',
-    neumorphic: 'btn-variant rounded-xl',
-    swiss: 'btn-variant rounded-none uppercase tracking-wider text-sm',
-    luxe: 'btn-variant rounded-lg font-playfair',
-    flutter: 'btn-variant rounded-full',
-    brutal: 'btn-variant rounded-none uppercase font-bold',
-    editorial: 'btn-variant rounded-none uppercase tracking-widest text-xs',
-    aurora: 'btn-variant rounded-full',
-  };
-
-  const staggerDelay = getStaggerDelay(index, variant);
+  const staggerDelay = getStaggerDelay(index);
 
   return (
     <Card 
-      className={cn(
-        'group overflow-hidden transition-all hover:shadow-lg hover:shadow-primary/10',
-        variantCardStyles[variant]
-      )}
+      className="group overflow-hidden transition-all hover:-translate-y-1 hover:shadow-hard-primary"
       style={{ animationDelay: staggerDelay }}
     >
       {/* Profile Image */}
-      <div className={cn('relative h-64 overflow-hidden', variantImageStyles[variant])}>
+      <div className="relative h-64 overflow-hidden">
         {profile.photoUrl ? (
           <img
             src={profile.photoUrl}
             alt={profile.name}
-            className="h-full w-full object-cover transition-all duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="h-full w-full bg-primary/20 flex items-center justify-center">
+          <div className="h-full w-full bg-muted flex items-center justify-center">
             <span className="text-4xl">👤</span>
           </div>
         )}
@@ -129,33 +89,21 @@ export const ProfileCard = ({
         
         {/* Verification Badge */}
         <div className="absolute right-3 top-3">
-          <Badge className={cn(
-            'bg-background/80 backdrop-blur-sm text-foreground gap-1',
-            variant === 'brutal' && 'rounded-none border-2 border-foreground',
-            variant === 'swiss' && 'rounded-none uppercase text-[10px]'
-          )}>
+          <Badge variant="muted" className="gap-1">
             <VerificationBadge level={profile.verificationLevel as VerificationLevel} />
             Revealed
           </Badge>
         </div>
 
-        {/* Name and age overlay */}
+        {/* Name overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <div className="flex items-center gap-2">
-            <h3 className={cn(
-              'text-xl font-semibold text-foreground',
-              variant === 'luxe' && 'font-playfair text-2xl',
-              variant === 'brutal' && 'font-grotesk uppercase',
-              variant === 'editorial' && 'font-sora font-light text-2xl'
-            )}>
+            <h3 className="text-xl font-black text-foreground uppercase tracking-tight">
               {profile.name}{profile.age ? `, ${profile.age}` : ''}
             </h3>
             <VerificationBadge level={profile.verificationLevel as VerificationLevel} size="lg" />
           </div>
-          <p className={cn(
-            'text-sm text-muted-foreground',
-            variant === 'swiss' && 'uppercase tracking-wider text-xs'
-          )}>{profile.area}</p>
+          <p className="text-sm text-muted-foreground uppercase tracking-wide">{profile.area}</p>
         </div>
       </div>
 
@@ -171,15 +119,7 @@ export const ProfileCard = ({
         {compatibilityReasons && compatibilityReasons.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {compatibilityReasons.map((reason, i) => (
-              <Badge 
-                key={i} 
-                variant="secondary" 
-                className={cn(
-                  'text-xs badge-variant',
-                  variant === 'brutal' && 'rounded-none',
-                  variant === 'swiss' && 'rounded-none uppercase text-[10px]'
-                )}
-              >
+              <Badge key={i} variant="secondary" className="text-xs">
                 {reason}
               </Badge>
             ))}
@@ -187,45 +127,24 @@ export const ProfileCard = ({
         )}
 
         {/* Bio */}
-        <p className={cn(
-          'text-sm text-muted-foreground line-clamp-2',
-          variant === 'editorial' && 'font-light leading-relaxed'
-        )}>{profile.bio || 'No bio yet'}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2">{profile.bio || 'No bio yet'}</p>
         
         {/* Interests */}
         <div className="flex flex-wrap gap-2">
           {(profile.interestTags || profile.interests || []).slice(0, 4).map((interest) => (
-            <Badge 
-              key={interest} 
-              variant="outline" 
-              className={cn(
-                'text-xs badge-variant',
-                variant === 'brutal' && 'rounded-none',
-                variant === 'swiss' && 'rounded-none uppercase text-[10px]'
-              )}
-            >
+            <Badge key={interest} variant="outline" className="text-xs">
               {interest}
             </Badge>
           ))}
           {(profile.interests?.length || 0) > 4 && (
-            <Badge 
-              variant="secondary" 
-              className={cn(
-                'text-xs',
-                variant === 'brutal' && 'rounded-none',
-                variant === 'swiss' && 'rounded-none'
-              )}
-            >
+            <Badge variant="muted" className="text-xs">
               +{profile.interests.length - 4}
             </Badge>
           )}
         </div>
 
-        {/* Looking For & Religion */}
-        <div className={cn(
-          'flex flex-wrap gap-2 text-xs text-muted-foreground',
-          variant === 'swiss' && 'uppercase tracking-wider text-[10px]'
-        )}>
+        {/* Looking For */}
+        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground uppercase tracking-wide">
           {profile.lookingFor && (
             <span>
               🎯 {profile.lookingFor === 'both' ? 'Friendship & Love' : 
@@ -238,10 +157,7 @@ export const ProfileCard = ({
         </div>
 
         {/* Wave Button */}
-        <Button 
-          className={cn('w-full gap-2', variantButtonStyles[variant])} 
-          onClick={() => onWave?.(profile.id)}
-        >
+        <Button className="w-full gap-2" onClick={() => onWave?.(profile.id)}>
           <Send className="h-4 w-4" />
           Send Wave
         </Button>

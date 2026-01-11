@@ -4,18 +4,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MemberCard, MemberData, BehaviorMetrics } from '@/components/members/MemberCard';
 import { MemberDetail } from '@/components/members/MemberDetail';
-import { RoleType } from '@/components/events/EventRoleSelector';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ThemeVariantProvider, useThemeVariant } from '@/contexts/ThemeVariantContext';
-import { ThemeVariantSwitcher } from '@/components/admin/ThemeVariantSwitcher';
 import { 
   Search, Grid, List, Users, Star, CheckCircle, 
-  TrendingUp, RefreshCw, Filter, Download, SlidersHorizontal
+  TrendingUp, RefreshCw, Download
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -23,8 +19,7 @@ interface MemberWithMetrics extends MemberData {
   behaviorMetrics?: BehaviorMetrics;
 }
 
-const MembersContent = () => {
-  const { variant } = useThemeVariant();
+const AdminMembers = () => {
   const [members, setMembers] = useState<MemberWithMetrics[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -123,13 +118,6 @@ const MembersContent = () => {
     setDetailOpen(false);
   };
 
-  const cardStyles = {
-    glass: 'bg-card/60 backdrop-blur-xl border-border/40',
-    neumorphic: 'bg-card shadow-[4px_4px_8px_hsl(0_0%_0%/0.2),-4px_-4px_8px_hsl(var(--border)/0.08)]',
-    swiss: 'bg-card border-l-4 border-l-primary',
-    luxe: 'bg-gradient-to-br from-card to-[hsl(225_24%_6%)] border-[hsl(45_30%_30%/0.2)]',
-  };
-
   return (
     <Layout>
       <div className="min-h-screen bg-background">
@@ -137,14 +125,13 @@ const MembersContent = () => {
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">Members</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-3xl font-black uppercase tracking-tight text-foreground">Members</h1>
+              <p className="text-muted-foreground uppercase tracking-wide text-sm">
                 {stats.total} members • {stats.trusted} trusted • {stats.active} active
               </p>
             </div>
             
             <div className="flex items-center gap-3">
-              <ThemeVariantSwitcher />
               <Button variant="outline" size="icon">
                 <Download className="h-4 w-4" />
               </Button>
@@ -163,14 +150,14 @@ const MembersContent = () => {
               { label: 'Verified', value: stats.verified, icon: CheckCircle },
               { label: 'Active', value: stats.active, icon: TrendingUp },
             ].map((stat) => (
-              <Card key={stat.label} className={cn('rounded-xl border', cardStyles[variant])}>
+              <Card key={stat.label}>
                 <CardContent className="p-4 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-muted/50 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-sm bg-muted flex items-center justify-center border-2 border-border">
                     <stat.icon className="h-5 w-5 text-foreground" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">{stat.label}</p>
+                    <p className="text-2xl font-black text-foreground">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{stat.label}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -178,22 +165,22 @@ const MembersContent = () => {
           </div>
 
           {/* Filters */}
-          <Card className={cn('rounded-xl border mb-6', cardStyles[variant])}>
+          <Card className="mb-6">
             <CardContent className="p-4">
               <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search by name, location, or occupation..."
+                    placeholder="SEARCH BY NAME, LOCATION, OR OCCUPATION..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-transparent"
+                    className="pl-10"
                   />
                 </div>
                 
                 <div className="flex items-center gap-2 flex-wrap">
                   <Select value={filterTrust} onValueChange={setFilterTrust}>
-                    <SelectTrigger className="w-[120px] bg-transparent">
+                    <SelectTrigger className="w-[120px]">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -205,7 +192,7 @@ const MembersContent = () => {
                   </Select>
 
                   <Select value={filterEvents} onValueChange={setFilterEvents}>
-                    <SelectTrigger className="w-[110px] bg-transparent">
+                    <SelectTrigger className="w-[110px]">
                       <SelectValue placeholder="Events" />
                     </SelectTrigger>
                     <SelectContent>
@@ -216,7 +203,7 @@ const MembersContent = () => {
                     </SelectContent>
                   </Select>
 
-                  <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-1 p-1 rounded-sm bg-muted border-2 border-border">
                     <Button
                       variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
                       size="icon"
@@ -243,14 +230,14 @@ const MembersContent = () => {
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
               {[...Array(12)].map((_, i) => (
-                <div key={i} className="h-48 rounded-2xl bg-muted/30 animate-pulse" />
+                <div key={i} className="h-48 rounded-sm bg-muted animate-pulse border-2 border-border" />
               ))}
             </div>
           ) : filteredMembers.length === 0 ? (
-            <Card className={cn('rounded-2xl', cardStyles[variant])}>
+            <Card>
               <CardContent className="p-16 text-center">
                 <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Members Found</h3>
+                <h3 className="text-lg font-bold uppercase mb-2">No Members Found</h3>
                 <p className="text-muted-foreground">
                   {searchQuery ? 'Try adjusting your search or filters' : 'Members will appear here once they sign up'}
                 </p>
@@ -273,42 +260,42 @@ const MembersContent = () => {
               ))}
             </div>
           ) : (
-            <Card className={cn('rounded-2xl overflow-hidden', cardStyles[variant])}>
+            <Card className="overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Member</th>
-                      <th className="text-left py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Location</th>
-                      <th className="text-center py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Trust</th>
-                      <th className="text-center py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Events</th>
-                      <th className="text-center py-4 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                    <tr className="border-b-2 border-border">
+                      <th className="text-left py-4 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Member</th>
+                      <th className="text-left py-4 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Location</th>
+                      <th className="text-center py-4 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Trust</th>
+                      <th className="text-center py-4 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Events</th>
+                      <th className="text-center py-4 px-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredMembers.map((member) => (
                       <tr 
                         key={member.id} 
-                        className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
+                        className="border-b border-border hover:bg-muted cursor-pointer transition-colors"
                         onClick={() => handleMemberClick(member)}
                       >
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold">
+                            <div className="h-10 w-10 rounded-sm bg-muted flex items-center justify-center text-sm font-bold border-2 border-border">
                               {member.name?.split(' ').map(n => n[0]).join('').toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-medium text-foreground">{member.name}{member.age && `, ${member.age}`}</p>
-                              <p className="text-xs text-muted-foreground">{member.occupation || '-'}</p>
+                              <p className="font-bold text-foreground uppercase">{member.name}{member.age && `, ${member.age}`}</p>
+                              <p className="text-xs text-muted-foreground uppercase">{member.occupation || '-'}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 px-4 text-sm text-muted-foreground">{member.area || '-'}</td>
+                        <td className="py-4 px-4 text-sm text-muted-foreground uppercase">{member.area || '-'}</td>
                         <td className="py-4 px-4 text-center">
                           <span className={cn(
-                            'text-sm font-semibold',
-                            (member.behaviorMetrics?.trust_index || 50) >= 70 ? 'text-emerald-400' : 
-                            (member.behaviorMetrics?.trust_index || 50) >= 50 ? 'text-amber-400' : 'text-muted-foreground'
+                            'text-sm font-bold',
+                            (member.behaviorMetrics?.trust_index || 50) >= 70 ? 'text-secondary' : 
+                            (member.behaviorMetrics?.trust_index || 50) >= 50 ? 'text-[hsl(38_80%_55%)]' : 'text-muted-foreground'
                           )}>
                             {Math.round(member.behaviorMetrics?.trust_index || member.trust_index || 50)}
                           </span>
@@ -316,7 +303,7 @@ const MembersContent = () => {
                         <td className="py-4 px-4 text-center text-sm text-muted-foreground">{member.events_attended || 0}</td>
                         <td className="py-4 px-4 text-center">
                           {member.community_trusted ? (
-                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">Trusted</Badge>
+                            <Badge>Trusted</Badge>
                           ) : (
                             <Badge variant="outline">Member</Badge>
                           )}
@@ -330,7 +317,7 @@ const MembersContent = () => {
           )}
 
           {/* Count */}
-          <p className="text-center text-sm text-muted-foreground mt-6">
+          <p className="text-center text-sm text-muted-foreground mt-6 uppercase tracking-wide">
             Showing {filteredMembers.length} of {members.length} members
           </p>
 
@@ -346,14 +333,6 @@ const MembersContent = () => {
         </div>
       </div>
     </Layout>
-  );
-};
-
-const AdminMembers = () => {
-  return (
-    <ThemeVariantProvider>
-      <MembersContent />
-    </ThemeVariantProvider>
   );
 };
 
