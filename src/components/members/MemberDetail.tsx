@@ -121,7 +121,7 @@ export const MemberDetail = ({
                 )}
               </div>
               {member.looking_for && (
-                <Badge variant="premium" className="mt-2">
+                <Badge variant="default" className="mt-2">
                   <Heart className="h-3 w-3 mr-1" />
                   Looking for {member.looking_for}
                 </Badge>
@@ -175,7 +175,7 @@ export const MemberDetail = ({
                       <h3 className="font-semibold text-foreground mb-2">Interests</h3>
                       <div className="flex flex-wrap gap-2">
                         {member.interests.map((interest, i) => (
-                          <Badge key={i} variant="premium-secondary">
+                          <Badge key={i} variant="secondary">
                             {interest}
                           </Badge>
                         ))}
@@ -295,7 +295,7 @@ export const MemberDetail = ({
                     <h3 className="font-semibold text-foreground mb-2">Interests</h3>
                     <div className="flex flex-wrap gap-2">
                       {member.interests.map((interest, i) => (
-                        <Badge key={i} variant="premium-secondary">
+                        <Badge key={i} variant="secondary">
                           {interest}
                         </Badge>
                       ))}
@@ -318,7 +318,7 @@ export const MemberDetail = ({
                   roleDescription={roleDescription}
                   onDescriptionChange={setRoleDescription}
                 />
-                <Button className="w-full mt-4" variant="glow" onClick={handleSaveRoles}>
+                <Button className="w-full mt-4" variant="premium" onClick={handleSaveRoles}>
                   Save Roles
                 </Button>
               </div>
@@ -326,7 +326,7 @@ export const MemberDetail = ({
 
             {/* Check-in button (for team) */}
             {mode === 'team' && checkInStatus && checkInStatus !== 'checked_in' && onCheckIn && (
-              <Button className="w-full" variant="gradient" onClick={onCheckIn}>
+              <Button className="w-full" variant="premium" onClick={onCheckIn}>
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Check In
               </Button>

@@ -275,7 +275,7 @@ const TeamCheckIns = () => {
             {events.map(event => (
               <Button
                 key={event.id}
-                variant={selectedEvent === event.id ? 'glow' : 'outline'}
+                variant={selectedEvent === event.id ? 'premium' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedEvent(event.id)}
                 className="gap-2"
@@ -289,7 +289,7 @@ const TeamCheckIns = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <Card variant="glass" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '150ms', animationFillMode: 'forwards' }}>
+          <Card variant="elevated" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '150ms', animationFillMode: 'forwards' }}>
             <CardContent className="p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
                 <Users className="h-5 w-5 text-primary" />
@@ -300,7 +300,7 @@ const TeamCheckIns = () => {
               </div>
             </CardContent>
           </Card>
-          <Card variant="glass" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
+          <Card variant="elevated" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
             <CardContent className="p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
                 <CheckCircle className="h-5 w-5 text-emerald-400" />
@@ -311,7 +311,7 @@ const TeamCheckIns = () => {
               </div>
             </CardContent>
           </Card>
-          <Card variant="glass" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}>
+          <Card variant="elevated" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}>
             <CardContent className="p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
                 <Clock className="h-5 w-5 text-amber-400" />
@@ -325,11 +325,11 @@ const TeamCheckIns = () => {
         </div>
 
         {/* Team Self Check-In */}
-        <Card variant="neon" className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
+        <Card variant="accent" className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+                <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
                   <UserCheck className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <div>
@@ -338,12 +338,12 @@ const TeamCheckIns = () => {
                 </div>
               </div>
               {teamCheckedIn ? (
-                <Badge variant="success" className="gap-1 shadow-glow">
+                <Badge variant="success" className="gap-1">
                   <CheckCircle className="h-3 w-3" />
                   You're Checked In
                 </Badge>
               ) : (
-                <Button onClick={handleTeamCheckIn} variant="glow" size="sm">
+                <Button onClick={handleTeamCheckIn} variant="premium" size="sm">
                   Check In Now
                 </Button>
               )}
@@ -365,7 +365,7 @@ const TeamCheckIns = () => {
         </div>
 
         {/* Attendees List */}
-        <Card variant="glass" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
+        <Card variant="elevated" className="opacity-0 animate-fade-in-up" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
@@ -412,7 +412,7 @@ const TeamCheckIns = () => {
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-foreground">{attendee.name}</p>
                           {attendee.is_team && (
-                            <Badge variant="premium-secondary" className="text-xs">Team</Badge>
+                            <Badge variant="secondary" className="text-xs">Team</Badge>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground">
@@ -422,13 +422,13 @@ const TeamCheckIns = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       {attendee.check_in_status && attendee.nametag_pin && (
-                        <Badge variant="premium" className="gap-1">
+                        <Badge variant="default" className="gap-1">
                           <Hash className="h-3 w-3" />
                           PIN: {attendee.nametag_pin}
                         </Badge>
                       )}
                       {attendee.geo_verified && (
-                        <Badge variant="premium-secondary" className="gap-1">
+                        <Badge variant="secondary" className="gap-1">
                           <MapPin className="h-3 w-3" />
                           GPS
                         </Badge>
@@ -437,7 +437,7 @@ const TeamCheckIns = () => {
                       {!attendee.check_in_status && (
                         <Button 
                           size="sm"
-                          variant="glow"
+                          variant="premium"
                           onClick={() => handleCheckIn(attendee.id)}
                         >
                           Check In

@@ -133,13 +133,13 @@ const MarketIntel = () => {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card variant="glass">
+          <Card variant="elevated">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Your Market Share</p>
                   <p className="text-3xl font-bold text-foreground">5%</p>
-                  <p className="text-xs text-green-400 flex items-center gap-1 mt-1">
+                  <p className="text-xs text-secondary flex items-center gap-1 mt-1">
                     <TrendingUp className="h-3 w-3" /> Growing
                   </p>
                 </div>
@@ -150,7 +150,7 @@ const MarketIntel = () => {
             </CardContent>
           </Card>
 
-          <Card variant="glass">
+          <Card variant="elevated">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -165,7 +165,7 @@ const MarketIntel = () => {
             </CardContent>
           </Card>
 
-          <Card variant="glass">
+          <Card variant="elevated">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -173,25 +173,25 @@ const MarketIntel = () => {
                   <p className="text-3xl font-bold text-foreground">$32</p>
                   <p className="text-xs text-muted-foreground mt-1">Market average</p>
                 </div>
-                <div className="h-12 w-12 rounded-xl bg-green-500/20 flex items-center justify-center">
-                  <DollarSign className="h-6 w-6 text-green-400" />
+                <div className="h-12 w-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                  <DollarSign className="h-6 w-6 text-accent" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card variant="glass">
+          <Card variant="elevated">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Monthly Events</p>
                   <p className="text-3xl font-bold text-foreground">44</p>
-                  <p className="text-xs text-yellow-400 flex items-center gap-1 mt-1">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                     <Activity className="h-3 w-3" /> Active market
                   </p>
                 </div>
-                <div className="h-12 w-12 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-yellow-400" />
+                <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-muted-foreground" />
                 </div>
               </div>
             </CardContent>
@@ -199,7 +199,7 @@ const MarketIntel = () => {
         </div>
 
         <Tabs defaultValue="competitors" className="space-y-6">
-          <TabsList className="glass">
+          <TabsList>
             <TabsTrigger value="competitors">Competitors</TabsTrigger>
             <TabsTrigger value="trends">Event Trends</TabsTrigger>
             <TabsTrigger value="timing">Optimal Timing</TabsTrigger>
@@ -210,7 +210,7 @@ const MarketIntel = () => {
           <TabsContent value="competitors" className="space-y-4">
             <div className="grid gap-4">
               {competitors.map((competitor) => (
-                <Card key={competitor.name} variant="glass">
+                <Card key={competitor.name} variant="elevated">
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
@@ -264,7 +264,7 @@ const MarketIntel = () => {
 
           {/* Event Trends Tab */}
           <TabsContent value="trends" className="space-y-4">
-            <Card variant="glass">
+            <Card variant="elevated">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-secondary" />
@@ -290,7 +290,7 @@ const MarketIntel = () => {
               </CardContent>
             </Card>
 
-            <Card variant="glass">
+            <Card variant="elevated">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5 text-yellow-400" />
@@ -318,7 +318,7 @@ const MarketIntel = () => {
 
           {/* Optimal Timing Tab */}
           <TabsContent value="timing" className="space-y-4">
-            <Card variant="glass">
+            <Card variant="elevated">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-primary" />
@@ -344,7 +344,7 @@ const MarketIntel = () => {
             </Card>
 
             <div className="grid md:grid-cols-2 gap-4">
-              <Card variant="glass">
+              <Card variant="elevated">
                 <CardHeader>
                   <CardTitle className="text-lg">Best Time Slots</CardTitle>
                 </CardHeader>
@@ -364,7 +364,7 @@ const MarketIntel = () => {
                 </CardContent>
               </Card>
 
-              <Card variant="glass">
+              <Card variant="elevated">
                 <CardHeader>
                   <CardTitle className="text-lg">Avoid These Dates</CardTitle>
                 </CardHeader>
@@ -388,7 +388,7 @@ const MarketIntel = () => {
 
           {/* AI Insights Tab */}
           <TabsContent value="ai-insights" className="space-y-4">
-            <Card variant="glass" className="border-secondary/30">
+            <Card variant="elevated" className="border-secondary/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Brain className="h-5 w-5 text-secondary" />

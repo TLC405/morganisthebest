@@ -138,7 +138,7 @@ export const LoveBotChat = ({ onClose }: LadyEvansChatProps) => {
   ];
 
   return (
-    <Card variant="glass" className="flex h-[500px] flex-col overflow-hidden shadow-glow-lg">
+    <Card variant="elevated" className="flex h-[500px] flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 border-b border-border/50 bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 p-4">
         <div className="relative">

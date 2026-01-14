@@ -130,15 +130,15 @@ const TeamDashboard = () => {
           {[
             { icon: Calendar, value: stats.eventsToday, label: 'Events Today', color: 'text-primary', delay: 0 },
             { icon: CheckCircle, value: stats.checkInsManaged, label: 'Check-ins Done', color: 'text-secondary', delay: 50 },
-            { icon: Clock, value: stats.pendingCheckIns, label: 'Pending', color: 'text-yellow-500', delay: 100 },
+            { icon: Clock, value: stats.pendingCheckIns, label: 'Pending', color: 'text-muted-foreground', delay: 100 },
             { icon: Users, value: stats.upcomingEvents, label: 'This Week', color: 'text-accent', delay: 150 },
             { icon: Star, value: stats.avgRating, label: 'Avg Rating', color: 'text-primary', delay: 200 },
             { icon: Timer, value: `${stats.onTimeRate}%`, label: 'On-Time Rate', color: 'text-chart-4', delay: 250 },
           ].map((stat, i) => (
             <Card 
               key={stat.label} 
-              variant="glass"
-              className="opacity-0 animate-slide-up-spring hover-lift"
+              variant="elevated"
+              className="opacity-0 animate-fade-in-up hover-lift"
               style={{ animationDelay: `${stat.delay}ms`, animationFillMode: 'forwards' }}
             >
               <CardContent className="pt-6 text-center">
@@ -223,7 +223,7 @@ const TeamDashboard = () => {
           {/* Right Sidebar */}
           <div className="space-y-6">
             {/* Live Activity Feed */}
-            <Card variant="glass">
+            <Card variant="elevated">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base">Live Activity</CardTitle>
@@ -250,7 +250,7 @@ const TeamDashboard = () => {
             </Card>
 
             {/* Quick Actions */}
-            <Card variant="glass">
+            <Card variant="elevated">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base">Quick Actions</CardTitle>
               </CardHeader>

@@ -273,7 +273,7 @@ const AdminShop = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card variant="glass">
+          <Card variant="elevated">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 rounded-xl bg-primary/20">
@@ -286,7 +286,7 @@ const AdminShop = () => {
               </div>
             </CardContent>
           </Card>
-          <Card variant="glass">
+          <Card variant="elevated">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 rounded-xl bg-secondary/20">
@@ -299,7 +299,7 @@ const AdminShop = () => {
               </div>
             </CardContent>
           </Card>
-          <Card variant="glass">
+          <Card variant="elevated">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 rounded-xl bg-accent/20">
@@ -312,7 +312,7 @@ const AdminShop = () => {
               </div>
             </CardContent>
           </Card>
-          <Card variant="glass">
+          <Card variant="elevated">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 rounded-xl bg-chart-4/20">
