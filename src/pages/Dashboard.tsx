@@ -66,7 +66,7 @@ const Dashboard = () => {
             return (
               <Card 
                 key={stat.label}
-                variant="glass" 
+                variant="elevated" 
                 className="hover-lift opacity-0 animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
               >
@@ -89,7 +89,7 @@ const Dashboard = () => {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Upcoming RSVPs */}
           <Card 
-            variant="glass" 
+            variant="elevated" 
             className="opacity-0 animate-fade-in-up"
             style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
           >
@@ -123,12 +123,12 @@ const Dashboard = () => {
                           <h4 className="font-medium text-foreground">{event.title}</h4>
                           <p className="text-sm text-muted-foreground">{event.date} at {event.start_time}</p>
                           {rsvp.nametag_pin && (
-                            <Badge variant="premium" className="mt-1">
+                            <Badge variant="default" className="mt-1">
                               PIN: {rsvp.nametag_pin}
                             </Badge>
                           )}
                         </div>
-                        <Button size="sm" variant="glow" asChild>
+                        <Button size="sm" variant="premium" asChild>
                           <Link to="/check-in">Check In</Link>
                         </Button>
                       </div>
@@ -141,7 +141,7 @@ const Dashboard = () => {
                     <Calendar className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <p className="text-muted-foreground mb-4">No upcoming RSVPs</p>
-                  <Button variant="gradient" asChild>
+                  <Button variant="premium" asChild>
                     <Link to="/events">Browse Events</Link>
                   </Button>
                 </div>
@@ -151,7 +151,7 @@ const Dashboard = () => {
 
           {/* Recently Revealed */}
           <Card 
-            variant="glass"
+            variant="elevated"
             className="opacity-0 animate-fade-in-up"
             style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
           >
@@ -208,7 +208,7 @@ const Dashboard = () => {
                     <Users className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <p className="text-muted-foreground mb-4">Attend events to meet people!</p>
-                  <Button variant="gradient" asChild>
+                  <Button variant="premium" asChild>
                     <Link to="/events">Find Events</Link>
                   </Button>
                 </div>
@@ -218,7 +218,7 @@ const Dashboard = () => {
 
           {/* Past Events */}
           <Card 
-            variant="glass"
+            variant="elevated"
             className="opacity-0 animate-fade-in-up"
             style={{ animationDelay: '600ms', animationFillMode: 'forwards' }}
           >
@@ -254,7 +254,7 @@ const Dashboard = () => {
 
           {/* Quick Actions */}
           <Card 
-            variant="glass"
+            variant="elevated"
             className="opacity-0 animate-fade-in-up"
             style={{ animationDelay: '700ms', animationFillMode: 'forwards' }}
           >

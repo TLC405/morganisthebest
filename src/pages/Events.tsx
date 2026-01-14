@@ -197,7 +197,7 @@ const Events = () => {
       <div className="mx-auto max-w-7xl px-4 py-8 pb-24 md:pb-8">
         {/* Profile completion prompt */}
         {user && profileComplete === false && (
-          <Card variant="neon" className="mb-6 animate-fade-in-up">
+          <Card variant="accent" className="mb-6 animate-fade-in-up">
             <CardContent className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-xl bg-primary/20 flex items-center justify-center">
@@ -208,7 +208,7 @@ const Events = () => {
                   <p className="text-sm text-muted-foreground">Required to RSVP for events</p>
                 </div>
               </div>
-              <Button variant="glow" onClick={() => navigate('/profile')}>
+              <Button variant="premium" onClick={() => navigate('/profile')}>
                 Complete
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
@@ -302,8 +302,8 @@ const Events = () => {
                 Cancel
               </Button>
               <Button 
-                variant="glow" 
-                className="flex-1 rounded-xl animate-spring-bounce" 
+                variant="premium" 
+                className="flex-1 rounded-xl" 
                 onClick={confirmRSVP}
               >
                 I'm In! 🎉
