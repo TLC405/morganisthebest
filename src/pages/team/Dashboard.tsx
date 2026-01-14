@@ -210,7 +210,7 @@ const TeamDashboard = () => {
                 </Card>
               ))
             ) : (
-              <Card variant="glass" className="text-center py-12">
+              <Card variant="elevated" className="text-center py-12">
                 <CardContent>
                   <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-medium mb-2">No events today</h3>
@@ -277,7 +277,7 @@ const TeamDashboard = () => {
             </Card>
 
             {/* Performance Score */}
-            <Card variant="gradient">
+            <Card variant="accent">
               <CardContent className="pt-6 text-center">
                 <div className="relative w-24 h-24 mx-auto mb-4">
                   <svg className="w-full h-full -rotate-90">

@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { HingePrompt, HINGE_PROMPTS } from '@/components/profiles/HingePrompt';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -101,7 +100,7 @@ const Profile = () => {
       });
     } else {
       toast({
-        title: "Profile Updated! ✨",
+        title: "Profile Updated!",
         description: "Your changes have been saved.",
       });
     }
@@ -112,9 +111,9 @@ const Profile = () => {
       <Layout>
         <div className="mx-auto max-w-2xl px-4 py-8">
           <div className="space-y-4">
-            <div className="h-8 skeleton-shimmer rounded-xl w-1/3" />
-            <div className="h-64 skeleton-shimmer rounded-3xl" />
-            <div className="h-48 skeleton-shimmer rounded-3xl" />
+            <div className="h-8 bg-muted rounded-sm w-1/3 animate-pulse" />
+            <div className="h-64 bg-muted rounded-sm animate-pulse" />
+            <div className="h-48 bg-muted rounded-sm animate-pulse" />
           </div>
         </div>
       </Layout>
@@ -129,23 +128,23 @@ const Profile = () => {
         {/* Header */}
         <div className="mb-8 animate-fade-in-up">
           <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+            <div className="h-14 w-14 rounded-sm border-4 border-primary bg-primary flex items-center justify-center">
               <User className="h-7 w-7 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
+              <h1 className="text-3xl font-bold text-foreground uppercase tracking-tight">My Profile</h1>
               <p className="text-muted-foreground">This is how you'll appear to other singles</p>
             </div>
           </div>
         </div>
 
-        {/* Photo Section - Tinder style large photo */}
+        {/* Photo Section */}
         <Card 
-          variant="photo-card" 
-          className="mb-6 opacity-0 animate-slide-up-spring overflow-hidden"
+          variant="elevated" 
+          className="mb-6 opacity-0 animate-fade-in-up overflow-hidden"
           style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
         >
-          <div className="relative aspect-[4/5] bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20">
+          <div className="relative aspect-[4/5] bg-muted">
             {photoUrl ? (
               <img
                 src={photoUrl}
@@ -158,39 +157,29 @@ const Profile = () => {
               </div>
             )}
             
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 photo-card-gradient" />
-            
             {/* Camera button */}
-            <button className="absolute bottom-4 right-4 h-14 w-14 rounded-full gradient-primary text-primary-foreground shadow-glow flex items-center justify-center hover:scale-110 transition-transform">
+            <button className="absolute bottom-4 right-4 h-14 w-14 rounded-sm border-2 border-primary bg-primary text-primary-foreground flex items-center justify-center hover:scale-105 transition-transform">
               <Camera className="h-6 w-6" />
             </button>
             
             {/* Name overlay */}
             <div className="absolute bottom-4 left-4">
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold text-foreground">
                 {name || 'Your Name'}{age && `, ${age}`}
               </p>
-              {area && <p className="text-white/80 text-sm">{area}</p>}
+              {area && <p className="text-muted-foreground text-sm">{area}</p>}
             </div>
           </div>
         </Card>
 
-        {/* Carousel Dots Indicator */}
-        <div className="carousel-dots mb-6 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
-          <div className="carousel-dot active" />
-          <div className="carousel-dot" />
-          <div className="carousel-dot" />
-        </div>
-
         {/* Basic Info */}
         <Card 
-          variant="glass" 
-          className="mb-6 opacity-0 animate-slide-up-spring"
+          variant="elevated" 
+          className="mb-6 opacity-0 animate-fade-in-up"
           style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
         >
           <CardHeader>
-            <CardTitle className="text-lg">Basic Info</CardTitle>
+            <CardTitle className="text-lg uppercase">Basic Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
@@ -201,7 +190,6 @@ const Profile = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your first name"
-                  className="rounded-xl"
                 />
               </div>
               <div className="space-y-2">
@@ -213,7 +201,6 @@ const Profile = () => {
                   onChange={(e) => setAge(e.target.value)}
                   min="18"
                   max="99"
-                  className="rounded-xl"
                 />
               </div>
             </div>
@@ -225,7 +212,6 @@ const Profile = () => {
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
                   placeholder="e.g., Midtown OKC"
-                  className="rounded-xl"
                 />
               </div>
               <div className="space-y-2">
@@ -235,21 +221,20 @@ const Profile = () => {
                   value={lookingFor}
                   onChange={(e) => setLookingFor(e.target.value)}
                   placeholder="e.g., Long-term relationship"
-                  className="rounded-xl"
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Hinge-Style Prompt Section */}
+        {/* About Me */}
         <Card 
-          variant="glass" 
-          className="mb-6 opacity-0 animate-slide-up-spring"
+          variant="elevated" 
+          className="mb-6 opacity-0 animate-fade-in-up"
           style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}
         >
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
+            <CardTitle className="text-lg flex items-center gap-2 uppercase">
               <Heart className="h-5 w-5 text-primary" />
               About Me
             </CardTitle>
@@ -262,7 +247,6 @@ const Profile = () => {
               placeholder="Tell others a bit about yourself..."
               rows={4}
               maxLength={200}
-              className="rounded-xl"
             />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Share what makes you unique</span>
@@ -273,18 +257,18 @@ const Profile = () => {
 
         {/* Compatibility Quiz CTA */}
         <Card 
-          variant={quizCompleted ? "glass" : "neon"}
-          className="mb-6 opacity-0 animate-slide-up-spring cursor-pointer hover-lift"
+          variant={quizCompleted ? "elevated" : "accent"}
+          className="mb-6 opacity-0 animate-fade-in-up cursor-pointer hover-lift"
           style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
           onClick={() => navigate('/quiz')}
         >
           <CardContent className="p-5 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={cn(
-                "h-14 w-14 rounded-2xl flex items-center justify-center",
+                "h-14 w-14 rounded-sm flex items-center justify-center border-2",
                 quizCompleted 
-                  ? "bg-primary/20" 
-                  : "gradient-primary shadow-glow animate-pulse-ring"
+                  ? "bg-primary/10 border-primary/20" 
+                  : "bg-primary border-primary"
               )}>
                 <Sparkles className={cn("h-7 w-7", quizCompleted ? "text-primary" : "text-primary-foreground")} />
               </div>
@@ -301,14 +285,14 @@ const Profile = () => {
           </CardContent>
         </Card>
 
-        {/* Interests - Interactive Pills */}
+        {/* Interests */}
         <Card 
-          variant="glass" 
-          className="mb-6 opacity-0 animate-slide-up-spring"
+          variant="elevated" 
+          className="mb-6 opacity-0 animate-fade-in-up"
           style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}
         >
           <CardHeader>
-            <CardTitle className="text-lg">Interests</CardTitle>
+            <CardTitle className="text-lg uppercase">Interests</CardTitle>
             <CardDescription>Select up to 6 interests that represent you</CardDescription>
           </CardHeader>
           <CardContent>
@@ -318,11 +302,13 @@ const Profile = () => {
                   key={interest}
                   onClick={() => toggleInterest(interest)}
                   className={cn(
-                    "interest-pill transition-all",
-                    interests.includes(interest) && "selected"
+                    "px-3 py-1.5 rounded-sm border-2 text-sm font-medium transition-all",
+                    interests.includes(interest) 
+                      ? "bg-primary border-primary text-primary-foreground" 
+                      : "bg-transparent border-border text-muted-foreground hover:border-primary hover:text-foreground"
                   )}
                 >
-                  {interests.includes(interest) && <Check className="h-3.5 w-3.5" />}
+                  {interests.includes(interest) && <Check className="h-3.5 w-3.5 inline mr-1" />}
                   {interest}
                 </button>
               ))}
@@ -346,8 +332,7 @@ const Profile = () => {
         {/* Save Button */}
         <Button 
           onClick={handleSave} 
-          variant="glow"
-          className="w-full gap-2 rounded-2xl opacity-0 animate-slide-up-spring h-14 text-lg" 
+          className="w-full gap-2 opacity-0 animate-fade-in-up h-14 text-lg" 
           size="lg"
           disabled={saving}
           style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}

@@ -386,7 +386,7 @@ const AdminCoupons = () => {
         </div>
 
         {coupons.length === 0 && !isLoading && (
-          <Card variant="glass" className="text-center py-12">
+          <Card variant="elevated" className="text-center py-12">
             <CardContent>
               <Ticket className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">No coupons yet</h3>

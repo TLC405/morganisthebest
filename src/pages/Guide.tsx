@@ -62,13 +62,13 @@ const SinglesGuide = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {steps.map((step, index) => (
-        <Card key={index} variant="glass" className="hover-lift">
+        <Card key={index} variant="elevated" className="hover-lift">
           <CardHeader className="pb-2">
             <div className="mb-2 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary">
-                <step.icon className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-sm border-2 border-primary bg-primary/10">
+                <step.icon className="h-5 w-5 text-primary" />
               </div>
-              <Badge variant="secondary" className="bg-secondary/20">
+              <Badge variant="secondary">
                 Step {index + 1}
               </Badge>
             </div>
@@ -128,13 +128,13 @@ const TeamGuide = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {steps.map((step, index) => (
-        <Card key={index} variant="glass" className="hover-lift">
+        <Card key={index} variant="elevated" className="hover-lift">
           <CardHeader className="pb-2">
             <div className="mb-2 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-secondary to-primary">
-                <step.icon className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-sm border-2 border-secondary bg-secondary/10">
+                <step.icon className="h-5 w-5 text-secondary" />
               </div>
-              <Badge className="bg-secondary">Step {index + 1}</Badge>
+              <Badge variant="secondary">Step {index + 1}</Badge>
             </div>
             <CardTitle className="text-lg">{step.title}</CardTitle>
           </CardHeader>
@@ -204,13 +204,13 @@ const AdminGuide = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {steps.map((step, index) => (
-        <Card key={index} variant="glass" className="hover-lift">
+        <Card key={index} variant="elevated" className="hover-lift">
           <CardHeader className="pb-2">
             <div className="mb-2 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary via-secondary to-accent">
-                <step.icon className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-sm border-2 border-accent bg-accent/10">
+                <step.icon className="h-5 w-5 text-accent-foreground" />
               </div>
-              <Badge variant="outline" className="border-primary text-primary">
+              <Badge variant="outline">
                 Admin
               </Badge>
             </div>
@@ -239,8 +239,8 @@ const Guide = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-4xl font-bold">
-            <span className="text-gradient">How to Use</span> the App
+          <h1 className="mb-2 text-4xl font-bold uppercase tracking-tight">
+            How to Use the App
           </h1>
           <p className="text-lg text-muted-foreground">
             Everything you need to know to make the most of your experience
@@ -278,14 +278,14 @@ const Guide = () => {
         </Tabs>
 
         {/* Pro Tips */}
-        <Card variant="gradient" className="mt-8">
+        <Card variant="accent" className="mt-8">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/20">
-              <Sparkles className="h-6 w-6 text-white" />
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm border-2 border-primary bg-primary/10">
+              <Sparkles className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">Need more help?</h3>
-              <p className="text-sm text-white/80">
+              <h3 className="font-semibold text-foreground">Need more help?</h3>
+              <p className="text-sm text-muted-foreground">
                 Click the chat bubble in the bottom-right corner to talk to Lady Evans, your personal concierge!
               </p>
             </div>
