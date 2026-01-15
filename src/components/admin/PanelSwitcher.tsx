@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Crown, Users, Heart, ChevronDown, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -80,8 +79,8 @@ export const PanelSwitcher = () => {
             variant="default"
             size="lg"
             className={cn(
-              "gap-2 shadow-premium glass-strong border border-border/50",
-              "hover:shadow-glow transition-all duration-300",
+              "gap-2 shadow-hard-sm border-2 border-foreground",
+              "hover:translate-y-0.5 hover:shadow-none transition-all",
               "px-4 py-3 h-auto"
             )}
           >
@@ -94,7 +93,7 @@ export const PanelSwitcher = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           align="end" 
-          className="w-64 glass-strong border-border/50 shadow-premium"
+          className="w-64 border-2 border-border shadow-depth-lg bg-popover"
         >
           <DropdownMenuLabel className="text-muted-foreground text-xs uppercase tracking-wider">
             Switch Panel View
@@ -109,7 +108,7 @@ export const PanelSwitcher = () => {
                 currentPanel === panel.id && panel.bgColor
               )}
             >
-              <div className={cn("p-2 rounded-lg", panel.bgColor)}>
+              <div className={cn("p-2", panel.bgColor)}>
                 <panel.icon className={cn("h-4 w-4", panel.color)} />
               </div>
               <div className="flex-1">
@@ -123,7 +122,7 @@ export const PanelSwitcher = () => {
                 </p>
               </div>
               {currentPanel === panel.id && (
-                <div className={cn("w-2 h-2 rounded-full", panel.color.replace('text-', 'bg-'))} />
+                <div className={cn("w-2 h-2", panel.color.replace('text-', 'bg-'))} />
               )}
             </DropdownMenuItem>
           ))}
