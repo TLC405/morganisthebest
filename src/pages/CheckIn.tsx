@@ -203,12 +203,11 @@ const CheckIn = () => {
     return (
       <Layout>
         <div className="mx-auto max-w-2xl px-4 py-8">
-          {/* Premium Check-In Confirmation */}
-          <Card className="text-center glass-card border-primary/20 overflow-hidden mb-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
-            <CardContent className="pt-8 pb-8 relative">
-              <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-accent/40 animate-pulse-ring">
-                <CheckCircle className="h-10 w-10 text-primary" />
+          {/* Check-In Confirmation */}
+          <Card variant="elevated" className="text-center mb-8">
+            <CardContent className="pt-8 pb-8">
+              <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center bg-primary shadow-hard-sm">
+                <CheckCircle className="h-10 w-10 text-primary-foreground" />
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">
                 You're Checked In!
@@ -217,25 +216,24 @@ const CheckIn = () => {
                 Welcome to {checkedEvent.title}!
               </p>
 
-              {/* Premium PIN Display */}
+              {/* PIN Display */}
               {nametagPin && (
-                <div className="relative rounded-2xl bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 p-8 mb-6 overflow-hidden">
-                  <div className="absolute inset-0 bg-mesh opacity-30" />
-                  <p className="text-sm text-muted-foreground mb-3 relative">Your Nametag PIN</p>
-                  <div className="text-6xl font-bold text-gradient tracking-widest relative animate-fade-in">
+                <div className="bg-muted border-4 border-primary p-8 mb-6">
+                  <p className="text-sm text-muted-foreground mb-3">Your Nametag PIN</p>
+                  <div className="text-6xl font-bold text-primary tracking-widest animate-fade-in">
                     #{nametagPin}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-4 relative">
+                  <p className="text-xs text-muted-foreground mt-4">
                     Share with someone you'd like to match with!
                   </p>
                 </div>
               )}
 
               {/* GPS Badge */}
-              <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6 ${
+              <div className={`inline-flex items-center gap-2 px-4 py-2 mb-6 border-2 ${
                 geoVerified 
-                  ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
-                  : 'bg-muted text-muted-foreground border border-border'
+                  ? 'bg-secondary/10 text-secondary border-secondary' 
+                  : 'bg-muted text-muted-foreground border-border'
               }`}>
                 <MapPin className="h-4 w-4" />
                 <span className="text-sm font-medium">
@@ -246,7 +244,7 @@ const CheckIn = () => {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   onClick={() => setShowPinEntry(true)} 
-                  className="flex-1 gap-2 bg-gradient-to-r from-primary to-secondary shadow-glow hover:shadow-glow-lg transition-all"
+                  className="flex-1 gap-2 shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all"
                   size="lg"
                 >
                   <Hash className="h-5 w-5" />
@@ -259,14 +257,14 @@ const CheckIn = () => {
             </CardContent>
           </Card>
 
-          {/* Attendee Photo Grid - Hinge Style */}
+          {/* Attendee Photo Grid */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
                 Who's Here
               </h3>
-              <Badge variant="secondary" className="bg-primary/10 text-primary">
+              <Badge variant="secondary">
                 {eventAttendees.length} checked in
               </Badge>
             </div>
@@ -275,7 +273,7 @@ const CheckIn = () => {
               {eventAttendees.map((attendee, index) => (
                 <div 
                   key={attendee.id}
-                  className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer animate-scale-in"
+                  className="group relative aspect-square overflow-hidden cursor-pointer animate-fade-in border-2 border-border hover:border-primary transition-colors"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   {attendee.profiles?.photo_url ? (
@@ -285,7 +283,7 @@ const CheckIn = () => {
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                    <div className="w-full h-full bg-muted flex items-center justify-center">
                       <span className="text-2xl font-bold text-primary">
                         {attendee.profiles?.name?.charAt(0) || '?'}
                       </span>
@@ -332,23 +330,21 @@ const CheckIn = () => {
 
   return (
     <Layout>
-      {/* Premium Gradient Header */}
-      <div className="relative border-b border-border overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
-        <div className="absolute inset-0 bg-mesh opacity-30" />
-        <div className="mx-auto max-w-lg px-4 py-12 text-center relative">
-          <div className="mb-4 mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/30 to-accent/40 animate-pulse-ring">
-            <QrCode className="h-10 w-10 text-primary" />
+      {/* Header */}
+      <div className="border-b-4 border-primary bg-card">
+        <div className="mx-auto max-w-lg px-4 py-12 text-center">
+          <div className="mb-4 mx-auto flex h-20 w-20 items-center justify-center bg-primary shadow-hard-sm">
+            <QrCode className="h-10 w-10 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold text-gradient mb-3">Event Check-In</h1>
-          <p className="text-muted-foreground text-lg">
+          <h1 className="text-3xl font-bold text-foreground mb-3">Event Check-In</h1>
+          <p className="text-muted-foreground">
             Get your nametag PIN for anonymous matching!
           </p>
         </div>
       </div>
 
       <div className="mx-auto max-w-lg px-4 py-8">
-        <Card className="glass-card border-border/50">
+        <Card variant="elevated">
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
@@ -361,15 +357,15 @@ const CheckIn = () => {
           <CardContent>
             {userRsvps.length === 0 ? (
               <div className="text-center py-12">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                  <QrCode className="h-10 w-10 text-primary/50" />
+                <div className="w-20 h-20 mx-auto mb-4 bg-muted flex items-center justify-center">
+                  <QrCode className="h-10 w-10 text-muted-foreground" />
                 </div>
                 <p className="text-muted-foreground mb-6">
                   No RSVPs yet. Browse events to get started!
                 </p>
                 <Button 
                   onClick={() => navigate('/events')}
-                  className="bg-gradient-to-r from-primary to-secondary shadow-glow"
+                  className="shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all"
                 >
                   Find Events
                 </Button>
@@ -379,13 +375,12 @@ const CheckIn = () => {
                 {userRsvps.map((rsvp, index) => (
                   <div 
                     key={rsvp.id} 
-                    className="group relative rounded-2xl overflow-hidden bg-gradient-to-r from-muted/30 to-accent/5 border border-border/50 hover:border-primary/30 transition-all animate-slide-up-spring"
+                    className="group border-2 border-border hover:border-primary transition-colors animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-primary/5 to-secondary/5" />
-                    <div className="relative p-5 flex items-center justify-between">
+                    <div className="p-5 flex items-center justify-between">
                       <div className="flex-1">
-                        <p className="font-semibold text-foreground text-lg group-hover:text-gradient transition-all">
+                        <p className="font-semibold text-foreground text-lg">
                           {rsvp.events?.title || 'Event'}
                         </p>
                         <p className="text-sm text-muted-foreground mt-1">
@@ -393,14 +388,14 @@ const CheckIn = () => {
                         </p>
                       </div>
                       {rsvp.check_in_status ? (
-                        <Badge className="bg-green-500/10 text-green-500 border border-green-500/20 gap-1">
+                        <Badge className="bg-secondary text-secondary-foreground gap-1">
                           <CheckCircle className="h-3 w-3" />
                           Checked In
                         </Badge>
                       ) : (
                         <Button 
                           onClick={() => handleCheckIn(rsvp)}
-                          className="gap-2 bg-gradient-to-r from-primary to-secondary shadow-glow hover:shadow-glow-lg transition-all"
+                          className="gap-2 shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all"
                         >
                           <MapPin className="h-4 w-4" />
                           Check In
