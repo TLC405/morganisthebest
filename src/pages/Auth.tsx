@@ -150,11 +150,14 @@ const Auth = () => {
               {/* Sparkle accent */}
               <Sparkles className="absolute -top-1 -right-1 h-5 w-5 text-accent animate-pulse" />
             </div>
-            <div className="space-y-1">
-              <span className="text-3xl font-bold text-foreground tracking-tight">
+            <div className="space-y-1 text-center">
+              <span className="text-3xl font-semibold text-foreground tracking-tight font-playfair">
                 Social Singles <span className="text-gradient">OKC</span>
               </span>
               <p className="text-sm text-muted-foreground font-medium">Where Science Meets Chemistry ✨</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80 font-medium">
+                Powered by TLC
+              </p>
             </div>
           </div>
           

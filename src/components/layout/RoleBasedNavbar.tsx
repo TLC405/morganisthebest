@@ -132,13 +132,16 @@ export const RoleBasedNavbar = () => {
           {/* Logo */}
           <Link to="/" className="flex flex-col group">
             <div className="flex items-center gap-1">
-              <span className="font-black text-xl tracking-tight text-accent">
+              <span className="font-playfair text-xl font-semibold tracking-tight text-accent">
                 SOCIAL SINGLES
               </span>
-              <span className="font-black text-xl text-primary">OKC</span>
+              <span className="font-playfair text-xl font-semibold text-primary">OKC</span>
             </div>
             <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold -mt-0.5">
               Date in Real Life
+            </span>
+            <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground/80 font-medium">
+              Powered by TLC
             </span>
           </Link>
 
