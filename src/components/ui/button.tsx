@@ -5,35 +5,35 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.98]",
   {
     variants: {
       variant: {
-        // Primary - Rose gold gradient with soft glow
-        default: "bg-gradient-to-r from-primary to-[hsl(350_75%_50%)] text-primary-foreground shadow-md hover:shadow-glow hover:scale-[1.02] active:scale-[0.98]",
-        // Secondary - Champagne gold, refined
-        secondary: "bg-secondary text-secondary-foreground shadow-md hover:bg-secondary/90 hover:shadow-lg active:scale-[0.98]",
+        // Default - Gold gradient
+        default: "bg-gradient-to-r from-primary to-[hsl(45_80%_55%)] text-primary-foreground shadow-soft hover:shadow-glow",
+        // Secondary - Champagne
+        secondary: "bg-secondary text-secondary-foreground shadow-soft hover:bg-secondary/90",
         // Destructive
-        destructive: "bg-destructive text-destructive-foreground shadow-md hover:bg-destructive/90 hover:shadow-lg active:scale-[0.98]",
-        // Outline - Elegant border with gradient on hover
-        outline: "border border-border bg-transparent text-foreground hover:bg-muted hover:border-primary/50 hover:text-primary",
+        destructive: "bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90",
+        // Outline - Elegant border
+        outline: "border-2 border-border bg-transparent text-foreground hover:bg-muted hover:border-primary/40",
         // Ghost - Minimal
-        ghost: "hover:bg-muted hover:text-foreground",
-        // Link - Underline style
+        ghost: "text-foreground hover:bg-muted hover:text-foreground",
+        // Link
         link: "text-primary underline-offset-4 hover:underline",
-        // Premium - Glass effect with shimmer
-        premium: "glass-card border-primary/30 text-foreground hover:border-primary/50 hover:shadow-glow hover:scale-[1.02] active:scale-[0.98]",
-        // Accent - Lavender gradient
-        accent: "bg-gradient-to-r from-accent to-[hsl(280_50%_60%)] text-accent-foreground shadow-md hover:shadow-glow-accent hover:scale-[1.02] active:scale-[0.98]",
+        // Premium - Gold with glow
+        premium: "bg-gradient-to-r from-primary via-[hsl(42_75%_52%)] to-primary text-primary-foreground shadow-glow hover:shadow-glow-lg",
+        // Accent - Trust blue
+        accent: "bg-accent text-accent-foreground shadow-soft hover:bg-accent/90",
       },
       size: {
-        default: "h-11 px-6 py-2 rounded-xl",
-        sm: "h-9 px-4 rounded-lg text-xs",
-        lg: "h-12 px-8 rounded-xl",
-        xl: "h-14 px-10 rounded-2xl text-base font-semibold",
-        icon: "h-10 w-10 rounded-xl",
-        "icon-sm": "h-8 w-8 rounded-lg",
-        "icon-lg": "h-12 w-12 rounded-xl",
+        default: "h-11 px-6 py-2",
+        sm: "h-9 px-4 text-xs",
+        lg: "h-12 px-8 text-base",
+        xl: "h-14 px-10 text-lg",
+        icon: "h-11 w-11",
+        "icon-sm": "h-9 w-9",
+        "icon-lg": "h-12 w-12",
       },
     },
     defaultVariants: {
@@ -52,7 +52,13 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
   },
 );
 Button.displayName = "Button";
