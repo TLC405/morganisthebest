@@ -4,24 +4,28 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-sm border-2 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
-        // Default - Stamped metal look
-        default: "border-primary bg-primary text-primary-foreground shadow-hard-sm",
-        // Secondary - Sage
-        secondary: "border-secondary bg-secondary text-secondary-foreground shadow-hard-sm",
+        // Default - Rose gold with soft glow
+        default: "border-transparent bg-primary/20 text-primary",
+        // Secondary - Champagne
+        secondary: "border-transparent bg-secondary/20 text-secondary",
         // Destructive
-        destructive: "border-destructive bg-destructive text-destructive-foreground shadow-hard-sm",
-        // Outline - Industrial border
-        outline: "border-foreground bg-transparent text-foreground",
-        // Muted - Subtle tag
-        muted: "border-border bg-muted text-muted-foreground",
-        // Success
-        success: "border-[hsl(142_50%_40%)] bg-[hsl(142_50%_40%)] text-white shadow-hard-sm",
-        // Warning
-        warning: "border-[hsl(38_80%_55%)] bg-[hsl(38_80%_55%)] text-[hsl(30_8%_12%)] shadow-hard-sm",
+        destructive: "border-transparent bg-destructive/20 text-destructive",
+        // Outline - Elegant border
+        outline: "border-border text-foreground bg-transparent",
+        // Muted - Subtle
+        muted: "border-border/50 bg-muted text-muted-foreground",
+        // Success - Green
+        success: "border-transparent bg-[hsl(160_50%_50%)]/20 text-[hsl(160_50%_50%)]",
+        // Warning - Amber
+        warning: "border-transparent bg-[hsl(38_80%_55%)]/20 text-[hsl(38_80%_55%)]",
+        // Accent - Lavender
+        accent: "border-transparent bg-accent/20 text-accent",
+        // Premium - Glass effect
+        premium: "glass-subtle border-primary/30 text-primary",
       },
     },
     defaultVariants: {
