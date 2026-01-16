@@ -8,6 +8,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useUpcomingEvents } from '@/hooks/useEvents';
 import { EventCard } from '@/components/events/EventCard';
 import { TrustBadgeRow } from '@/components/trust/TrustBadge';
+import { FloatingLogo, BrandWatermark } from '@/components/brand/FloatingLogo';
+import { TLCBadge } from '@/components/brand/TLCBadge';
 
 const features = [
   {
@@ -73,16 +75,28 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-[90vh] flex items-center gradient-champagne-radial">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 gradient-mesh opacity-80" />
-        <div className="blur-orb blur-orb-primary w-[400px] h-[400px] -top-20 -right-20 opacity-20" />
-        <div className="blur-orb blur-orb-accent w-[300px] h-[300px] bottom-20 -left-20 opacity-15" />
+      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
+        {/* Background */}
+        <div className="absolute inset-0 gradient-champagne-radial" />
+        <div className="absolute inset-0 gradient-mesh opacity-60" />
         
-        <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
+        {/* Brand Watermark */}
+        <BrandWatermark />
+        
+        {/* Decorative Elements */}
+        <div className="blur-orb blur-orb-primary w-[500px] h-[500px] -top-40 -right-40 opacity-15" />
+        <div className="blur-orb blur-orb-accent w-[400px] h-[400px] bottom-20 -left-40 opacity-10" />
+        <div className="blur-orb blur-orb-secondary w-[300px] h-[300px] top-1/4 right-1/4 opacity-10" />
+        
+        <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24 w-full">
           <div className="mx-auto max-w-4xl text-center">
+            {/* Floating Logo */}
+            <div className="mb-10 flex justify-center animate-fade-in-up opacity-0 stagger-1">
+              <FloatingLogo size="hero" showTagline={true} showTLC={true} />
+            </div>
+            
             {/* Trust Badges Row */}
-            <div className="mb-10 flex flex-wrap justify-center gap-2 animate-fade-in-up opacity-0 stagger-1">
+            <div className="mb-8 flex flex-wrap justify-center gap-2 animate-fade-in-up opacity-0 stagger-2">
               <TrustBadgeRow 
                 badges={['id-verified', 'selfie-verified', 'background-checked']} 
                 size="md"
@@ -91,22 +105,22 @@ const Index = () => {
             </div>
             
             {/* Headlines */}
-            <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl animate-fade-in-up opacity-0 stagger-2">
+            <h1 className="mb-6 text-3xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl animate-fade-in-up opacity-0 stagger-3">
               Elevated Dating
               <span className="block text-gradient mt-2">+ Complete Privacy</span>
             </h1>
             
-            <p className="mb-8 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto leading-relaxed animate-fade-in-up opacity-0 stagger-3">
+            <p className="mb-8 text-base text-muted-foreground md:text-lg max-w-2xl mx-auto leading-relaxed animate-fade-in-up opacity-0 stagger-3">
               Blurred profiles. Only revealed at events. Meet real Oklahoma singles 
               at curated events with complete identity verification.
             </p>
 
             {/* Feature Pills */}
-            <div className="mb-10 flex flex-wrap justify-center gap-2 animate-fade-in-up opacity-0 stagger-3">
-              {trustFeatures.map((feature, i) => (
+            <div className="mb-10 flex flex-wrap justify-center gap-2 animate-fade-in-up opacity-0 stagger-4">
+              {trustFeatures.slice(0, 4).map((feature, i) => (
                 <div 
                   key={feature.label}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm text-foreground shadow-soft"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-sm border border-border/50 text-sm text-foreground shadow-soft"
                 >
                   <feature.icon className="h-4 w-4 text-primary" />
                   {feature.label}
@@ -115,14 +129,14 @@ const Index = () => {
             </div>
             
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up opacity-0 stagger-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up opacity-0 stagger-5">
               <Button size="xl" className="gap-3" asChild>
                 <Link to="/events">
                   <Calendar className="h-5 w-5" />
                   Find an Event
                 </Link>
               </Button>
-              <Button variant="outline" size="xl" className="gap-3" asChild>
+              <Button variant="outline" size="xl" className="gap-3 bg-card/50 backdrop-blur-sm" asChild>
                 <Link to="/auth">
                   <Sparkles className="h-5 w-5" />
                   Get Started
@@ -131,12 +145,12 @@ const Index = () => {
             </div>
 
             {/* Social Proof */}
-            <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up opacity-0 stagger-5">
+            <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up opacity-0 stagger-6">
               <div className="flex -space-x-3">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div 
                     key={i} 
-                    className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-card flex items-center justify-center shadow-soft"
+                    className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-card flex items-center justify-center shadow-soft"
                   >
                     <span className="text-xs font-medium text-muted-foreground">👤</span>
                   </div>
@@ -146,7 +160,7 @@ const Index = () => {
                 <p className="text-sm font-semibold text-foreground">500+ verified singles in OKC</p>
                 <div className="flex items-center gap-1 text-muted-foreground text-xs">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />
+                    <Star key={i} className="h-3.5 w-3.5 fill-secondary text-secondary" />
                   ))}
                   <span className="ml-1">4.9 average rating</span>
                 </div>
@@ -270,14 +284,13 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="py-20 md:py-28 relative overflow-hidden gradient-champagne-radial">
-        <div className="blur-orb blur-orb-primary w-[300px] h-[300px] top-0 right-1/4 opacity-15" />
-        <div className="blur-orb blur-orb-secondary w-[250px] h-[250px] bottom-0 left-1/4 opacity-15" />
+        <BrandWatermark />
+        <div className="blur-orb blur-orb-primary w-[300px] h-[300px] top-0 right-1/4 opacity-10" />
+        <div className="blur-orb blur-orb-accent w-[250px] h-[250px] bottom-0 left-1/4 opacity-10" />
         
         <div className="mx-auto max-w-3xl px-4 text-center relative">
           <div className="mb-10 mx-auto">
-            <div className="h-24 w-24 mx-auto rounded-3xl gradient-primary flex items-center justify-center shadow-glow-lg animate-float">
-              <Heart className="h-12 w-12 text-primary-foreground" fill="currentColor" />
-            </div>
+            <FloatingLogo size="lg" showTagline={false} showTLC={true} />
           </div>
           <h2 className="mb-6 text-3xl md:text-5xl font-bold text-foreground">
             Ready to Meet Someone Real?
@@ -292,6 +305,10 @@ const Index = () => {
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>
+          
+          <div className="mt-10">
+            <TLCBadge variant="block" />
+          </div>
         </div>
       </section>
     </Layout>

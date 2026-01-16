@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Heart, Mail, Lock, User, Shield, Users, Sparkles } from 'lucide-react';
+import { FloatingLogo, BrandWatermark } from '@/components/brand/FloatingLogo';
+import { TLCBadge } from '@/components/brand/TLCBadge';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -115,38 +117,32 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 gradient-mesh" />
-      <div className="blur-orb blur-orb-primary w-[400px] h-[400px] -top-40 -right-40 animate-float" />
-      <div className="blur-orb blur-orb-accent w-[300px] h-[300px] -bottom-20 -left-20 animate-float" style={{ animationDelay: '3s' }} />
-      <div className="blur-orb blur-orb-secondary w-[200px] h-[200px] top-1/3 left-1/4 animate-float" style={{ animationDelay: '1.5s' }} />
+      <div className="absolute inset-0 gradient-champagne-radial" />
+      <div className="absolute inset-0 gradient-mesh opacity-50" />
+      <BrandWatermark />
+      <div className="blur-orb blur-orb-primary w-[400px] h-[400px] -top-40 -right-40 opacity-10 animate-float" />
+      <div className="blur-orb blur-orb-accent w-[300px] h-[300px] -bottom-20 -left-20 opacity-10 animate-float" style={{ animationDelay: '3s' }} />
       
-      <Card variant="spotlight" className="w-full max-w-md animate-scale-in relative">
-        <CardHeader className="text-center space-y-6 pb-2">
-          {/* Logo */}
-          <div className="flex flex-col items-center gap-5">
-            <div className="h-20 w-20 rounded-2xl gradient-primary flex items-center justify-center shadow-glow-lg">
-              <Heart className="h-10 w-10 text-primary-foreground" fill="currentColor" />
+      <div className="relative w-full max-w-md">
+        {/* Floating Logo Above Card */}
+        <div className="flex justify-center mb-8 animate-fade-in-up opacity-0 stagger-1">
+          <FloatingLogo size="md" showTagline={true} showTLC={false} />
+        </div>
+        
+        <Card variant="spotlight" className="animate-scale-in">
+          <CardHeader className="text-center space-y-4 pb-2">
+            <div className="space-y-2">
+              <CardTitle className="text-xl font-semibold text-foreground">
+                {isLogin ? 'Welcome Back' : 'Join the Community'}
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                {isLogin 
+                  ? 'Sign in to connect with genuine singles' 
+                  : 'Create an account to start meeting real people'
+                }
+              </CardDescription>
             </div>
-            <div className="space-y-1">
-              <span className="text-2xl font-bold text-foreground tracking-tight">
-                Social Singles <span className="text-gradient">OKC</span>
-              </span>
-              <p className="text-sm text-muted-foreground">Where Science Meets Chemistry</p>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <CardTitle className="text-xl font-semibold text-foreground">
-              {isLogin ? 'Welcome Back' : 'Join the Community'}
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              {isLogin 
-                ? 'Sign in to connect with genuine singles' 
-                : 'Create an account to start meeting real people'
-              }
-            </CardDescription>
-          </div>
-        </CardHeader>
+          </CardHeader>
         
         <CardContent className="pt-4">
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -248,14 +244,16 @@ const Auth = () => {
             </Badge>
           </div>
           
-          {/* Social proof counter */}
-          <div className="mt-5 text-center">
+          {/* Social proof counter + TLC */}
+          <div className="mt-5 text-center space-y-3">
             <p className="text-xs text-muted-foreground">
               Join <span className="text-primary font-semibold">500+</span> OKC singles finding real connections
             </p>
+            <TLCBadge variant="inline" />
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

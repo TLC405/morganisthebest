@@ -126,24 +126,21 @@ export const RoleBasedNavbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-card border-b-4 border-primary">
+    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-lg border-b border-border/50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex flex-col group">
-            <div className="flex items-center gap-1">
-              <span className="font-black text-xl tracking-tight text-foreground">
-                SOCIAL SINGLES
-              </span>
-              <span className="font-black text-xl text-primary">OKC</span>
+        <div className="flex items-center justify-between h-14">
+          {/* Minimal Logo - Just icon on mobile, small on desktop */}
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="h-9 w-9 rounded-xl gradient-primary flex items-center justify-center shadow-soft group-hover:shadow-glow transition-shadow">
+              <Heart className="h-5 w-5 text-primary-foreground" fill="currentColor" />
             </div>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold -mt-0.5">
-              Date in Real Life
+            <span className="hidden sm:block text-sm font-bold text-foreground">
+              SS<span className="text-primary">OKC</span>
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Desktop Navigation - Centered */}
+          <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = location.pathname === link.to;
@@ -152,9 +149,9 @@ export const RoleBasedNavbar = () => {
                   key={link.to}
                   to={link.to}
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-150',
+                    'flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-full transition-all duration-200',
                     isActive
-                      ? 'bg-primary text-primary-foreground'
+                      ? 'bg-primary text-primary-foreground shadow-soft'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   )}
                 >
@@ -206,26 +203,26 @@ export const RoleBasedNavbar = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-foreground border-2 border-foreground hover:bg-foreground hover:text-background transition-colors"
+            className="md:hidden p-2 rounded-lg text-foreground hover:bg-muted transition-colors"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t-2 border-border animate-fade-in">
+          <nav className="md:hidden py-4 border-t border-border animate-fade-in">
             {/* Mobile User Greeting */}
             {user && getFirstName() && (
-              <div className="flex items-center gap-3 px-4 py-3 mb-2 border-b-2 border-border">
-                <Avatar className="h-10 w-10 border-2 border-primary rounded-sm">
+              <div className="flex items-center gap-3 px-4 py-3 mb-2 border-b border-border">
+                <Avatar className="h-10 w-10 border-2 border-primary rounded-xl">
                   <AvatarImage src={userPhoto || undefined} />
-                  <AvatarFallback className="bg-primary text-primary-foreground rounded-sm">
+                  <AvatarFallback className="bg-primary text-primary-foreground rounded-xl">
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="text-base font-bold text-foreground uppercase">
+                  <span className="text-sm font-semibold text-foreground">
                     {getFirstName()}
                   </span>
                   {getRoleBadge()}
@@ -243,7 +240,7 @@ export const RoleBasedNavbar = () => {
                     to={link.to}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-wider transition-all',
+                      'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all',
                       isActive
                         ? 'bg-primary text-primary-foreground'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
