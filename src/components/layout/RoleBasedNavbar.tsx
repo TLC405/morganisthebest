@@ -132,7 +132,7 @@ export const RoleBasedNavbar = () => {
           {/* Logo */}
           <Link to="/" className="flex flex-col group">
             <div className="flex items-center gap-1">
-              <span className="font-black text-xl tracking-tight text-accent">
+              <span className="font-black text-xl tracking-tight text-foreground">
                 SOCIAL SINGLES
               </span>
               <span className="font-black text-xl text-primary">OKC</span>

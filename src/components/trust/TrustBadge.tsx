@@ -29,26 +29,26 @@ const badgeConfig: Record<BadgeType, {
   'id-verified': {
     icon: Shield,
     label: 'ID Verified',
-    color: 'text-accent',
-    bgColor: 'bg-accent/10 border-accent/20',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10 border-primary/20',
   },
   'selfie-verified': {
     icon: Camera,
     label: 'Selfie Verified',
-    color: 'text-accent',
-    bgColor: 'bg-accent/10 border-accent/20',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10 border-primary/20',
   },
   'background-checked': {
     icon: UserCheck,
     label: 'Background Checked',
-    color: 'text-accent',
-    bgColor: 'bg-accent/10 border-accent/20',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10 border-primary/20',
   },
   'ok-resident': {
     icon: MapPin,
     label: 'OK Resident',
-    color: 'text-primary',
-    bgColor: 'bg-primary/10 border-primary/20',
+    color: 'text-accent',
+    bgColor: 'bg-accent/10 border-accent/20',
   },
   'fraud-checked': {
     icon: AlertTriangle,
@@ -59,14 +59,14 @@ const badgeConfig: Record<BadgeType, {
   'community-trusted': {
     icon: Star,
     label: 'Community Trusted',
-    color: 'text-primary',
-    bgColor: 'bg-primary/10 border-primary/20',
+    color: 'text-secondary',
+    bgColor: 'bg-secondary/10 border-secondary/20',
   },
   'admin-vetted': {
     icon: BadgeCheck,
     label: 'Admin Vetted',
-    color: 'text-accent',
-    bgColor: 'bg-accent/10 border-accent/20',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10 border-primary/20',
   },
 };
 

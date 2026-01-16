@@ -8,9 +8,9 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        // Default - Gold
+        // Default - Blue primary
         default: "border-transparent bg-primary/15 text-primary",
-        // Secondary - Champagne
+        // Secondary - Bronze
         secondary: "border-transparent bg-secondary/15 text-secondary",
         // Destructive
         destructive: "border-transparent bg-destructive/15 text-destructive",
@@ -22,12 +22,12 @@ const badgeVariants = cva(
         success: "border-transparent bg-[hsl(160_50%_45%)]/15 text-[hsl(160_50%_40%)]",
         // Warning - Amber
         warning: "border-transparent bg-[hsl(38_80%_50%)]/15 text-[hsl(38_75%_45%)]",
-        // Accent - Trust blue
+        // Accent - Lavender
         accent: "border-transparent bg-accent/15 text-accent",
-        // Premium - Gold gradient
-        premium: "border-primary/20 bg-gradient-to-r from-primary/10 to-secondary/10 text-primary",
+        // Premium - Blue gradient
+        premium: "border-primary/20 bg-gradient-to-r from-primary/10 to-accent/10 text-primary",
         // Trust - Blue with icon-ready spacing
-        trust: "border-accent/20 bg-accent/10 text-accent font-semibold",
+        trust: "border-primary/20 bg-primary/10 text-primary font-semibold",
       },
     },
     defaultVariants: {
