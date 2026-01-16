@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, Calendar, Users, Shield, Sparkles, ArrowRight, MessageCircle, ShieldCheck, Star } from 'lucide-react';
+import { Heart, Calendar, Users, Shield, Sparkles, ArrowRight, MessageCircle, ShieldCheck, Star, CheckCircle, MapPin, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,32 +7,42 @@ import { Layout } from '@/components/layout/Layout';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUpcomingEvents } from '@/hooks/useEvents';
 import { EventCard } from '@/components/events/EventCard';
+import { TrustBadgeRow } from '@/components/trust/TrustBadge';
 
 const features = [
   {
-    icon: ShieldCheck,
-    title: 'Zero Catfishing',
-    description: 'Every profile is verified. Live selfie check + event attendance proof. No fakes allowed.',
-    gradient: 'from-primary/20 to-primary/5',
-  },
-  {
-    icon: MessageCircle,
-    title: 'Zero Ghosting',
-    description: 'Response rates are tracked and visible. Accountability breeds respect.',
-    gradient: 'from-secondary/20 to-secondary/5',
-  },
-  {
     icon: Users,
-    title: 'Meet First, Reveal Later',
-    description: 'Profiles stay mysterious until you attend the same event. Real chemistry, not filtered photos.',
-    gradient: 'from-accent/20 to-accent/5',
+    title: 'Meet First',
+    subtitle: 'Real People, No Swiping',
+    description: 'Connect at curated singles events. See who they really are before matching online.',
   },
   {
-    icon: Shield,
-    title: '100% Privacy',
-    description: 'No geo-tracking. No data selling. Check in with your nametag PIN. Your safety matters.',
-    gradient: 'from-[hsl(160_50%_50%)]/20 to-[hsl(160_50%_50%)]/5',
+    icon: ShieldCheck,
+    title: 'No Catfishing',
+    subtitle: 'Identity Verified, Fake-Free',
+    description: 'Every member is ID verified, selfie checked, and background screened.',
   },
+  {
+    icon: EyeOff,
+    title: 'Complete Privacy',
+    subtitle: 'Blurred Until You Meet',
+    description: 'Photos stay blurred until you meet in person. Real chemistry, not filtered photos.',
+  },
+  {
+    icon: Calendar,
+    title: 'Real Events',
+    subtitle: 'Admin-Vetted Community',
+    description: 'Professionally hosted events with vetted attendees. A safer way to date.',
+  },
+];
+
+const trustFeatures = [
+  { icon: CheckCircle, label: 'Meet in person first' },
+  { icon: EyeOff, label: 'No browsing profiles' },
+  { icon: ShieldCheck, label: 'Admin-vetted names' },
+  { icon: MapPin, label: 'Oklahoma matches' },
+  { icon: Shield, label: 'Fraud checked' },
+  { icon: Users, label: 'OK Resident verified' },
 ];
 
 const howItWorks = [
@@ -63,45 +73,50 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
-        {/* Background Effects */}
-        <div className="absolute inset-0 gradient-mesh opacity-60" />
-        <div className="blur-orb blur-orb-primary w-[500px] h-[500px] -top-40 -right-40 animate-float" />
-        <div className="blur-orb blur-orb-accent w-[400px] h-[400px] -bottom-20 -left-20 animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 gradient-spotlight" />
+      <section className="relative overflow-hidden min-h-[90vh] flex items-center gradient-champagne-radial">
+        {/* Decorative Elements */}
+        <div className="absolute inset-0 gradient-mesh opacity-80" />
+        <div className="blur-orb blur-orb-primary w-[400px] h-[400px] -top-20 -right-20 opacity-20" />
+        <div className="blur-orb blur-orb-accent w-[300px] h-[300px] bottom-20 -left-20 opacity-15" />
         
-        <div className="relative mx-auto max-w-7xl px-4 py-20 md:py-32">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
           <div className="mx-auto max-w-4xl text-center">
-            {/* Trust Badges */}
-            <div className="mb-10 flex flex-wrap justify-center gap-3">
-              <Badge variant="premium" className="gap-2 py-2.5 px-5 animate-fade-in-up opacity-0 stagger-1">
-                <ShieldCheck className="h-4 w-4" />
-                Zero Catfishing
-              </Badge>
-              <Badge variant="premium" className="gap-2 py-2.5 px-5 animate-fade-in-up opacity-0 stagger-2">
-                <MessageCircle className="h-4 w-4" />
-                Zero Ghosting
-              </Badge>
-              <Badge variant="premium" className="gap-2 py-2.5 px-5 animate-fade-in-up opacity-0 stagger-3">
-                <Heart className="h-4 w-4" />
-                100% Real
-              </Badge>
+            {/* Trust Badges Row */}
+            <div className="mb-10 flex flex-wrap justify-center gap-2 animate-fade-in-up opacity-0 stagger-1">
+              <TrustBadgeRow 
+                badges={['id-verified', 'selfie-verified', 'background-checked']} 
+                size="md"
+                showLabels={true}
+              />
             </div>
             
             {/* Headlines */}
-            <h1 className="mb-6 text-5xl font-bold tracking-tight text-foreground md:text-7xl lg:text-8xl animate-fade-in-up opacity-0 stagger-2">
-              Meet People First.
-              <span className="block text-gradient mt-2">In Real Life.</span>
+            <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl animate-fade-in-up opacity-0 stagger-2">
+              Elevated Dating
+              <span className="block text-gradient mt-2">+ Complete Privacy</span>
             </h1>
             
-            <p className="mb-12 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto leading-relaxed animate-fade-in-up opacity-0 stagger-3">
-              We're not another dating app. We host real events where real singles meet face-to-face. 
-              No swiping. No ghosting. No catfishing. Just genuine human connection.
+            <p className="mb-8 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto leading-relaxed animate-fade-in-up opacity-0 stagger-3">
+              Blurred profiles. Only revealed at events. Meet real Oklahoma singles 
+              at curated events with complete identity verification.
             </p>
+
+            {/* Feature Pills */}
+            <div className="mb-10 flex flex-wrap justify-center gap-2 animate-fade-in-up opacity-0 stagger-3">
+              {trustFeatures.map((feature, i) => (
+                <div 
+                  key={feature.label}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm text-foreground shadow-soft"
+                >
+                  <feature.icon className="h-4 w-4 text-primary" />
+                  {feature.label}
+                </div>
+              ))}
+            </div>
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up opacity-0 stagger-4">
-              <Button size="xl" className="gap-3 shadow-glow" asChild>
+              <Button size="xl" className="gap-3" asChild>
                 <Link to="/events">
                   <Calendar className="h-5 w-5" />
                   Find an Event
@@ -116,25 +131,23 @@ const Index = () => {
             </div>
 
             {/* Social Proof */}
-            <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up opacity-0 stagger-5">
+            <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up opacity-0 stagger-5">
               <div className="flex -space-x-3">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div 
                     key={i} 
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 border-2 border-background flex items-center justify-center"
+                    className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 border-2 border-card flex items-center justify-center shadow-soft"
                   >
-                    <span className="text-xs font-medium text-foreground/70">👤</span>
+                    <span className="text-xs font-medium text-muted-foreground">👤</span>
                   </div>
                 ))}
               </div>
               <div className="text-center sm:text-left">
-                <p className="text-sm font-medium text-foreground">500+ singles in OKC</p>
+                <p className="text-sm font-semibold text-foreground">500+ verified singles in OKC</p>
                 <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                  <Star className="h-3 w-3 fill-secondary text-secondary" />
-                  <Star className="h-3 w-3 fill-secondary text-secondary" />
-                  <Star className="h-3 w-3 fill-secondary text-secondary" />
-                  <Star className="h-3 w-3 fill-secondary text-secondary" />
-                  <Star className="h-3 w-3 fill-secondary text-secondary" />
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />
+                  ))}
                   <span className="ml-1">4.9 average rating</span>
                 </div>
               </div>
@@ -144,17 +157,15 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 md:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-aurora" />
+      <section className="py-20 md:py-28 relative overflow-hidden bg-card">
         <div className="mx-auto max-w-7xl px-4 relative">
-          <div className="text-center mb-16">
-            <Badge variant="secondary" className="mb-4">Why We're Different</Badge>
-            <h2 className="mb-6 text-3xl md:text-5xl font-bold text-foreground">
+          <div className="text-center mb-14">
+            <Badge variant="premium" className="mb-4">Why We're Different</Badge>
+            <h2 className="mb-4 text-3xl md:text-5xl font-bold text-foreground">
               Dating apps are broken.
-              <span className="text-gradient block mt-1">We're fixing that.</span>
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              We solve the real problems: fake profiles, ghosting, and endless swiping.
+            <p className="text-gradient text-2xl md:text-3xl font-bold">
+              We're fixing that.
             </p>
           </div>
           
@@ -162,16 +173,17 @@ const Index = () => {
             {features.map((feature, index) => (
               <Card 
                 key={feature.title} 
-                variant="glass"
-                className="group hover-lift opacity-0 animate-fade-in-up overflow-hidden"
+                variant="feature"
+                className="group opacity-0 animate-fade-in-up text-center"
                 style={{ animationDelay: `${index * 100 + 200}ms`, animationFillMode: 'forwards' }}
               >
-                <CardContent className="pt-8 pb-6">
-                  <div className={`mb-6 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} group-hover:shadow-glow transition-all duration-300`}>
-                    <feature.icon className="h-7 w-7 text-primary" />
+                <CardContent className="pt-8 pb-6 px-6">
+                  <div className="mb-5 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/15 transition-colors duration-300">
+                    <feature.icon className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="mb-3 text-lg font-semibold text-foreground text-center">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed text-center">{feature.description}</p>
+                  <h3 className="mb-1 text-lg font-bold text-foreground">{feature.title}</h3>
+                  <p className="mb-3 text-sm font-medium text-primary">{feature.subtitle}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -180,10 +192,9 @@ const Index = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-24 md:py-32 relative">
-        <div className="blur-orb blur-orb-secondary w-[300px] h-[300px] top-1/2 left-0 -translate-y-1/2" />
+      <section className="py-20 md:py-28 relative gradient-champagne">
         <div className="mx-auto max-w-7xl px-4 relative">
-          <div className="text-center mb-16">
+          <div className="text-center mb-14">
             <Badge variant="accent" className="mb-4">Simple Process</Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">
               How It Works
@@ -197,13 +208,13 @@ const Index = () => {
                 className="relative text-center group opacity-0 animate-fade-in-up"
                 style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
               >
-                <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center rounded-2xl gradient-primary shadow-glow group-hover:scale-110 transition-transform duration-300">
+                <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center rounded-2xl gradient-gold shadow-glow group-hover:scale-105 transition-transform duration-300">
                   <span className="text-3xl font-bold text-primary-foreground">{item.step}</span>
                 </div>
-                <h3 className="mb-3 text-xl font-semibold text-foreground">{item.title}</h3>
+                <h3 className="mb-3 text-xl font-bold text-foreground">{item.title}</h3>
                 <p className="text-sm text-muted-foreground">{item.description}</p>
                 {index < howItWorks.length - 1 && (
-                  <ArrowRight className="absolute right-0 top-10 hidden h-6 w-6 -translate-x-4 text-primary/40 md:block group-hover:translate-x-0 group-hover:text-primary transition-all duration-300" />
+                  <ArrowRight className="absolute right-0 top-10 hidden h-6 w-6 -translate-x-4 text-primary/30 md:block group-hover:translate-x-0 group-hover:text-primary transition-all duration-300" />
                 )}
               </div>
             ))}
@@ -212,8 +223,7 @@ const Index = () => {
       </section>
 
       {/* Upcoming Events */}
-      <section className="py-24 md:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-hero" />
+      <section className="py-20 md:py-28 relative overflow-hidden bg-card">
         <div className="mx-auto max-w-7xl px-4 relative">
           <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
@@ -250,7 +260,7 @@ const Index = () => {
               ))}
             </div>
           ) : (
-            <Card variant="glass" className="text-center py-16">
+            <Card variant="champagne" className="text-center py-16">
               <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
               <p className="text-muted-foreground text-lg">No upcoming events. Check back soon!</p>
             </Card>
@@ -259,25 +269,24 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 md:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh" />
-        <div className="blur-orb blur-orb-primary w-[400px] h-[400px] top-0 right-0" />
-        <div className="blur-orb blur-orb-accent w-[300px] h-[300px] bottom-0 left-1/4" />
+      <section className="py-20 md:py-28 relative overflow-hidden gradient-champagne-radial">
+        <div className="blur-orb blur-orb-primary w-[300px] h-[300px] top-0 right-1/4 opacity-15" />
+        <div className="blur-orb blur-orb-secondary w-[250px] h-[250px] bottom-0 left-1/4 opacity-15" />
         
         <div className="mx-auto max-w-3xl px-4 text-center relative">
           <div className="mb-10 mx-auto">
-            <div className="h-28 w-28 mx-auto rounded-3xl gradient-primary flex items-center justify-center shadow-glow-lg animate-float">
-              <Heart className="h-14 w-14 text-primary-foreground" fill="currentColor" />
+            <div className="h-24 w-24 mx-auto rounded-3xl gradient-gold flex items-center justify-center shadow-glow-lg animate-float">
+              <Heart className="h-12 w-12 text-primary-foreground" fill="currentColor" />
             </div>
           </div>
           <h2 className="mb-6 text-3xl md:text-5xl font-bold text-foreground">
             Ready to Meet Someone Real?
           </h2>
-          <p className="mb-12 text-lg text-muted-foreground max-w-xl mx-auto">
+          <p className="mb-10 text-lg text-muted-foreground max-w-xl mx-auto">
             Join hundreds of OKC singles who are tired of catfishing and ghosting.
             Real connections start with real meetings.
           </p>
-          <Button size="xl" className="gap-3 shadow-glow-lg" asChild>
+          <Button size="xl" variant="premium" className="gap-3" asChild>
             <Link to="/auth">
               Get Started Now
               <ArrowRight className="h-5 w-5" />

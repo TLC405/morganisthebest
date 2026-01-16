@@ -8,20 +8,26 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        // Default - Glass card with subtle blur
-        default: "glass-card shadow-depth",
-        // Elevated - Solid with premium shadow
-        elevated: "bg-card border border-border shadow-premium hover:shadow-depth-lg",
-        // Glass - Frosted translucent
-        glass: "glass-card hover:border-primary/30",
-        // Spotlight - Glass with accent glow
-        spotlight: "glass-strong border-primary/20 shadow-glow",
+        // Default - Cream with soft shadow
+        default: "bg-card border border-border shadow-soft",
+        // Elevated - Premium shadow depth
+        elevated: "bg-card border border-border shadow-elegant hover:shadow-depth-lg",
+        // Glass - Frosted cream
+        glass: "glass-cream hover:border-primary/20",
+        // Champagne - Subtle warm gradient
+        champagne: "gradient-champagne border border-border shadow-soft",
+        // Trust - Blue accent for verification
+        trust: "bg-card border-l-4 border-l-accent border border-border shadow-soft",
+        // Feature - For feature cards
+        feature: "bg-card border border-border shadow-soft hover:shadow-elegant hover:-translate-y-1",
+        // Spotlight - Gold accent glow
+        spotlight: "bg-card border border-primary/20 shadow-glow",
         // Editorial - Clean minimal
-        editorial: "bg-card/80 border border-border/50",
+        editorial: "bg-card/90 border border-border/60",
         // Minimal - Ultra-thin borders
-        minimal: "bg-transparent border border-border/30",
-        // Accent - Gradient border accent
-        accent: "glass-card border-l-2 border-l-primary",
+        minimal: "bg-transparent border border-border/40",
+        // Accent - Gold left border
+        accent: "bg-card border border-border border-l-4 border-l-primary shadow-soft",
       },
     },
     defaultVariants: {
@@ -50,7 +56,7 @@ CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn("text-xl font-semibold leading-tight tracking-tight", className)} {...props} />
+    <h3 ref={ref} className={cn("text-xl font-semibold leading-tight tracking-tight text-foreground", className)} {...props} />
   ),
 );
 CardTitle.displayName = "CardTitle";
