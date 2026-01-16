@@ -9,9 +9,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Default - Gold gradient
-        default: "bg-gradient-to-r from-primary to-[hsl(45_80%_55%)] text-primary-foreground shadow-soft hover:shadow-glow",
-        // Secondary - Champagne
+        // Default - Royal Blue gradient
+        default: "bg-gradient-to-r from-primary to-[hsl(225_80%_60%)] text-primary-foreground shadow-soft hover:shadow-glow",
+        // Secondary - Bronze/Gold accent
         secondary: "bg-secondary text-secondary-foreground shadow-soft hover:bg-secondary/90",
         // Destructive
         destructive: "bg-destructive text-destructive-foreground shadow-soft hover:bg-destructive/90",
@@ -21,9 +21,9 @@ const buttonVariants = cva(
         ghost: "text-foreground hover:bg-muted hover:text-foreground",
         // Link
         link: "text-primary underline-offset-4 hover:underline",
-        // Premium - Gold with glow
-        premium: "bg-gradient-to-r from-primary via-[hsl(42_75%_52%)] to-primary text-primary-foreground shadow-glow hover:shadow-glow-lg",
-        // Accent - Trust blue
+        // Premium - Blue with glow
+        premium: "bg-gradient-to-r from-primary via-[hsl(220_75%_58%)] to-primary text-primary-foreground shadow-glow hover:shadow-glow-lg",
+        // Accent - Lavender
         accent: "bg-accent text-accent-foreground shadow-soft hover:bg-accent/90",
       },
       size: {

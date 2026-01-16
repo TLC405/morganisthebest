@@ -208,7 +208,7 @@ const Index = () => {
                 className="relative text-center group opacity-0 animate-fade-in-up"
                 style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'forwards' }}
               >
-                <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center rounded-2xl gradient-gold shadow-glow group-hover:scale-105 transition-transform duration-300">
+                <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center rounded-2xl gradient-secondary shadow-glow group-hover:scale-105 transition-transform duration-300">
                   <span className="text-3xl font-bold text-primary-foreground">{item.step}</span>
                 </div>
                 <h3 className="mb-3 text-xl font-bold text-foreground">{item.title}</h3>
@@ -275,7 +275,7 @@ const Index = () => {
         
         <div className="mx-auto max-w-3xl px-4 text-center relative">
           <div className="mb-10 mx-auto">
-            <div className="h-24 w-24 mx-auto rounded-3xl gradient-gold flex items-center justify-center shadow-glow-lg animate-float">
+            <div className="h-24 w-24 mx-auto rounded-3xl gradient-primary flex items-center justify-center shadow-glow-lg animate-float">
               <Heart className="h-12 w-12 text-primary-foreground" fill="currentColor" />
             </div>
           </div>
