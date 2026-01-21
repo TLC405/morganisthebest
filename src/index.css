@@ -556,6 +556,28 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* ========== ATOMIC/BRUTALIST UTILITIES ========== */
+  .atomic-border {
+    @apply border-2 border-foreground;
+  }
+  .atomic-border-thick {
+    @apply border-4 border-foreground;
+  }
+  .atomic-shadow {
+    box-shadow: 8px 8px 0px 0px hsl(var(--foreground));
+  }
+  .atomic-shadow-hover {
+    @apply hover:shadow-[4px_4px_0px_0px_hsl(var(--foreground))] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all;
+  }
+  .font-mono-loud {
+    @apply font-mono uppercase tracking-widest font-bold;
+  }
+  .bg-grid {
+    background-image: linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
+                      linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
 }
 
 @layer base {

@@ -28,7 +28,7 @@ import { cn } from '@/lib/utils';
 
 // Navigation links by role
 const singlesLinks = [
-  { to: '/', label: 'Home', icon: Heart },
+  { to: '/social', label: 'Home', icon: Heart },
   { to: '/events', label: 'Events', icon: Calendar },
   { to: '/matches', label: 'Matches', icon: Heart },
   { to: '/chats', label: 'Chats', icon: MessageCircle },
@@ -51,6 +51,9 @@ const adminLinks = [
   { to: '/admin/venues', label: 'Venues', icon: Building2 },
   { to: '/admin/feedback', label: 'Feedback', icon: MessageCircle },
   { to: '/admin/team', label: 'Team', icon: Star },
+  { to: '/admin/shop', label: 'Shop', icon: Building2 },
+  { to: '/admin/coupons', label: 'Coupons', icon: Star },
+  { to: '/admin/orders', label: 'Orders', icon: ClipboardList },
   { to: '/admin/market-intel', label: 'Intel', icon: Brain },
 ];
 

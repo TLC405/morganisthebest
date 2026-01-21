@@ -7,7 +7,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { RoleRouter } from "@/components/RoleRouter";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { PanelSwitcher } from "@/components/admin/PanelSwitcher";
-import Index from "./pages/Index";
+import Landing from "./pages/Landing";
+import Social from "./pages/Social";
 import Auth from "./pages/Auth";
 import Events from "./pages/Events";
 import Connections from "./pages/Connections";
@@ -18,6 +19,8 @@ import Quiz from "./pages/Quiz";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 import Guide from "./pages/Guide";
+import Chats from "./pages/Chats";
+import Chat from "./pages/Chat";
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsers from "./pages/admin/Users";
@@ -50,7 +53,8 @@ const App = () => (
         <RoleRouter>
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/social" element={<Social />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/events" element={<Events />} />
             <Route path="/guide" element={<Guide />} />
@@ -62,6 +66,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/quiz" element={<Quiz />} />
+            <Route path="/chats" element={<Chats />} />
+            <Route path="/chat/:conversationId" element={<Chat />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/messages/:chatType/:chatId" element={<Messages />} />
             
