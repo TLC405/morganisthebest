@@ -68,7 +68,7 @@ const mapEventForDisplay = (event: any) => ({
   imageUrl: 'https://images.unsplash.com/photo-1529543544277-068cc8eda7b4?w=800',
 });
 
-const Index = () => {
+const Social = () => {
   const { events: dbEvents, isLoading } = useUpcomingEvents(3);
   const upcomingEvents = dbEvents.map(mapEventForDisplay);
 
@@ -315,4 +315,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Social;

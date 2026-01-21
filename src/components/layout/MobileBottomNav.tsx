@@ -16,10 +16,10 @@ import { cn } from '@/lib/utils';
 
 // Navigation items by role
 const singlesNav = [
-  { to: '/', icon: Heart, label: 'Home' },
+  { to: '/social', icon: Heart, label: 'Home' },
   { to: '/events', icon: Calendar, label: 'Events' },
   { to: '/matches', icon: Heart, label: 'Matches' },
-  { to: '/messages', icon: MessageCircle, label: 'Messages' },
+  { to: '/chats', icon: MessageCircle, label: 'Chats' },
   { to: '/profile', icon: User, label: 'Profile' },
 ];
 
