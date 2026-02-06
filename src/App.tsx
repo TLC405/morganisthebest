@@ -7,20 +7,20 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { RoleRouter } from "@/components/RoleRouter";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { PanelSwitcher } from "@/components/admin/PanelSwitcher";
+
+// Pages
 import Landing from "./pages/Landing";
 import Social from "./pages/Social";
 import Auth from "./pages/Auth";
 import Events from "./pages/Events";
-import Connections from "./pages/Connections";
-import CheckIn from "./pages/CheckIn";
-import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
-import Quiz from "./pages/Quiz";
-import Messages from "./pages/Messages";
-import NotFound from "./pages/NotFound";
-import Guide from "./pages/Guide";
+import Matches from "./pages/Matches";
 import Chats from "./pages/Chats";
 import Chat from "./pages/Chat";
+import CheckIn from "./pages/CheckIn";
+import Quiz from "./pages/Quiz";
+import NotFound from "./pages/NotFound";
+
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsers from "./pages/admin/Users";
@@ -33,13 +33,12 @@ import MarketIntel from "./pages/admin/MarketIntel";
 import AdminShop from "./pages/admin/Shop";
 import AdminCoupons from "./pages/admin/Coupons";
 import AdminOrders from "./pages/admin/Orders";
+
 // Team pages
 import TeamDashboard from "./pages/team/Dashboard";
 import TeamEvents from "./pages/team/Events";
 import TeamCheckIns from "./pages/team/CheckIns";
 import TeamPerformance from "./pages/team/Performance";
-// Member pages
-import Matches from "./pages/Matches";
 
 const queryClient = new QueryClient();
 
@@ -52,26 +51,27 @@ const App = () => (
         <BrowserRouter>
         <RoleRouter>
           <Routes>
-            {/* Public Routes */}
+            {/* Landing - Brutalist entry */}
             <Route path="/" element={<Landing />} />
-            <Route path="/social" element={<Social />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/guide" element={<Guide />} />
             
-            {/* Singles Routes (authenticated users) */}
-            <Route path="/connections" element={<Connections />} />
+            {/* Social Hub - Main app home */}
+            <Route path="/social" element={<Social />} />
+            
+            {/* Auth */}
+            <Route path="/auth" element={<Auth />} />
+            
+            {/* Core Singles Routes (4 main tabs) */}
+            <Route path="/events" element={<Events />} />
             <Route path="/matches" element={<Matches />} />
-            <Route path="/check-in" element={<CheckIn />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/quiz" element={<Quiz />} />
             <Route path="/chats" element={<Chats />} />
             <Route path="/chat/:conversationId" element={<Chat />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/messages/:chatType/:chatId" element={<Messages />} />
+            <Route path="/profile" element={<Profile />} />
             
-            {/* Admin Routes - Protected with server-side role verification */}
+            {/* Secondary Singles Routes */}
+            <Route path="/check-in" element={<CheckIn />} />
+            <Route path="/quiz" element={<Quiz />} />
+            
+            {/* Admin Routes */}
             <Route path="/admin/dashboard" element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AdminDashboard />
@@ -128,7 +128,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            {/* Team Routes - Protected for team and admin roles */}
+            {/* Team Routes */}
             <Route path="/team/dashboard" element={
               <ProtectedRoute allowedRoles={['team', 'admin']}>
                 <TeamDashboard />

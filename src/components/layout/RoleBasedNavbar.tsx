@@ -8,7 +8,6 @@ import {
   Heart, 
   Calendar, 
   MessageCircle, 
-  MapPin, 
   User, 
   Menu, 
   X,
@@ -21,19 +20,19 @@ import {
   LogIn,
   Crown,
   Shield,
-  HelpCircle,
-  Brain
+  Brain,
+  ShoppingBag,
+  Ticket,
+  Package,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Navigation links by role
+// Simplified navigation - 4 core tabs for singles
 const singlesLinks = [
-  { to: '/social', label: 'Home', icon: Heart },
   { to: '/events', label: 'Events', icon: Calendar },
   { to: '/matches', label: 'Matches', icon: Heart },
   { to: '/chats', label: 'Chats', icon: MessageCircle },
-  { to: '/check-in', label: 'Check In', icon: MapPin },
-  { to: '/guide', label: 'Guide', icon: HelpCircle },
   { to: '/profile', label: 'Profile', icon: User },
 ];
 
@@ -41,7 +40,7 @@ const teamLinks = [
   { to: '/team/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/team/events', label: 'Events', icon: Calendar },
   { to: '/team/check-ins', label: 'Check-Ins', icon: ClipboardList },
-  { to: '/team/performance', label: 'My Performance', icon: Star },
+  { to: '/team/performance', label: 'Stats', icon: Star },
 ];
 
 const adminLinks = [
@@ -49,11 +48,11 @@ const adminLinks = [
   { to: '/admin/members', label: 'Members', icon: Users },
   { to: '/admin/events', label: 'Events', icon: Calendar },
   { to: '/admin/venues', label: 'Venues', icon: Building2 },
-  { to: '/admin/feedback', label: 'Feedback', icon: MessageCircle },
+  { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare },
   { to: '/admin/team', label: 'Team', icon: Star },
-  { to: '/admin/shop', label: 'Shop', icon: Building2 },
-  { to: '/admin/coupons', label: 'Coupons', icon: Star },
-  { to: '/admin/orders', label: 'Orders', icon: ClipboardList },
+  { to: '/admin/shop', label: 'Shop', icon: ShoppingBag },
+  { to: '/admin/coupons', label: 'Coupons', icon: Ticket },
+  { to: '/admin/orders', label: 'Orders', icon: Package },
   { to: '/admin/market-intel', label: 'Intel', icon: Brain },
 ];
 
@@ -117,10 +116,10 @@ export const RoleBasedNavbar = () => {
     
     return (
       <span className={cn(
-        'flex items-center gap-1.5 px-2 py-0.5 text-xs font-bold uppercase tracking-wider border-2',
+        'flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-mono-loud atomic-border',
         isAdmin 
-          ? 'bg-primary text-primary-foreground border-primary' 
-          : 'bg-secondary text-secondary-foreground border-secondary'
+          ? 'bg-primary text-primary-foreground' 
+          : 'bg-secondary text-secondary-foreground'
       )}>
         <Icon className="h-3 w-3" />
         {role}
@@ -129,15 +128,15 @@ export const RoleBasedNavbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-lg border-b border-border/50">
+    <header className="sticky top-0 z-50 bg-card border-b-2 border-foreground">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14">
-          {/* Minimal Logo - Just icon on mobile, small on desktop */}
+          {/* Brand - Brutalist style */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="h-9 w-9 rounded-xl gradient-primary flex items-center justify-center shadow-soft group-hover:shadow-glow transition-shadow">
+            <div className="h-9 w-9 bg-primary atomic-border flex items-center justify-center group-hover:atomic-shadow-hover transition-all">
               <Heart className="h-5 w-5 text-primary-foreground" fill="currentColor" />
             </div>
-            <span className="hidden sm:block text-sm font-bold text-foreground">
+            <span className="hidden sm:block font-mono-loud text-xs text-foreground">
               SS<span className="text-primary">OKC</span>
             </span>
           </Link>
@@ -146,19 +145,20 @@ export const RoleBasedNavbar = () => {
           <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => {
               const Icon = link.icon;
-              const isActive = location.pathname === link.to;
+              const isActive = location.pathname === link.to || 
+                (link.to !== '/' && location.pathname.startsWith(link.to));
               return (
                 <Link
                   key={link.to}
                   to={link.to}
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-full transition-all duration-200',
+                    'flex items-center gap-2 px-3 py-1.5 font-mono-loud text-[10px] transition-all duration-200',
                     isActive
-                      ? 'bg-primary text-primary-foreground shadow-soft'
+                      ? 'bg-foreground text-background'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   )}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-3.5 w-3.5" />
                   {link.label}
                 </Link>
               );
@@ -166,17 +166,17 @@ export const RoleBasedNavbar = () => {
           </nav>
 
           {/* User Section */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             {user && getFirstName() && (
-              <div className="flex items-center gap-3">
-                <Avatar className="h-9 w-9 border-2 border-primary rounded-sm">
+              <div className="flex items-center gap-2">
+                <Avatar className="h-8 w-8 atomic-border rounded-none">
                   <AvatarImage src={userPhoto || undefined} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold rounded-sm">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs font-mono-loud rounded-none">
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="text-sm font-bold text-foreground uppercase tracking-wide">
+                  <span className="font-mono-loud text-[10px] text-foreground">
                     {getFirstName()}
                   </span>
                   {getRoleBadge()}
@@ -189,15 +189,16 @@ export const RoleBasedNavbar = () => {
                 variant="ghost" 
                 size="sm" 
                 onClick={signOut}
+                className="font-mono-loud text-[10px]"
               >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+                <LogOut className="h-3.5 w-3.5 mr-1" />
+                OUT
               </Button>
             ) : (
               <Link to="/auth">
-                <Button size="sm">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Sign In
+                <Button size="sm" className="font-mono-loud text-[10px] rounded-none atomic-border bg-primary text-primary-foreground">
+                  <LogIn className="h-3.5 w-3.5 mr-1" />
+                  SIGN IN
                 </Button>
               </Link>
             )}
@@ -206,7 +207,7 @@ export const RoleBasedNavbar = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-foreground hover:bg-muted transition-colors"
+            className="md:hidden p-2 text-foreground"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -214,18 +215,17 @@ export const RoleBasedNavbar = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-border animate-fade-in">
-            {/* Mobile User Greeting */}
+          <nav className="md:hidden py-3 border-t-2 border-foreground animate-fade-in">
             {user && getFirstName() && (
-              <div className="flex items-center gap-3 px-4 py-3 mb-2 border-b border-border">
-                <Avatar className="h-10 w-10 border-2 border-primary rounded-xl">
+              <div className="flex items-center gap-3 px-4 py-3 mb-2 border-b-2 border-foreground">
+                <Avatar className="h-10 w-10 atomic-border rounded-none">
                   <AvatarImage src={userPhoto || undefined} />
-                  <AvatarFallback className="bg-primary text-primary-foreground rounded-xl">
+                  <AvatarFallback className="bg-primary text-primary-foreground rounded-none font-mono-loud">
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-foreground">
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono-loud text-xs text-foreground">
                     {getFirstName()}
                   </span>
                   {getRoleBadge()}
@@ -233,48 +233,49 @@ export const RoleBasedNavbar = () => {
               </div>
             )}
             
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-0.5">
               {navLinks.map((link) => {
                 const Icon = link.icon;
-                const isActive = location.pathname === link.to;
+                const isActive = location.pathname === link.to ||
+                  (link.to !== '/' && location.pathname.startsWith(link.to));
                 return (
                   <Link
                     key={link.to}
                     to={link.to}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all',
+                      'flex items-center gap-3 px-4 py-3 font-mono-loud text-xs transition-all',
                       isActive
-                        ? 'bg-primary text-primary-foreground'
+                        ? 'bg-foreground text-background'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     )}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-4 w-4" />
                     {link.label}
                   </Link>
                 );
               })}
               
-              <div className="border-t-2 border-border mt-2 pt-2">
+              <div className="border-t-2 border-foreground mt-2 pt-2">
                 {user ? (
                   <button
                     onClick={() => {
                       signOut();
                       setMobileMenuOpen(false);
                     }}
-                    className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted"
+                    className="flex items-center gap-3 px-4 py-3 w-full text-left font-mono-loud text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
                   >
-                    <LogOut className="h-5 w-5" />
-                    Sign Out
+                    <LogOut className="h-4 w-4" />
+                    SIGN OUT
                   </button>
                 ) : (
                   <Link
                     to="/auth"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-bold uppercase tracking-wider text-primary hover:bg-primary/10"
+                    className="flex items-center gap-3 px-4 py-3 font-mono-loud text-xs text-primary hover:bg-primary/10"
                   >
-                    <LogIn className="h-5 w-5" />
-                    Sign In
+                    <LogIn className="h-4 w-4" />
+                    SIGN IN
                   </Link>
                 )}
               </div>
