@@ -142,7 +142,7 @@ export const RoleBasedNavbar = () => {
           </Link>
 
           {/* Desktop Navigation - Centered */}
-          <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+          <nav className="hidden md:flex items-center gap-1 flex-1 justify-center mx-4 overflow-x-auto scrollbar-hide">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = location.pathname === link.to || 
@@ -152,7 +152,7 @@ export const RoleBasedNavbar = () => {
                   key={link.to}
                   to={link.to}
                   className={cn(
-                    'flex items-center gap-2 px-3 py-1.5 font-mono-loud text-[10px] transition-all duration-200',
+                    'flex items-center gap-2 px-3 py-1.5 font-mono-loud text-[10px] transition-all duration-200 whitespace-nowrap flex-shrink-0',
                     isActive
                       ? 'bg-foreground text-background'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
