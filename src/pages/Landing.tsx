@@ -29,7 +29,7 @@ const Landing = () => {
           
           {/* Tagline */}
           <p className="font-mono-loud text-sm md:text-base text-muted-foreground mb-2">
-            PREMIUM DATING
+            OKLAHOMA'S PREMIER SINGLES COMMUNITY
           </p>
           <p className="font-mono-loud text-xs text-primary">
             POWERED BY TLC
