@@ -13,8 +13,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Simplified 4-tab navigation
+// 5-tab navigation
 const singlesNav = [
+  { to: '/social', icon: Heart, label: 'Home' },
   { to: '/events', icon: Calendar, label: 'Events' },
   { to: '/matches', icon: Heart, label: 'Matches' },
   { to: '/chats', icon: MessageCircle, label: 'Chats' },

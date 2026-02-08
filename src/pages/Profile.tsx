@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User, Camera, Save, Sparkles, Check, ChevronRight, Heart } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { User, Camera, Save, Sparkles, Check, ChevronRight, Heart, Calendar, Users, Send, ArrowRight } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,9 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserRSVPs } from '@/hooks/useEvents';
+import { useProfiles } from '@/hooks/useProfiles';
 import { cn } from '@/lib/utils';
 
 const allInterests = [
@@ -33,6 +36,8 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { upcoming, past, isLoading: rsvpsLoading } = useUserRSVPs();
+  const { profiles: revealedProfiles } = useProfiles({ limit: 10 });
 
   useEffect(() => {
     if (!user) return;
@@ -122,21 +127,77 @@ const Profile = () => {
 
   const initials = name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U';
 
+  const stats = [
+    { label: 'Events', value: past.length, icon: Calendar },
+    { label: 'People Met', value: revealedProfiles.length, icon: Users },
+    { label: 'Waves', value: 0, icon: Send },
+    { label: 'Matches', value: 0, icon: Heart },
+  ];
+
   return (
     <Layout>
       <div className="mx-auto max-w-2xl px-4 py-8 pb-24 md:pb-8">
         {/* Header */}
         <div className="mb-8 animate-fade-in-up">
           <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-sm border-4 border-primary bg-primary flex items-center justify-center">
+            <div className="h-14 w-14 atomic-border bg-primary flex items-center justify-center">
               <User className="h-7 w-7 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground uppercase tracking-tight">My Profile</h1>
+              <h1 className="text-3xl font-bold text-foreground uppercase tracking-tight font-mono-loud">My Profile</h1>
               <p className="text-muted-foreground">This is how you'll appear to other singles</p>
             </div>
           </div>
         </div>
+
+        {/* My Activity Stats (merged from Dashboard) */}
+        <div className="grid grid-cols-4 gap-3 mb-6 animate-fade-in-up" style={{ animationDelay: '50ms', animationFillMode: 'forwards' }}>
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <Card key={stat.label} variant="elevated" className="text-center">
+                <CardContent className="pt-4 pb-3 px-2">
+                  <Icon className="h-5 w-5 mx-auto mb-1 text-primary" />
+                  <p className="text-xl font-bold text-foreground">{stat.value}</p>
+                  <p className="text-[10px] text-muted-foreground font-mono-loud">{stat.label}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Upcoming Events (merged from Dashboard) */}
+        {upcoming.length > 0 && (
+          <Card variant="elevated" className="mb-6 animate-fade-in-up" style={{ animationDelay: '80ms', animationFillMode: 'forwards' }}>
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+              <CardTitle className="text-sm font-mono-loud uppercase">Upcoming Events</CardTitle>
+              <Button variant="ghost" size="sm" className="gap-1 text-xs" asChild>
+                <Link to="/events">
+                  View All
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {upcoming.slice(0, 2).map((rsvp) => {
+                const event = rsvp.events;
+                if (!event) return null;
+                return (
+                  <div key={rsvp.id} className="flex items-center gap-3 p-3 rounded-sm bg-muted/30">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{event.title}</p>
+                      <p className="text-xs text-muted-foreground">{event.date}</p>
+                    </div>
+                    {rsvp.nametag_pin && (
+                      <Badge variant="default" className="text-[10px]">PIN: {rsvp.nametag_pin}</Badge>
+                    )}
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Photo Section */}
         <Card 
@@ -146,108 +207,62 @@ const Profile = () => {
         >
           <div className="relative aspect-[4/5] bg-muted">
             {photoUrl ? (
-              <img
-                src={photoUrl}
-                alt="Your profile"
-                className="w-full h-full object-cover"
-              />
+              <img src={photoUrl} alt="Your profile" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <span className="text-8xl font-bold text-foreground/20">{initials}</span>
               </div>
             )}
-            
-            {/* Camera button */}
-            <button className="absolute bottom-4 right-4 h-14 w-14 rounded-sm border-2 border-primary bg-primary text-primary-foreground flex items-center justify-center hover:scale-105 transition-transform">
+            <button className="absolute bottom-4 right-4 h-14 w-14 atomic-border bg-primary text-primary-foreground flex items-center justify-center hover:scale-105 transition-transform">
               <Camera className="h-6 w-6" />
             </button>
-            
-            {/* Name overlay */}
             <div className="absolute bottom-4 left-4">
-              <p className="text-2xl font-bold text-foreground">
-                {name || 'Your Name'}{age && `, ${age}`}
-              </p>
+              <p className="text-2xl font-bold text-foreground">{name || 'Your Name'}{age && `, ${age}`}</p>
               {area && <p className="text-muted-foreground text-sm">{area}</p>}
             </div>
           </div>
         </Card>
 
         {/* Basic Info */}
-        <Card 
-          variant="elevated" 
-          className="mb-6 opacity-0 animate-fade-in-up"
-          style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
-        >
+        <Card variant="elevated" className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
           <CardHeader>
-            <CardTitle className="text-lg uppercase">Basic Info</CardTitle>
+            <CardTitle className="text-lg uppercase font-mono-loud">Basic Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name">Display Name</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your first name"
-                />
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your first name" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="age">Age</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  value={age}
-                  onChange={(e) => setAge(e.target.value)}
-                  min="18"
-                  max="99"
-                />
+                <Input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} min="18" max="99" />
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="area">Area</Label>
-                <Input
-                  id="area"
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  placeholder="e.g., Midtown OKC"
-                />
+                <Input id="area" value={area} onChange={(e) => setArea(e.target.value)} placeholder="e.g., Midtown OKC" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lookingFor">Looking For</Label>
-                <Input
-                  id="lookingFor"
-                  value={lookingFor}
-                  onChange={(e) => setLookingFor(e.target.value)}
-                  placeholder="e.g., Long-term relationship"
-                />
+                <Input id="lookingFor" value={lookingFor} onChange={(e) => setLookingFor(e.target.value)} placeholder="e.g., Long-term relationship" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* About Me */}
-        <Card 
-          variant="elevated" 
-          className="mb-6 opacity-0 animate-fade-in-up"
-          style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}
-        >
+        <Card variant="elevated" className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 uppercase">
+            <CardTitle className="text-lg flex items-center gap-2 uppercase font-mono-loud">
               <Heart className="h-5 w-5 text-primary" />
               About Me
             </CardTitle>
             <CardDescription>Share your personality with prompts</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Textarea
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="Tell others a bit about yourself..."
-              rows={4}
-              maxLength={200}
-            />
+            <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell others a bit about yourself..." rows={4} maxLength={200} />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Share what makes you unique</span>
               <span>{bio.length}/200</span>
@@ -265,10 +280,8 @@ const Profile = () => {
           <CardContent className="p-5 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={cn(
-                "h-14 w-14 rounded-sm flex items-center justify-center border-2",
-                quizCompleted 
-                  ? "bg-primary/10 border-primary/20" 
-                  : "bg-primary border-primary"
+                "h-14 w-14 atomic-border flex items-center justify-center",
+                quizCompleted ? "bg-primary/10" : "bg-primary"
               )}>
                 <Sparkles className={cn("h-7 w-7", quizCompleted ? "text-primary" : "text-primary-foreground")} />
               </div>
@@ -286,13 +299,9 @@ const Profile = () => {
         </Card>
 
         {/* Interests */}
-        <Card 
-          variant="elevated" 
-          className="mb-6 opacity-0 animate-fade-in-up"
-          style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}
-        >
+        <Card variant="elevated" className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}>
           <CardHeader>
-            <CardTitle className="text-lg uppercase">Interests</CardTitle>
+            <CardTitle className="text-lg uppercase font-mono-loud">Interests</CardTitle>
             <CardDescription>Select up to 6 interests that represent you</CardDescription>
           </CardHeader>
           <CardContent>
@@ -332,7 +341,7 @@ const Profile = () => {
         {/* Save Button */}
         <Button 
           onClick={handleSave} 
-          className="w-full gap-2 opacity-0 animate-fade-in-up h-14 text-lg" 
+          className="w-full gap-2 opacity-0 animate-fade-in-up h-14 text-lg atomic-shadow-hover" 
           size="lg"
           disabled={saving}
           style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
