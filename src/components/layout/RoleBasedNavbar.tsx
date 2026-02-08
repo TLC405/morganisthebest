@@ -28,8 +28,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Simplified navigation - 4 core tabs for singles
+// 5-tab navigation for singles
 const singlesLinks = [
+  { to: '/social', label: 'Home', icon: Heart },
   { to: '/events', label: 'Events', icon: Calendar },
   { to: '/matches', label: 'Matches', icon: Heart },
   { to: '/chats', label: 'Chats', icon: MessageCircle },

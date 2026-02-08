@@ -79,6 +79,7 @@ const Social = () => {
         {/* Background */}
         <div className="absolute inset-0 gradient-champagne-radial" />
         <div className="absolute inset-0 gradient-mesh opacity-60" />
+        <div className="absolute inset-0 bg-grid opacity-[0.03]" />
         
         {/* Brand Watermark */}
         <BrandWatermark />
@@ -105,14 +106,11 @@ const Social = () => {
             </div>
             
             {/* Headlines */}
-            <h1 className="mb-6 text-3xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl animate-fade-in-up opacity-0 stagger-3">
-              Elevated Dating
-              <span className="block text-gradient mt-2">+ Complete Privacy</span>
+            <h1 className="mb-6 text-3xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl animate-fade-in-up opacity-0 stagger-3 font-mono-loud uppercase">
+              Date In Real Life
             </h1>
-            
-            <p className="mb-8 text-base text-muted-foreground md:text-lg max-w-2xl mx-auto leading-relaxed animate-fade-in-up opacity-0 stagger-3">
-              Blurred profiles. Only revealed at events. Meet real Oklahoma singles 
-              at curated events with complete identity verification.
+            <p className="mb-8 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto leading-relaxed animate-fade-in-up opacity-0 stagger-3 font-medium">
+              Real Chemistry. Not Meets.
             </p>
 
             {/* Feature Pills */}
@@ -130,13 +128,13 @@ const Social = () => {
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up opacity-0 stagger-5">
-              <Button size="xl" className="gap-3" asChild>
+              <Button size="xl" className="gap-3 atomic-border atomic-shadow-hover" asChild>
                 <Link to="/events">
                   <Calendar className="h-5 w-5" />
                   Find an Event
                 </Link>
               </Button>
-              <Button variant="outline" size="xl" className="gap-3 bg-card/50 backdrop-blur-sm" asChild>
+              <Button variant="outline" size="xl" className="gap-3 atomic-border atomic-shadow-hover" asChild>
                 <Link to="/auth">
                   <Sparkles className="h-5 w-5" />
                   Get Started

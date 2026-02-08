@@ -156,11 +156,11 @@ const Events = () => {
         <div className="absolute inset-0 gradient-spotlight pointer-events-none" />
         <div className="mx-auto max-w-7xl px-4 py-10 relative">
           <div className="flex items-center gap-4 mb-6 animate-fade-in-up">
-            <div className="h-14 w-14 rounded-2xl gradient-primary shadow-glow flex items-center justify-center">
+            <div className="h-14 w-14 atomic-border bg-primary flex items-center justify-center">
               <Calendar className="h-7 w-7 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Upcoming Events</h1>
+              <h1 className="text-3xl font-bold text-foreground font-mono-loud uppercase tracking-tight">Upcoming Events</h1>
               <p className="text-muted-foreground">Find your next opportunity to meet amazing singles</p>
             </div>
           </div>

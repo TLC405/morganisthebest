@@ -33,7 +33,7 @@ const Auth = () => {
           break;
         case 'single':
         default:
-          navigate('/dashboard', { replace: true });
+          navigate('/events', { replace: true });
           break;
       }
     }
@@ -118,6 +118,7 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 gradient-champagne-radial" />
+      <div className="absolute inset-0 bg-grid opacity-[0.03]" />
       <div className="absolute inset-0 gradient-mesh opacity-50" />
       <BrandWatermark />
       <div className="blur-orb blur-orb-primary w-[400px] h-[400px] -top-40 -right-40 opacity-10 animate-float" />
@@ -129,7 +130,7 @@ const Auth = () => {
           <FloatingLogo size="md" showTagline={true} showTLC={false} />
         </div>
         
-        <Card variant="spotlight" className="animate-scale-in">
+        <Card className="animate-scale-in atomic-border">
           <CardHeader className="text-center space-y-4 pb-2">
             <div className="space-y-2">
               <CardTitle className="text-xl font-semibold text-foreground">
@@ -205,7 +206,7 @@ const Auth = () => {
 
             <Button 
               type="submit" 
-              className="w-full h-12 text-base font-semibold shadow-glow"
+              className="w-full h-12 text-base font-semibold atomic-shadow-hover"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
