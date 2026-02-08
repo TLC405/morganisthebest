@@ -20,7 +20,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ 
   children, 
   allowedRoles,
-  redirectTo = '/dashboard'
+  redirectTo = '/events'
 }: ProtectedRouteProps) => {
   const { user, isLoading: authLoading } = useAuth();
   const location = useLocation();
