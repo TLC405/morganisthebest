@@ -9,12 +9,14 @@ import { RoleRouter } from "@/components/RoleRouter";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { PanelSwitcher } from "@/components/admin/PanelSwitcher";
 import { BrandedSplash } from "@/components/BrandedSplash";
+import { APP_VERSION, getBuildTimestamp } from "@/lib/version";
 
 // Lazy-loaded pages
 const Landing = lazy(() => import("./pages/Landing"));
 const Social = lazy(() => import("./pages/Social"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Events = lazy(() => import("./pages/Events"));
+const Preview = lazy(() => import("./pages/Preview"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Matches = lazy(() => import("./pages/Matches"));
 const Chats = lazy(() => import("./pages/Chats"));
@@ -44,125 +46,139 @@ const TeamPerformance = lazy(() => import("./pages/team/Performance"));
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-        <RoleRouter>
-          <Suspense fallback={<BrandedSplash />}>
-            <Routes>
-              {/* Landing - Brutalist entry */}
+const App = () => {
+  const buildTimestamp = getBuildTimestamp();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+          <RoleRouter>
+            <Suspense fallback={<BrandedSplash />}>
+              <Routes>
+                {/* Landing - Brutalist entry */}
               <Route path="/" element={<Landing />} />
               
               {/* Social Hub - Main app home */}
               <Route path="/social" element={<Social />} />
+              {/* Standalone preview/testing */}
+              <Route path="/preview" element={<Preview />} />
               
               {/* Auth */}
               <Route path="/auth" element={<Auth />} />
-              
-              {/* Core Singles Routes (5 main tabs) */}
-              <Route path="/events" element={<Events />} />
-              <Route path="/matches" element={<Matches />} />
-              <Route path="/chats" element={<Chats />} />
-              <Route path="/chat/:conversationId" element={<Chat />} />
-              <Route path="/profile" element={<Profile />} />
-              
-              {/* Secondary Singles Routes */}
-              <Route path="/check-in" element={<CheckIn />} />
-              <Route path="/quiz" element={<Quiz />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin/dashboard" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/users" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminUsers />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/members" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminMembers />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/events" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminEvents />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/venues" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminVenues />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/feedback" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminFeedback />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/market-intel" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <MarketIntel />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/team" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminTeam />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/shop" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminShop />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/coupons" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminCoupons />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/orders" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminOrders />
-                </ProtectedRoute>
-              } />
-              
-              {/* Team Routes */}
-              <Route path="/team/dashboard" element={
-                <ProtectedRoute allowedRoles={['team', 'admin']}>
-                  <TeamDashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/team/events" element={
-                <ProtectedRoute allowedRoles={['team', 'admin']}>
-                  <TeamEvents />
-                </ProtectedRoute>
-              } />
-              <Route path="/team/check-ins" element={
-                <ProtectedRoute allowedRoles={['team', 'admin']}>
-                  <TeamCheckIns />
-                </ProtectedRoute>
-              } />
-              <Route path="/team/performance" element={
-                <ProtectedRoute allowedRoles={['team', 'admin']}>
-                  <TeamPerformance />
-                </ProtectedRoute>
-              } />
-              
-              {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-          <PanelSwitcher />
-        </RoleRouter>
-      </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+                
+                {/* Core Singles Routes (5 main tabs) */}
+                <Route path="/events" element={<Events />} />
+                <Route path="/matches" element={<Matches />} />
+                <Route path="/chats" element={<Chats />} />
+                <Route path="/chat/:conversationId" element={<Chat />} />
+                <Route path="/profile" element={<Profile />} />
+                
+                {/* Secondary Singles Routes */}
+                <Route path="/check-in" element={<CheckIn />} />
+                <Route path="/quiz" element={<Quiz />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin/dashboard" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/users" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminUsers />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/members" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminMembers />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/events" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminEvents />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/venues" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminVenues />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/feedback" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminFeedback />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/market-intel" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <MarketIntel />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/team" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminTeam />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/shop" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminShop />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/coupons" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminCoupons />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/orders" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminOrders />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Team Routes */}
+                <Route path="/team/dashboard" element={
+                  <ProtectedRoute allowedRoles={['team', 'admin']}>
+                    <TeamDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/team/events" element={
+                  <ProtectedRoute allowedRoles={['team', 'admin']}>
+                    <TeamEvents />
+                  </ProtectedRoute>
+                } />
+                <Route path="/team/check-ins" element={
+                  <ProtectedRoute allowedRoles={['team', 'admin']}>
+                    <TeamCheckIns />
+                  </ProtectedRoute>
+                } />
+                <Route path="/team/performance" element={
+                  <ProtectedRoute allowedRoles={['team', 'admin']}>
+                    <TeamPerformance />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Catch-all */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+            <PanelSwitcher />
+            <div className="fixed bottom-4 left-4 z-40 rounded-full border bg-card/80 px-3 py-1.5 text-xs text-muted-foreground backdrop-blur shadow-sm">
+              <span className="font-mono text-[11px] text-foreground">
+                Build {APP_VERSION}
+              </span>
+              {buildTimestamp && (
+                <span className="ml-2 text-[10px]">{buildTimestamp}</span>
+              )}
+            </div>
+          </RoleRouter>
+        </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
