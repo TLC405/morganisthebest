@@ -60,10 +60,11 @@ const App = () => {
             <Suspense fallback={<BrandedSplash />}>
               <Routes>
                 {/* Landing - Brutalist entry */}
-                <Route path="/" element={<Landing />} />
+              <Route path="/" element={<Landing />} />
               
               {/* Social Hub - Main app home */}
               <Route path="/social" element={<Social />} />
+              {/* Standalone preview/testing */}
               <Route path="/preview" element={<Preview />} />
               
               {/* Auth */}
