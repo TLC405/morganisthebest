@@ -16,6 +16,7 @@ const Landing = lazy(() => import("./pages/Landing"));
 const Social = lazy(() => import("./pages/Social"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Events = lazy(() => import("./pages/Events"));
+const Preview = lazy(() => import("./pages/Preview"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Matches = lazy(() => import("./pages/Matches"));
 const Chats = lazy(() => import("./pages/Chats"));
@@ -60,12 +61,13 @@ const App = () => {
               <Routes>
                 {/* Landing - Brutalist entry */}
                 <Route path="/" element={<Landing />} />
-                
-                {/* Social Hub - Main app home */}
-                <Route path="/social" element={<Social />} />
-                
-                {/* Auth */}
-                <Route path="/auth" element={<Auth />} />
+              
+              {/* Social Hub - Main app home */}
+              <Route path="/social" element={<Social />} />
+              <Route path="/preview" element={<Preview />} />
+              
+              {/* Auth */}
+              <Route path="/auth" element={<Auth />} />
                 
                 {/* Core Singles Routes (5 main tabs) */}
                 <Route path="/events" element={<Events />} />
