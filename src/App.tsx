@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { RoleRouter } from "@/components/RoleRouter";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -14,6 +14,7 @@ import { BrandedSplash } from "@/components/BrandedSplash";
 const Landing = lazy(() => import("./pages/Landing"));
 const Social = lazy(() => import("./pages/Social"));
 const Auth = lazy(() => import("./pages/Auth"));
+const Explore = lazy(() => import("./pages/Explore"));
 const Events = lazy(() => import("./pages/Events"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Matches = lazy(() => import("./pages/Matches"));
@@ -54,103 +55,80 @@ const App = () => (
         <RoleRouter>
           <Suspense fallback={<BrandedSplash />}>
             <Routes>
-              {/* Landing - Brutalist entry */}
-              <Route path="/" element={<Landing />} />
+              {/* Auth-first: root = login */}
+              <Route path="/" element={<Auth />} />
               
-              {/* Social Hub - Main app home */}
-              <Route path="/social" element={<Social />} />
+              {/* About / Marketing page */}
+              <Route path="/about" element={<Social />} />
               
               {/* Auth */}
               <Route path="/auth" element={<Auth />} />
               
-              {/* Core Singles Routes (5 main tabs) */}
+              {/* Explore - Main hub after login */}
+              <Route path="/explore" element={<Explore />} />
+              
+              {/* Core Routes (5 main tabs) */}
               <Route path="/events" element={<Events />} />
               <Route path="/matches" element={<Matches />} />
               <Route path="/chats" element={<Chats />} />
               <Route path="/chat/:conversationId" element={<Chat />} />
               <Route path="/profile" element={<Profile />} />
               
-              {/* Secondary Singles Routes */}
+              {/* Secondary Routes */}
               <Route path="/check-in" element={<CheckIn />} />
               <Route path="/quiz" element={<Quiz />} />
               
+              {/* Legacy redirects */}
+              <Route path="/social" element={<Navigate to="/about" replace />} />
+              <Route path="/dashboard" element={<Navigate to="/explore" replace />} />
+              
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>
               } />
               <Route path="/admin/users" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminUsers />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminUsers /></ProtectedRoute>
               } />
               <Route path="/admin/members" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminMembers />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminMembers /></ProtectedRoute>
               } />
               <Route path="/admin/events" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminEvents />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminEvents /></ProtectedRoute>
               } />
               <Route path="/admin/venues" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminVenues />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminVenues /></ProtectedRoute>
               } />
               <Route path="/admin/feedback" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminFeedback />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminFeedback /></ProtectedRoute>
               } />
               <Route path="/admin/market-intel" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <MarketIntel />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><MarketIntel /></ProtectedRoute>
               } />
               <Route path="/admin/team" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminTeam />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminTeam /></ProtectedRoute>
               } />
               <Route path="/admin/shop" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminShop />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminShop /></ProtectedRoute>
               } />
               <Route path="/admin/coupons" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminCoupons />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminCoupons /></ProtectedRoute>
               } />
               <Route path="/admin/orders" element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminOrders />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}><AdminOrders /></ProtectedRoute>
               } />
               
               {/* Team Routes */}
               <Route path="/team/dashboard" element={
-                <ProtectedRoute allowedRoles={['team', 'admin']}>
-                  <TeamDashboard />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['team', 'admin']}><TeamDashboard /></ProtectedRoute>
               } />
               <Route path="/team/events" element={
-                <ProtectedRoute allowedRoles={['team', 'admin']}>
-                  <TeamEvents />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['team', 'admin']}><TeamEvents /></ProtectedRoute>
               } />
               <Route path="/team/check-ins" element={
-                <ProtectedRoute allowedRoles={['team', 'admin']}>
-                  <TeamCheckIns />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['team', 'admin']}><TeamCheckIns /></ProtectedRoute>
               } />
               <Route path="/team/performance" element={
-                <ProtectedRoute allowedRoles={['team', 'admin']}>
-                  <TeamPerformance />
-                </ProtectedRoute>
+                <ProtectedRoute allowedRoles={['team', 'admin']}><TeamPerformance /></ProtectedRoute>
               } />
               
               {/* Catch-all */}

@@ -287,10 +287,10 @@ const Profile = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">
-                  {quizCompleted ? 'Compatibility Quiz Complete!' : 'Take the Compatibility Quiz'}
+                  {quizCompleted ? 'Profile Quiz Complete!' : 'Build Your Profile'}
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {quizCompleted ? 'Your matches are being calculated' : 'Answer 8 quick questions to find your best matches'}
+                  {quizCompleted ? 'Your profile is visible to people you meet at events' : 'Answer 8 questions so people you meet at events can see your personality and compatibility'}
                 </p>
               </div>
             </div>

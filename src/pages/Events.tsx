@@ -152,8 +152,8 @@ const Events = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <div className="gradient-hero border-b border-border/50 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-spotlight pointer-events-none" />
+      <div className="border-b-2 border-foreground bg-card relative overflow-hidden">
+        <div className="absolute inset-0 bg-dots opacity-30 pointer-events-none" />
         <div className="mx-auto max-w-7xl px-4 py-10 relative">
           <div className="flex items-center gap-4 mb-6 animate-fade-in-up">
             <div className="h-14 w-14 atomic-border bg-primary flex items-center justify-center">
@@ -208,7 +208,7 @@ const Events = () => {
                   <p className="text-sm text-muted-foreground">Required to RSVP for events</p>
                 </div>
               </div>
-              <Button variant="premium" onClick={() => navigate('/profile')}>
+              <Button variant="primary" onClick={() => navigate('/profile')}>
                 Complete
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
@@ -258,10 +258,10 @@ const Events = () => {
 
       {/* RSVP Dialog */}
       <Dialog open={rsvpDialog.open} onOpenChange={(open) => setRsvpDialog({ ...rsvpDialog, open })}>
-        <DialogContent className="sm:max-w-md glass-strong border-primary/20">
+        <DialogContent className="sm:max-w-md border-2 border-foreground shadow-brutal-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3 text-xl">
-              <div className="h-10 w-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+              <div className="h-10 w-10 border-2 border-foreground bg-primary flex items-center justify-center">
                 <Sparkles className="h-5 w-5 text-primary-foreground" />
               </div>
               Confirm Your RSVP
@@ -271,7 +271,7 @@ const Events = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-5">
-            <div className="rounded-2xl overflow-hidden">
+            <div className="overflow-hidden">
               {rsvpDialog.event?.imageUrl && (
                 <div className="relative h-32">
                   <img 
@@ -288,7 +288,7 @@ const Events = () => {
               )}
             </div>
             
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30">
+            <div className="flex items-center gap-3 p-3 bg-muted border-2 border-foreground">
               <Users className="h-5 w-5 text-primary" />
               <span className="text-sm text-foreground">Show up, check in, and meet amazing people!</span>
             </div>
@@ -296,17 +296,17 @@ const Events = () => {
             <div className="flex gap-3">
               <Button 
                 variant="outline" 
-                className="flex-1 rounded-xl" 
+                className="flex-1" 
                 onClick={() => setRsvpDialog({ open: false, event: null })}
               >
                 Cancel
               </Button>
               <Button 
-                variant="premium" 
-                className="flex-1 rounded-xl" 
+                variant="primary" 
+                className="flex-1" 
                 onClick={confirmRSVP}
               >
-                I'm In! 🎉
+                I'm In!
               </Button>
             </div>
           </div>

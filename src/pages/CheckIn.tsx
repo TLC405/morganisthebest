@@ -251,7 +251,7 @@ const CheckIn = () => {
                   Enter Someone's PIN
                 </Button>
                 <Button asChild variant="outline" className="flex-1" size="lg">
-                  <a href="/connections">View Profiles</a>
+                  <a href="/matches">View Profiles</a>
                 </Button>
               </div>
             </CardContent>

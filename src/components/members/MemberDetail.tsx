@@ -318,7 +318,7 @@ export const MemberDetail = ({
                   roleDescription={roleDescription}
                   onDescriptionChange={setRoleDescription}
                 />
-                <Button className="w-full mt-4" variant="premium" onClick={handleSaveRoles}>
+                <Button className="w-full mt-4" variant="primary" onClick={handleSaveRoles}>
                   Save Roles
                 </Button>
               </div>
@@ -326,7 +326,7 @@ export const MemberDetail = ({
 
             {/* Check-in button (for team) */}
             {mode === 'team' && checkInStatus && checkInStatus !== 'checked_in' && onCheckIn && (
-              <Button className="w-full" variant="premium" onClick={onCheckIn}>
+              <Button className="w-full" variant="primary" onClick={onCheckIn}>
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Check In
               </Button>

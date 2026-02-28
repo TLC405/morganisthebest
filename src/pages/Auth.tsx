@@ -7,9 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { Heart, Mail, Lock, User, Shield, Users, Sparkles } from 'lucide-react';
+import { Compass, Mail, Lock, User, Shield, Users, Sparkles } from 'lucide-react';
 import { FloatingLogo, BrandWatermark } from '@/components/brand/FloatingLogo';
-import { TLCBadge } from '@/components/brand/TLCBadge';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -33,7 +32,7 @@ const Auth = () => {
           break;
         case 'single':
         default:
-          navigate('/events', { replace: true });
+          navigate('/explore', { replace: true });
           break;
       }
     }
@@ -47,57 +46,25 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
-          toast({
-            variant: 'destructive',
-            title: 'Sign in failed',
-            description: error.message
-          });
+          toast({ variant: 'destructive', title: 'Sign in failed', description: error.message });
         } else {
-          toast({
-            title: 'Welcome back!',
-            description: 'You have successfully signed in.'
-          });
-          navigate('/');
+          toast({ title: 'Welcome back!', description: 'You have successfully signed in.' });
         }
       } else {
         if (!name.trim()) {
-          toast({
-            variant: 'destructive',
-            title: 'Name required',
-            description: 'Please enter your name to create an account.'
-          });
+          toast({ variant: 'destructive', title: 'Name required', description: 'Please enter your name to create an account.' });
           setIsSubmitting(false);
           return;
         }
-        
         const { error } = await signUp(email, password, name);
         if (error) {
-          if (error.message.includes('already registered')) {
-            toast({
-              variant: 'destructive',
-              title: 'Account exists',
-              description: 'This email is already registered. Try signing in instead.'
-            });
-          } else {
-            toast({
-              variant: 'destructive',
-              title: 'Sign up failed',
-              description: error.message
-            });
-          }
+          toast({ variant: 'destructive', title: 'Sign up failed', description: error.message });
         } else {
-          toast({
-            title: 'Account created!',
-            description: 'Please check your email to confirm your account, or sign in directly if email confirmation is disabled.'
-          });
+          toast({ title: 'Account created!', description: 'Please check your email to confirm your account.' });
         }
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'An unexpected error occurred. Please try again.'
-      });
+      toast({ variant: 'destructive', title: 'Error', description: 'An unexpected error occurred.' });
     }
 
     setIsSubmitting(false);
@@ -107,153 +74,146 @@ const Auth = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-14 w-14 rounded-2xl gradient-primary animate-pulse shadow-glow" />
-          <p className="text-muted-foreground animate-pulse-soft">Loading...</p>
+          <div className="h-14 w-14 border-4 border-foreground bg-foreground animate-pulse flex items-center justify-center">
+            <Compass className="h-7 w-7 text-background" />
+          </div>
+          <p className="text-muted-foreground font-mono text-sm uppercase tracking-wider">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 gradient-champagne-radial" />
-      <div className="absolute inset-0 bg-grid opacity-[0.03]" />
-      <div className="absolute inset-0 gradient-mesh opacity-50" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background bg-dots">
       <BrandWatermark />
-      <div className="blur-orb blur-orb-primary w-[400px] h-[400px] -top-40 -right-40 opacity-10 animate-float" />
-      <div className="blur-orb blur-orb-accent w-[300px] h-[300px] -bottom-20 -left-20 opacity-10 animate-float" style={{ animationDelay: '3s' }} />
       
       <div className="relative w-full max-w-md">
-        {/* Floating Logo Above Card */}
         <div className="flex justify-center mb-8 animate-fade-in-up opacity-0 stagger-1">
-          <FloatingLogo size="md" showTagline={true} showTLC={false} />
+          <FloatingLogo size="md" showTagline={true} />
         </div>
         
-        <Card className="animate-scale-in atomic-border">
+        <Card variant="brutal" className="animate-scale-in">
           <CardHeader className="text-center space-y-4 pb-2">
             <div className="space-y-2">
-              <CardTitle className="text-xl font-semibold text-foreground">
+              <CardTitle className="text-xl">
                 {isLogin ? 'Welcome Back' : 'Join the Community'}
               </CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardDescription>
                 {isLogin 
-                  ? 'Sign in to connect with genuine singles' 
-                  : 'Create an account to start meeting real people'
+                  ? 'Sign in to find your people in OKC' 
+                  : 'Create an account to cure isolation'
                 }
               </CardDescription>
             </div>
           </CardHeader>
         
-        <CardContent className="pt-4">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {!isLogin && (
+          <CardContent className="pt-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-bold font-mono uppercase tracking-wider">Full Name</Label>
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 border-2 border-foreground bg-muted flex items-center justify-center">
+                      <User className="h-4 w-4 text-primary" />
+                    </div>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Your name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="pl-14 h-12"
+                      required={!isLogin}
+                    />
+                  </div>
+                </div>
+              )}
+              
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium text-foreground">Full Name</Label>
+                <Label htmlFor="email" className="text-sm font-bold font-mono uppercase tracking-wider">Email</Label>
                 <div className="relative">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-muted/80 flex items-center justify-center">
-                    <User className="h-4 w-4 text-primary" />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 border-2 border-foreground bg-muted flex items-center justify-center">
+                    <Mail className="h-4 w-4 text-primary" />
                   </div>
                   <Input
-                    id="name"
-                    type="text"
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="pl-14 h-12"
-                    required={!isLogin}
+                    required
                   />
                 </div>
               </div>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-foreground">Email</Label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-muted/80 flex items-center justify-center">
-                  <Mail className="h-4 w-4 text-primary" />
+              
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-bold font-mono uppercase tracking-wider">Password</Label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 border-2 border-foreground bg-muted flex items-center justify-center">
+                    <Lock className="h-4 w-4 text-primary" />
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-14 h-12"
+                    required
+                    minLength={6}
+                  />
                 </div>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-14 h-12"
-                  required
-                />
               </div>
+
+              <Button 
+                type="submit" 
+                className="w-full h-12 text-base"
+                variant="primary"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 animate-spin" />
+                    Please wait...
+                  </span>
+                ) : (
+                  isLogin ? 'Sign In' : 'Create Account'
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-sm text-primary hover:underline font-bold font-mono uppercase tracking-wider transition-colors"
+              >
+                {isLogin 
+                  ? "Don't have an account? Sign up" 
+                  : 'Already have an account? Sign in'
+                }
+              </button>
+            </div>
+
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Badge variant="outline" className="gap-2 py-2 px-4">
+                <Shield className="h-3.5 w-3.5" />
+                Real People Only
+              </Badge>
+              <Badge variant="outline" className="gap-2 py-2 px-4">
+                <Users className="h-3.5 w-3.5" />
+                In-Person Events
+              </Badge>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-foreground">Password</Label>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg bg-muted/80 flex items-center justify-center">
-                  <Lock className="h-4 w-4 text-primary" />
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-14 h-12"
-                  required
-                  minLength={6}
-                />
-              </div>
+            <div className="mt-5 text-center">
+              <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider">
+                Cure isolation. Get out. <span className="text-primary font-bold">Inspire OKC</span>
+              </p>
             </div>
-
-            <Button 
-              type="submit" 
-              className="w-full h-12 text-base font-semibold atomic-shadow-hover"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <span className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 animate-spin" />
-                  Please wait...
-                </span>
-              ) : (
-                isLogin ? 'Sign In' : 'Create Account'
-              )}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary hover:underline font-medium transition-colors"
-            >
-              {isLogin 
-                ? "Don't have an account? Sign up" 
-                : 'Already have an account? Sign in'
-              }
-            </button>
-          </div>
-
-          {/* Trust badges */}
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Badge variant="premium" className="gap-2 py-2 px-4">
-              <Shield className="h-3.5 w-3.5" />
-              Zero Catfishing
-            </Badge>
-            <Badge variant="premium" className="gap-2 py-2 px-4">
-              <Users className="h-3.5 w-3.5" />
-              Zero Ghosting
-            </Badge>
-          </div>
-          
-          {/* Social proof counter + TLC */}
-          <div className="mt-5 text-center space-y-3">
-            <p className="text-xs text-muted-foreground">
-              Join <span className="text-primary font-semibold">500+</span> OKC singles finding real connections
-            </p>
-            <TLCBadge variant="inline" />
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

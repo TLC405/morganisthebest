@@ -275,7 +275,7 @@ const TeamCheckIns = () => {
             {events.map(event => (
               <Button
                 key={event.id}
-                variant={selectedEvent === event.id ? 'premium' : 'outline'}
+                variant={selectedEvent === event.id ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedEvent(event.id)}
                 className="gap-2"
@@ -343,7 +343,7 @@ const TeamCheckIns = () => {
                   You're Checked In
                 </Badge>
               ) : (
-                <Button onClick={handleTeamCheckIn} variant="premium" size="sm">
+                <Button onClick={handleTeamCheckIn} variant="primary" size="sm">
                   Check In Now
                 </Button>
               )}
@@ -437,7 +437,7 @@ const TeamCheckIns = () => {
                       {!attendee.check_in_status && (
                         <Button 
                           size="sm"
-                          variant="premium"
+                          variant="primary"
                           onClick={() => handleCheckIn(attendee.id)}
                         >
                           Check In
