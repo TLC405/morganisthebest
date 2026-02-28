@@ -4,30 +4,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const cardVariants = cva(
-  "rounded-2xl text-card-foreground transition-all duration-300",
+  "text-card-foreground transition-all duration-150",
   {
     variants: {
       variant: {
-        // Default - Cream with soft shadow
-        default: "bg-card border border-border shadow-soft",
-        // Elevated - Premium shadow depth
-        elevated: "bg-card border border-border shadow-elegant hover:shadow-depth-lg",
-        // Glass - Frosted cream
-        glass: "glass-cream hover:border-primary/20",
-        // Champagne - Subtle warm gradient
-        champagne: "gradient-champagne border border-border shadow-soft",
-        // Trust - Blue accent for verification
-        trust: "bg-card border-l-4 border-l-accent border border-border shadow-soft",
-        // Feature - For feature cards
-        feature: "bg-card border border-border shadow-soft hover:shadow-elegant hover:-translate-y-1",
-        // Spotlight - Gold accent glow
-        spotlight: "bg-card border border-primary/20 shadow-glow",
-        // Editorial - Clean minimal
-        editorial: "bg-card/90 border border-border/60",
-        // Minimal - Ultra-thin borders
-        minimal: "bg-transparent border border-border/40",
-        // Accent - Gold left border
-        accent: "bg-card border border-border border-l-4 border-l-primary shadow-soft",
+        default: "bg-card border-2 border-foreground",
+        brutal: "bg-card border-2 border-foreground shadow-brutal",
+        stacked: "bg-card border-2 border-foreground shadow-brutal-sm",
+        inset: "bg-muted border-2 border-foreground",
+        elevated: "bg-card border-2 border-foreground shadow-brutal-sm",
+        accent: "bg-card border-2 border-foreground border-l-4 border-l-primary",
+        feature: "bg-card border-2 border-foreground shadow-brutal-sm brutal-hover",
       },
     },
     defaultVariants: {
@@ -56,7 +43,7 @@ CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn("text-xl font-semibold leading-tight tracking-tight text-foreground", className)} {...props} />
+    <h3 ref={ref} className={cn("text-xl font-bold leading-tight tracking-tight text-foreground uppercase font-mono", className)} {...props} />
   ),
 );
 CardTitle.displayName = "CardTitle";

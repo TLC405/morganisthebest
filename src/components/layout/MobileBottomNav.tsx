@@ -1,25 +1,24 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { 
-  Heart, 
+  Search, 
   Calendar, 
   MessageCircle, 
   User,
+  Users,
   LayoutDashboard,
   ClipboardList,
   Star,
-  Users,
   Building2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// 5-tab navigation
 const singlesNav = [
-  { to: '/social', icon: Heart, label: 'Home' },
+  { to: '/explore', icon: Search, label: 'Explore' },
   { to: '/events', icon: Calendar, label: 'Events' },
-  { to: '/matches', icon: Heart, label: 'Matches' },
+  { to: '/matches', icon: Users, label: 'Connect' },
   { to: '/chats', icon: MessageCircle, label: 'Chats' },
-  { to: '/profile', icon: User, label: 'Profile' },
+  { to: '/profile', icon: User, label: 'Me' },
 ];
 
 const teamNav = [
@@ -44,12 +43,9 @@ export const MobileBottomNav = () => {
 
   const getNavItems = () => {
     switch (role) {
-      case 'admin':
-        return adminNav;
-      case 'team':
-        return teamNav;
-      default:
-        return singlesNav;
+      case 'admin': return adminNav;
+      case 'team': return teamNav;
+      default: return singlesNav;
     }
   };
 
@@ -78,7 +74,7 @@ export const MobileBottomNav = () => {
                 "h-5 w-5 transition-transform",
                 isActive && "scale-110"
               )} />
-              <span className="font-mono-loud text-[8px]">{item.label}</span>
+              <span className="font-mono font-bold text-[8px] uppercase tracking-wider">{item.label}</span>
             </Link>
           );
         })}

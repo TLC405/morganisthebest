@@ -38,10 +38,10 @@ export const EventCard = ({ event, onRSVP, index = 0, isRSVPd = false }: EventCa
 
   return (
     <Card 
-      variant="glass"
-      className="group relative overflow-hidden hover-lift"
+      variant="brutal"
+      className="group relative overflow-hidden"
     >
-      <div className="relative h-[420px] overflow-hidden rounded-2xl">
+      <div className="relative h-[420px] overflow-hidden">
         <img
           src={event.imageUrl}
           alt={event.title}
@@ -52,7 +52,7 @@ export const EventCard = ({ event, onRSVP, index = 0, isRSVPd = false }: EventCa
         
         {/* Top Badges */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-          <Badge variant="premium" className="backdrop-blur-md">
+          <Badge variant="default">
             <span className="mr-1.5">{category.icon}</span>
             {category.label}
           </Badge>
@@ -64,11 +64,11 @@ export const EventCard = ({ event, onRSVP, index = 0, isRSVPd = false }: EventCa
             <span className="font-medium">{spotsLeft} spots left</span>
             <span className="text-muted-foreground">{event.attendeeCount}/{event.maxCapacity}</span>
           </div>
-          <div className="h-1.5 overflow-hidden bg-muted/50 rounded-full backdrop-blur-sm">
+          <div className="h-1.5 overflow-hidden bg-muted/50">
             <div 
               className={cn(
                 'h-full rounded-full transition-all duration-500',
-                spotsPercentage < 20 ? 'bg-destructive' : 'gradient-primary',
+                spotsPercentage < 20 ? 'bg-destructive' : 'bg-primary',
               )}
               style={{ width: `${100 - spotsPercentage}%` }}
             />
@@ -83,19 +83,19 @@ export const EventCard = ({ event, onRSVP, index = 0, isRSVPd = false }: EventCa
           
           <div className="space-y-2 mb-4">
             <div className="flex items-center gap-3 text-foreground/90">
-              <div className="flex h-8 w-8 items-center justify-center glass-subtle rounded-lg">
+              <div className="flex h-8 w-8 items-center justify-center bg-muted border-2 border-foreground">
                 <Calendar className="h-4 w-4" />
               </div>
               <span className="font-medium text-sm">
                 {new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
               </span>
-              <div className="flex h-8 w-8 items-center justify-center glass-subtle rounded-lg">
+              <div className="flex h-8 w-8 items-center justify-center bg-muted border-2 border-foreground">
                 <Clock className="h-4 w-4" />
               </div>
               <span className="font-medium text-sm">{event.time}</span>
             </div>
             <div className="flex items-center gap-3 text-foreground/90">
-              <div className="flex h-8 w-8 items-center justify-center glass-subtle rounded-lg">
+              <div className="flex h-8 w-8 items-center justify-center bg-muted border-2 border-foreground">
                 <MapPin className="h-4 w-4" />
               </div>
               <span className="font-medium text-sm">{event.location}</span>
@@ -111,7 +111,7 @@ export const EventCard = ({ event, onRSVP, index = 0, isRSVPd = false }: EventCa
             ) : (
               <>
                 <Button 
-                  className="flex-1 h-12 shadow-glow" 
+                  className="flex-1 h-12" 
                   onClick={() => onRSVP?.(event.id)}
                 >
                   RSVP Now

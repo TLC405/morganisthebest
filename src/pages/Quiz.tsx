@@ -84,7 +84,7 @@ const Quiz = () => {
       
       if (profileError) throw profileError;
       
-      toast.success('Quiz complete! Your matches are being calculated ✨');
+      toast.success('Profile saved! People you meet at events will see your compatibility.');
       navigate('/profile');
     } catch (error: any) {
       console.error('Error saving quiz:', error);
@@ -101,7 +101,7 @@ const Quiz = () => {
         <div className="max-w-lg mx-auto">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Heart className="h-6 w-6 text-primary fill-primary" />
-            <span className="text-lg font-bold text-foreground">Compatibility Quiz</span>
+            <span className="text-lg font-bold text-foreground font-mono uppercase tracking-wider">Build Your Profile</span>
           </div>
           <QuizProgress currentStep={currentStep} totalSteps={quizQuestions.length} />
         </div>
@@ -141,7 +141,7 @@ const Quiz = () => {
             ) : isLastStep ? (
               <>
                 <Sparkles className="mr-2 h-4 w-4" />
-                See My Matches
+                Save Profile
               </>
             ) : (
               <>

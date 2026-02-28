@@ -27,7 +27,7 @@ export const RoleRouter = ({ children }: RoleRouterProps) => {
           break;
         case 'single':
         default:
-          navigate('/events', { replace: true });
+          navigate('/explore', { replace: true });
           break;
       }
     }
