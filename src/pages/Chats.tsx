@@ -3,7 +3,6 @@ import { MessageCircle, Heart, Clock } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -48,8 +47,6 @@ const Chats = () => {
 
         if (error) throw error;
 
-        // For now, return empty array since we don't have profiles data yet
-        // In production, you'd join with profiles table
         const previews: ConversationPreview[] = (data || []).map(conv => ({
           id: conv.id,
           otherUser: {
@@ -73,7 +70,6 @@ const Chats = () => {
 
     fetchConversations();
 
-    // Subscribe to realtime updates
     const channel = supabase
       .channel('conversations-list')
       .on(
@@ -100,7 +96,7 @@ const Chats = () => {
         <div className="mx-auto max-w-2xl px-4 py-8">
           <div className="animate-pulse space-y-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-20 bg-muted rounded-lg" />
+              <div key={i} className="h-20 bg-muted border-2 border-foreground" />
             ))}
           </div>
         </div>
@@ -110,24 +106,28 @@ const Chats = () => {
 
   return (
     <Layout>
-      <div className="mx-auto max-w-2xl px-4 py-8">
+      <div className="mx-auto max-w-2xl px-4 py-8 pb-24 md:pb-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <MessageCircle className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">Chats</h1>
+        <div className="mb-8 animate-fade-in-up">
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 atomic-border bg-primary flex items-center justify-center">
+              <MessageCircle className="h-7 w-7 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground font-mono uppercase tracking-tight">Chats</h1>
+              <p className="text-muted-foreground">Your conversations with your connections</p>
+            </div>
           </div>
-          <p className="text-muted-foreground">
-            Your conversations with matched singles
-          </p>
         </div>
 
         {/* Empty State */}
         {conversations.length === 0 && (
-          <Card>
+          <Card variant="elevated">
             <CardContent className="py-12 text-center">
-              <Heart className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">
+              <div className="mx-auto w-20 h-20 border-2 border-foreground bg-muted flex items-center justify-center mb-4">
+                <Heart className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2 uppercase font-mono">
                 No Matches Yet
               </h3>
               <p className="text-muted-foreground text-sm max-w-sm mx-auto">
@@ -143,24 +143,24 @@ const Chats = () => {
           {conversations.map(conv => (
             <Card 
               key={conv.id}
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
+              variant="elevated"
+              className="cursor-pointer hover:border-primary transition-colors"
               onClick={() => navigate(`/chat/${conv.id}`)}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-14 w-14">
-                    <AvatarImage src={conv.otherUser.photoUrl || undefined} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-lg">
+                  <div className="h-14 w-14 border-2 border-foreground bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg font-bold text-primary">
                       {conv.otherUser.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+                    </span>
+                  </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold text-foreground truncate">
                         {conv.otherUser.name}
                       </h3>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1 font-mono">
                         <Clock className="h-3 w-3" />
                         {format(new Date(conv.lastMessageAt), 'MMM d')}
                       </span>
@@ -178,7 +178,7 @@ const Chats = () => {
                   </div>
 
                   {conv.unreadCount > 0 && (
-                    <Badge className="bg-primary text-primary-foreground">
+                    <Badge className="bg-primary text-primary-foreground rounded-none">
                       {conv.unreadCount}
                     </Badge>
                   )}

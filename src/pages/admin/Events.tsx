@@ -173,7 +173,7 @@ const AdminEvents = () => {
           </div>
           <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
             <DialogTrigger asChild>
-              <Button className="shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all">
+              <Button className="shadow-brutal-sm hover:translate-y-0.5 hover:shadow-none transition-all">
                 <Plus className="h-4 w-4 mr-2" />
                 Create Event
               </Button>
@@ -261,7 +261,7 @@ const AdminEvents = () => {
                     ))}
                   </select>
                 </div>
-                <Button type="submit" className="w-full shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all">
+                <Button type="submit" className="w-full shadow-brutal-sm hover:translate-y-0.5 hover:shadow-none transition-all">
                   {editingEvent ? 'Update Event' : 'Create Event'}
                 </Button>
               </form>

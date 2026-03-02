@@ -161,7 +161,7 @@ const Events = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-foreground font-mono-loud uppercase tracking-tight">Upcoming Events</h1>
-              <p className="text-muted-foreground">Find your next opportunity to meet amazing singles</p>
+              <p className="text-muted-foreground">Find your next opportunity to meet amazing people</p>
             </div>
           </div>
 
@@ -174,8 +174,8 @@ const Events = () => {
                   className="story-item flex-shrink-0 w-32 cursor-pointer group"
                   onClick={() => handleRSVP(event.id)}
                 >
-                  <div className="story-ring p-0.5 mb-2">
-                    <div className="rounded-full overflow-hidden">
+                  <div className="border-2 border-foreground p-0.5 mb-2">
+                    <div className="overflow-hidden">
                       <img 
                         src={event.imageUrl} 
                         alt={event.title}
@@ -200,7 +200,7 @@ const Events = () => {
           <Card variant="accent" className="mb-6 animate-fade-in-up">
             <CardContent className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                <div className="h-12 w-12 border-2 border-foreground bg-primary/20 flex items-center justify-center">
                   <Sparkles className="h-6 w-6 text-primary" />
                 </div>
                 <div>
@@ -247,7 +247,7 @@ const Events = () => {
 
         {filteredEvents.length === 0 && (
           <div className="py-16 text-center animate-fade-in-up">
-            <div className="mx-auto w-24 h-24 rounded-full bg-muted/50 flex items-center justify-center mb-6">
+            <div className="mx-auto w-24 h-24 border-2 border-foreground bg-muted/50 flex items-center justify-center mb-6">
               <Calendar className="h-12 w-12 text-muted-foreground" />
             </div>
             <h3 className="text-xl font-semibold mb-2">No events found</h3>

@@ -79,7 +79,7 @@ export const PanelSwitcher = () => {
             variant="default"
             size="lg"
             className={cn(
-              "gap-2 shadow-hard-sm border-2 border-foreground",
+              "gap-2 shadow-brutal-sm border-2 border-foreground",
               "hover:translate-y-0.5 hover:shadow-none transition-all",
               "px-4 py-3 h-auto"
             )}

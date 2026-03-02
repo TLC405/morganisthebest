@@ -11,7 +11,7 @@ export const LoveBotWidget = () => {
       {/* Floating Button - Bottom LEFT to not conflict with PanelSwitcher */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 left-6 z-50 h-14 w-14 shadow-hard-sm transition-all duration-300 ${
+        className={`fixed bottom-6 left-6 z-50 h-14 w-14 shadow-brutal-sm transition-all duration-300 ${
           isOpen 
             ? 'bg-muted hover:bg-muted/80 text-foreground' 
             : 'bg-primary hover:bg-primary/90 hover:translate-y-0.5 hover:shadow-none'

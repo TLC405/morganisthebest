@@ -105,7 +105,7 @@ const AdminDashboard = () => {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div className="space-y-1">
-              <h1 className="text-3xl font-black uppercase tracking-tight text-foreground">
+              <h1 className="text-3xl font-black uppercase tracking-tight text-foreground font-mono">
                 Dashboard
               </h1>
               <p className="text-muted-foreground uppercase tracking-wide text-sm">
@@ -284,7 +284,7 @@ const AdminDashboard = () => {
                       <Link
                         key={action.label}
                         to={action.href}
-                        className="group flex items-center gap-3 p-4 rounded-sm transition-all border-2 border-border hover:border-primary hover:bg-muted"
+                        className="group flex items-center gap-3 p-4 rounded-sm transition-all border-2 border-foreground hover:border-primary hover:bg-muted"
                       >
                         <div className="h-10 w-10 rounded-sm flex items-center justify-center bg-primary/10 border-2 border-primary/20">
                           <action.icon className="h-5 w-5 text-primary" />
