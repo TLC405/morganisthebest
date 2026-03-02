@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useUpcomingEvents } from '@/hooks/useEvents';
 import { EventCard } from '@/components/events/EventCard';
 import { FloatingLogo, BrandWatermark } from '@/components/brand/FloatingLogo';
-import { TLCBadge } from '@/components/brand/TLCBadge';
 
 const verticals = [
   { icon: Heart, label: 'Singles OKC', desc: 'Dating events, mixers, speed dating' },
@@ -228,7 +227,7 @@ const Social = () => {
           </Button>
           
           <div className="mt-10">
-            <TLCBadge variant="block" />
+            <p className="text-sm text-muted-foreground font-mono uppercase tracking-wider">Powered by Inspire OKC</p>
           </div>
         </div>
       </section>

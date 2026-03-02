@@ -189,7 +189,7 @@ const Matches = () => {
               <Heart className="h-4 w-4 mr-2" />
               Mutual
               {mutualMatches.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary text-[10px] font-bold flex items-center justify-center text-primary-foreground">
+                <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-none bg-primary text-[10px] font-bold flex items-center justify-center text-primary-foreground">
                   {mutualMatches.length}
                 </span>
               )}
@@ -198,7 +198,7 @@ const Matches = () => {
               <Sparkles className="h-4 w-4 mr-2" />
               Received
               {pendingWaves.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-secondary text-[10px] font-bold flex items-center justify-center text-secondary-foreground">
+                <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-none bg-secondary text-[10px] font-bold flex items-center justify-center text-secondary-foreground">
                   {pendingWaves.length}
                 </span>
               )}

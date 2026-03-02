@@ -145,7 +145,7 @@ const Profile = () => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-foreground uppercase tracking-tight font-mono-loud">My Profile</h1>
-              <p className="text-muted-foreground">This is how you'll appear to other singles</p>
+              <p className="text-muted-foreground">This is how you'll appear to people you meet</p>
             </div>
           </div>
         </div>

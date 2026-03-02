@@ -134,7 +134,7 @@ const Quiz = () => {
           <Button
             onClick={handleNext}
             disabled={!answers[currentQuestion.key] || isSubmitting}
-            className="flex-1 h-12 shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all"
+            className="flex-1 h-12 shadow-brutal-sm hover:translate-y-0.5 hover:shadow-none transition-all"
           >
             {isSubmitting ? (
               <>Saving...</>

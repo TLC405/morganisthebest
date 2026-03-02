@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { QrCode, CheckCircle, Hash, MapPin, Sparkles, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -206,7 +206,7 @@ const CheckIn = () => {
           {/* Check-In Confirmation */}
           <Card variant="elevated" className="text-center mb-8">
             <CardContent className="pt-8 pb-8">
-              <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center bg-primary shadow-hard-sm">
+              <div className="mb-6 mx-auto flex h-20 w-20 items-center justify-center bg-primary shadow-brutal-sm">
                 <CheckCircle className="h-10 w-10 text-primary-foreground" />
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">
@@ -244,14 +244,14 @@ const CheckIn = () => {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   onClick={() => setShowPinEntry(true)} 
-                  className="flex-1 gap-2 shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all"
+                  className="flex-1 gap-2 shadow-brutal-sm hover:translate-y-0.5 hover:shadow-none transition-all"
                   size="lg"
                 >
                   <Hash className="h-5 w-5" />
                   Enter Someone's PIN
                 </Button>
                 <Button asChild variant="outline" className="flex-1" size="lg">
-                  <a href="/matches">View Profiles</a>
+                  <Link to="/matches">View Profiles</Link>
                 </Button>
               </div>
             </CardContent>
@@ -333,7 +333,7 @@ const CheckIn = () => {
       {/* Header */}
       <div className="border-b-4 border-primary bg-card">
         <div className="mx-auto max-w-lg px-4 py-12 text-center">
-          <div className="mb-4 mx-auto flex h-20 w-20 items-center justify-center bg-primary shadow-hard-sm">
+          <div className="mb-4 mx-auto flex h-20 w-20 items-center justify-center bg-primary shadow-brutal-sm">
             <QrCode className="h-10 w-10 text-primary-foreground" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-3">Event Check-In</h1>
@@ -365,7 +365,7 @@ const CheckIn = () => {
                 </p>
                 <Button 
                   onClick={() => navigate('/events')}
-                  className="shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all"
+                  className="shadow-brutal-sm hover:translate-y-0.5 hover:shadow-none transition-all"
                 >
                   Find Events
                 </Button>
@@ -395,7 +395,7 @@ const CheckIn = () => {
                       ) : (
                         <Button 
                           onClick={() => handleCheckIn(rsvp)}
-                          className="gap-2 shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all"
+                          className="gap-2 shadow-brutal-sm hover:translate-y-0.5 hover:shadow-none transition-all"
                         >
                           <MapPin className="h-4 w-4" />
                           Check In

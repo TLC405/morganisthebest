@@ -157,12 +157,17 @@ const AdminVenues = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Venues Management</h1>
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 border-2 border-foreground bg-foreground flex items-center justify-center">
+                <Building2 className="h-6 w-6 text-background" />
+              </div>
+              <h1 className="text-3xl font-bold text-foreground font-mono uppercase tracking-tight">Venues Management</h1>
+            </div>
             <p className="text-muted-foreground">GPS-integrated locations with capacity tracking</p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
             <DialogTrigger asChild>
-              <Button className="shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all">
+              <Button className="shadow-brutal-sm hover:translate-y-0.5 hover:shadow-none transition-all">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Venue
               </Button>
@@ -237,7 +242,7 @@ const AdminVenues = () => {
                     />
                   </div>
                 </div>
-                <Button type="submit" className="w-full shadow-hard-sm hover:translate-y-0.5 hover:shadow-none transition-all">
+                <Button type="submit" className="w-full shadow-brutal-sm hover:translate-y-0.5 hover:shadow-none transition-all">
                   {editingVenue ? 'Update Venue' : 'Add Venue'}
                 </Button>
               </form>
