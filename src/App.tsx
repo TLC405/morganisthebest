@@ -79,7 +79,7 @@ const App = () => (
               <Route path="/quiz" element={<Quiz />} />
               
               {/* Legacy redirects */}
-              <Route path="/social" element={<Navigate to="/about" replace />} />
+              <Route path="/social" element={<Social />} />
               <Route path="/dashboard" element={<Navigate to="/explore" replace />} />
               
               {/* Admin Routes */}

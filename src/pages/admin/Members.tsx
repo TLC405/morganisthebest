@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '@/components/layout/Layout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -119,7 +119,7 @@ const AdminMembers = () => {
   };
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           {/* Header */}
@@ -332,7 +332,7 @@ const AdminMembers = () => {
           />
         </div>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 };
 

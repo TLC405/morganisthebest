@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -94,7 +94,7 @@ const MarketIntel = () => {
   };
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -445,7 +445,7 @@ const MarketIntel = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 };
 

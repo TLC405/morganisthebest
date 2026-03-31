@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '@/components/layout/Layout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -87,7 +87,7 @@ const AdminOrders = () => {
   const fulfilledOrders = orders.filter(o => o.status === 'fulfilled').length;
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -244,7 +244,7 @@ const AdminOrders = () => {
           </Card>
         )}
       </div>
-    </Layout>
+    </AdminLayout>
   );
 };
 

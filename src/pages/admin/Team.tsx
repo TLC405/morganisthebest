@@ -1,4 +1,4 @@
-import { Layout } from '@/components/layout/Layout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +30,7 @@ const AdminTeam = () => {
   ];
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -102,7 +102,7 @@ const AdminTeam = () => {
           ))}
         </div>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 };
 

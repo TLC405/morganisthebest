@@ -112,7 +112,7 @@ const Matches = () => {
             </div>
 
             {/* Bottom info overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background/90 to-transparent">
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-foreground/80">
               <h3 className="text-2xl font-bold text-foreground">
                 {match.profile.name}
                 {match.profile.age && <span className="font-normal">, {match.profile.age}</span>}
