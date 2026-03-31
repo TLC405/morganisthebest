@@ -87,7 +87,7 @@ const AdminOrders = () => {
   const fulfilledOrders = orders.filter(o => o.status === 'fulfilled').length;
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -244,7 +244,7 @@ const AdminOrders = () => {
           </Card>
         )}
       </div>
-    </Layout>
+    </AdminLayout>
   );
 };
 
