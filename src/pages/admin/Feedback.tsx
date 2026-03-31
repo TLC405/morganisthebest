@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '@/components/layout/Layout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ThumbsUp, ThumbsDown, Minus, MessageCircle, Users } from 'lucide-react';

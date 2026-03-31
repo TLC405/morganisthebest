@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import { 
