@@ -328,10 +328,10 @@ const Profile = () => {
               </p>
               <div className="flex gap-1">
                 {interests.map((_, i) => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-primary" />
+                  <div key={i} className="w-2 h-2 rounded-none bg-primary border border-foreground" />
                 ))}
                 {[...Array(6 - interests.length)].map((_, i) => (
-                  <div key={i + interests.length} className="w-2 h-2 rounded-full bg-muted" />
+                  <div key={i + interests.length} className="w-2 h-2 rounded-none bg-muted border border-foreground" />
                 ))}
               </div>
             </div>
